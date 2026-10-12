@@ -45,6 +45,14 @@ class FlywayMigrationIT {
         }
     }
 
+    @Test
+    void everyRootHasSummaryNotesAndSource() {
+        var incomplete = column("SELECT code FROM nerve_root WHERE patient_summary IS NULL "
+                + "OR clinical_notes IS NULL OR source_reference IS NULL");
+
+        assertThat(incomplete).isEmpty();
+    }
+
     private List<String> column(String sql) {
         return jdbc.sql(sql).query(String.class).list();
     }
