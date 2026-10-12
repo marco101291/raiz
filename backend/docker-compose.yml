@@ -1,0 +1,21 @@
+# PostgreSQL local para desarrollo. Puerto 5434 para no chocar con otros Postgres en 5432/5433.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: raiz-postgres
+    environment:
+      POSTGRES_DB: raiz
+      POSTGRES_USER: raiz
+      POSTGRES_PASSWORD: raiz
+    ports:
+      - "5434:5432"
+    volumes:
+      - raiz-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U raiz -d raiz"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  raiz-pgdata:

@@ -42,7 +42,7 @@ Este README es la especificación del proyecto. Está escrito para usarse con Cl
 
 ```
 raiz/
-├── backend/            Java 21 · Spring Boot 3 · JPA · Flyway · PostgreSQL
+├── backend/            Java 21 · Spring Boot 4 · JPA · Flyway · PostgreSQL
 │   └── src/main/java/com/raiz/
 │       ├── domain/     Java puro, sin Spring ni JPA (ya implementado, ver abajo)
 │       │   ├── model/        NerveRoot, BodyZone, MotorAction, Reflex, RedFlag, SpinalRegion,
@@ -443,7 +443,7 @@ Contrato compartido:
 ## Instrucciones para Claude Code
 
 **Stack y convenciones**
-- Java 21, Spring Boot 3 (última 3.x estable), Maven. PostgreSQL 16 con `docker-compose.yml`.
+- Java 21, Spring Boot 4 (última 4.x estable), Maven. PostgreSQL 16 con `docker-compose.yml`.
 - `domain/` se queda en Java puro: sin anotaciones de Spring ni de JPA. Las entidades JPA viven en `persistence/` y se mapean a los records del dominio.
 - Usa Java moderno donde aporte: records, sealed interfaces, `switch` con pattern matching, `List.copyOf`/`Set.copyOf` en constructores compactos.
 - Migraciones con Flyway (`V1__schema.sql`, `V2__seed_nerve_roots.sql`, ...). El contenido clínico entra por migraciones, no hardcodeado.
