@@ -15,6 +15,7 @@ import java.util.Set;
  * @param provocationTests pruebas de tensión o provocación útiles para el profesional
  * @param patientSummary   explicación en lenguaje claro
  * @param clinicalNotes    notas para fisios, neurólogos y traumatólogos
+ * @param sourceReference  referencias bibliográficas que respaldan el contenido clínico
  */
 public record NerveRoot(
         String code,
@@ -25,7 +26,8 @@ public record NerveRoot(
         List<String> typicalDiscLevels,
         List<String> provocationTests,
         String patientSummary,
-        String clinicalNotes) {
+        String clinicalNotes,
+        String sourceReference) {
 
     public NerveRoot {
         Objects.requireNonNull(code, "code");

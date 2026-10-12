@@ -185,7 +185,7 @@ class CorrelationEngineTest {
 
     private static NerveRoot root(String code, Set<BodyZone> zones, Set<MotorAction> motor, Set<Reflex> reflexes) {
         return new NerveRoot(code, SpinalRegion.LUMBOSACRAL, zones, motor, reflexes,
-                List.of(), List.of(), "", "");
+                List.of(), List.of(), "", "", "");
     }
 
     private record FixedCatalog(List<NerveRoot> roots) implements NerveRootCatalog {

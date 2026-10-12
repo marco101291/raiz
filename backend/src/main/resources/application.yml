@@ -11,3 +11,6 @@ spring:
       ddl-auto: validate
     # Sin sesión abierta durante la vista: las consultas ocurren en la capa de servicio/adaptador.
     open-in-view: false
+    properties:
+      # Carga las colecciones de varias raíces en una sola consulta (evita N+1 al arrancar).
+      hibernate.default_batch_fetch_size: 16
