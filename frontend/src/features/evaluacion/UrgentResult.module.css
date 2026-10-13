@@ -1,0 +1,70 @@
+.resultado {
+  display: grid;
+  gap: 2rem;
+}
+
+/* La derivación va arriba, a todo lo ancho de la columna, con el color de su urgencia. */
+.bandaUrgencia,
+.bandaPronto {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.75rem 1.5rem;
+  border-radius: var(--radio);
+  color: #fff;
+}
+
+.bandaUrgencia {
+  background: var(--urgencia);
+}
+
+.bandaPronto {
+  background: var(--pronto);
+}
+
+.urgencia {
+  font-size: var(--titulo);
+}
+
+.mensaje {
+  font-size: var(--texto-lg);
+  line-height: 1.4;
+  max-width: 32rem;
+}
+
+.telefono {
+  font-weight: 700;
+}
+
+.seccion {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.seccion h2 {
+  font-size: var(--texto-lg);
+}
+
+.seccion ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.aviso {
+  font-size: var(--texto-sm);
+  color: var(--tinta-suave);
+  border-top: 1px solid var(--linea);
+  padding-top: 1rem;
+}
+
+.editar {
+  justify-self: start;
+  min-height: 3rem;
+  padding: 0 1.5rem;
+  border-radius: var(--radio-control);
+  border: 2px solid var(--tinta);
+  background: transparent;
+  font-weight: 700;
+  cursor: pointer;
+}

@@ -1,0 +1,32 @@
+.paso {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.estado {
+  display: grid;
+  gap: 1rem;
+  justify-items: start;
+  color: var(--tinta-suave);
+}
+
+.reintentar {
+  min-height: 3rem;
+  padding: 0 1.5rem;
+  border-radius: var(--radio-control);
+  border: 2px solid var(--tinta);
+  background: transparent;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.errorEnvio {
+  color: var(--urgencia);
+  font-weight: 700;
+}
+
+.pendiente {
+  display: grid;
+  gap: 1rem;
+  justify-items: start;
+}

@@ -1,0 +1,15 @@
+.pagina {
+  max-width: calc(var(--medida) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: 1.5rem var(--gutter) 4rem;
+  display: grid;
+  gap: 2.5rem;
+}
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  text-decoration: none;
+}
