@@ -1,0 +1,62 @@
+.resultado {
+  display: grid;
+  gap: 2rem;
+}
+
+.seccion {
+  display: grid;
+  gap: 0.6rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--linea);
+}
+
+.seccion h2 {
+  font-size: var(--texto-lg);
+}
+
+.lista {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.ayuda {
+  color: var(--tinta-suave);
+  font-size: var(--texto-sm);
+}
+
+.dato {
+  font-weight: 700;
+}
+
+/* Las raíces sí son una secuencia: van ordenadas de más a menos compatible. */
+.raices {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 1rem;
+}
+
+.raiz {
+  display: grid;
+  gap: 0.4rem;
+  padding-left: 1rem;
+  border-left: 4px solid var(--nervio);
+}
+
+.raiz h3 {
+  font-size: var(--texto-lg);
+}
+
+.deficit {
+  font-weight: 700;
+}
+
+.aviso {
+  font-size: var(--texto-sm);
+  color: var(--tinta-suave);
+  border-top: 1px solid var(--linea);
+  padding-top: 1rem;
+}

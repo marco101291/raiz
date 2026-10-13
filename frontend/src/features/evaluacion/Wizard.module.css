@@ -19,14 +19,3 @@
   font-weight: 700;
   cursor: pointer;
 }
-
-.errorEnvio {
-  color: var(--urgencia);
-  font-weight: 700;
-}
-
-.pendiente {
-  display: grid;
-  gap: 1rem;
-  justify-items: start;
-}

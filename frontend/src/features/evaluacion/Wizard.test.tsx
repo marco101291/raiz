@@ -101,12 +101,24 @@ describe("Wizard", () => {
 
 describe("Wizard: cuestionario de dolor", () => {
   beforeEach(() => {
+    assess.mockReset();
     redFlags.mockReset().mockResolvedValue(flags);
     painOptions.mockReset().mockResolvedValue(options);
     sessionStorage.setItem("raiz.evaluacion.v1", JSON.stringify({ step: "dolor", triage: { FEVER: "no" } }));
   });
 
-  it("pide los campos obligatorios y luego avanza al mapa guardando las respuestas", async () => {
+  it("pide los campos obligatorios y luego envía la evaluación con el triage y el dolor", async () => {
+    assess.mockResolvedValue({
+      type: "NO_ROOT_CORRELATION",
+      referral: {
+        urgency: { id: "ROUTINE", label: "Agenda una valoración con un especialista" },
+        specialists: [{ id: "PHYSIOTHERAPIST", label: "Fisioterapeuta" }],
+        message: "Mensaje",
+        disclaimer: "Aviso",
+      },
+      pattern: { type: "RADICULAR", explanation: "Explicación" },
+      note: "Nota",
+    });
     vi.resetModules();
     const { Wizard } = await import("./Wizard");
     render(<Wizard />);
@@ -121,7 +133,13 @@ describe("Wizard: cuestionario de dolor", () => {
     await userEvent.click(screen.getByRole("checkbox", { name: "Ardor o quemazón" }));
     await userEvent.click(screen.getByRole("button", { name: "Continuar" }));
 
-    expect(await screen.findByRole("heading", { name: "Mapa del cuerpo" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Agenda una valoración con un especialista" })).toBeInTheDocument();
+    expect(assess).toHaveBeenCalledWith(
+      expect.objectContaining({
+        redFlags: [],
+        pain: expect.objectContaining({ intensity: 6, distribution: "DISTAL", qualities: ["BURNING"] }),
+      }),
+    );
     const saved = JSON.parse(sessionStorage.getItem("raiz.evaluacion.v1") ?? "{}");
     expect(saved.pain).toMatchObject({
       intensity: 6,

@@ -56,7 +56,7 @@ describe("buildRequest", () => {
     const { buildRequest } = await freshDraft();
     const request = buildRequest(
       {
-        step: "mapa",
+        step: "resultado",
         triage: { FEVER: "no" },
         pain: {
           intensity: 4,
@@ -84,6 +84,6 @@ describe("buildRequest", () => {
 
   it("no envía un cuestionario de dolor incompleto", async () => {
     const { buildRequest } = await freshDraft();
-    expect(buildRequest({ step: "mapa", triage: {}, pain: { intensity: 4 } }).pain).toBeUndefined();
+    expect(buildRequest({ step: "resultado", triage: {}, pain: { intensity: 4 } }).pain).toBeUndefined();
   });
 });

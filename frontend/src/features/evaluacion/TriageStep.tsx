@@ -19,11 +19,10 @@ interface Props {
   onChange: (answers: Record<string, Answer>) => void;
   /** Recibe los datos de alarma marcados con "sí" (vacío si no hay ninguno). */
   onSubmit: (redFlags: string[]) => void;
-  submitting?: boolean;
 }
 
 /** Paso 1. Todas las preguntas son obligatorias: no se puede avanzar sin responder cada una. */
-export function TriageStep({ flags, defaultValues, onChange, onSubmit, submitting = false }: Props) {
+export function TriageStep({ flags, defaultValues, onChange, onSubmit }: Props) {
   // El esquema depende del catálogo que llega del backend: una pregunta por dato de alarma.
   const schema = useMemo(
     () =>
@@ -104,8 +103,8 @@ export function TriageStep({ flags, defaultValues, onChange, onSubmit, submittin
         })}
       </div>
 
-      <button type="submit" className={step.principal} disabled={submitting}>
-        {submitting ? "Consultando…" : anyYes ? "Ver qué hacer" : "Continuar"}
+      <button type="submit" className={step.principal}>
+        {anyYes ? "Ver qué hacer" : "Continuar"}
       </button>
     </form>
   );

@@ -1,13 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
-import { api, type AssessmentResponse, type Schemas } from "@/lib/api/client";
-import { getDraft, setDraft, subscribeDraft, type Draft } from "./draft";
+import { api, type Schemas } from "@/lib/api/client";
+import { buildRequest, getDraft, resetDraft, setDraft, subscribeDraft, type Draft } from "./draft";
 import { PainStep } from "./PainStep";
 import { Progress } from "./Progress";
+import { ResultStep } from "./ResultStep";
 import { TriageStep } from "./TriageStep";
-import { UrgentResult } from "./UrgentResult";
 import styles from "./Wizard.module.css";
 
 type Catalog =
@@ -18,12 +17,14 @@ type Catalog =
 /** En el servidor no hay sessionStorage: se renderiza el estado de carga y el cliente hidrata. */
 const serverDraft = () => null;
 
+/**
+ * Orquesta los pasos. Cada paso solo junta respuestas; aquí se decide a cuál ir.
+ * Flujo actual: alarma → (sin alarma) dolor → resultado. Con alarma se salta directo al resultado.
+ * El mapa corporal y la fuerza guiada se insertarán entre dolor y resultado.
+ */
 export function Wizard() {
   const draft = useSyncExternalStore(subscribeDraft, getDraft, serverDraft);
   const [catalog, setCatalog] = useState<Catalog>({ status: "loading" });
-  const [result, setResult] = useState<AssessmentResponse | null>(null);
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState(false);
 
   const loadCatalog = useCallback(() => {
     // Los catálogos del formulario se piden en paralelo; si falla cualquiera, se puede reintentar.
@@ -36,23 +37,6 @@ export function Wizard() {
   useEffect(loadCatalog, [loadCatalog]);
 
   const update = (patch: Partial<Draft>) => setDraft({ ...getDraft(), ...patch });
-
-  const submitAlarm = async (redFlags: string[]) => {
-    if (redFlags.length === 0) {
-      update({ step: "dolor" });
-      return;
-    }
-    // Con alarma se envía en este momento y se salta al resultado (README, Formularios).
-    setSubmitting(true);
-    setSubmitError(false);
-    try {
-      setResult(await api.assess({ redFlags: redFlags as Schemas["AssessmentRequest"]["redFlags"] }));
-    } catch {
-      setSubmitError(true);
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   if (draft === null || catalog.status === "loading") {
     return <p className={styles.estado}>Cargando las preguntas…</p>;
@@ -76,8 +60,15 @@ export function Wizard() {
     );
   }
 
-  if (result?.type === "URGENT_REFERRAL") {
-    return <UrgentResult result={result} onEdit={() => setResult(null)} />;
+  if (draft.step === "resultado") {
+    const alarm = buildRequest(draft).redFlags?.length;
+    return (
+      <ResultStep
+        request={buildRequest(draft)}
+        onEdit={() => update({ step: alarm ? "alarma" : "dolor" })}
+        onRestart={resetDraft}
+      />
+    );
   }
 
   return (
@@ -85,21 +76,13 @@ export function Wizard() {
       <Progress current={draft.step} />
 
       {draft.step === "alarma" && (
-        <>
-          <TriageStep
-            flags={catalog.flags}
-            defaultValues={draft.triage}
-            onChange={(triage) => update({ triage })}
-            onSubmit={submitAlarm}
-            submitting={submitting}
-          />
-          {submitError && (
-            <p role="alert" className={styles.errorEnvio}>
-              No pudimos obtener la orientación. Si tienes alguna de estas señales, no esperes: acude a
-              urgencias o llama al 911.
-            </p>
-          )}
-        </>
+        <TriageStep
+          flags={catalog.flags}
+          defaultValues={draft.triage}
+          onChange={(triage) => update({ triage })}
+          // Con alarma se envía en ese momento y se salta al resultado (README, Formularios).
+          onSubmit={(redFlags) => update({ step: redFlags.length > 0 ? "resultado" : "dolor" })}
+        />
       )}
 
       {draft.step === "dolor" && (
@@ -108,19 +91,8 @@ export function Wizard() {
           defaultValues={draft.pain ?? {}}
           onChange={(pain) => update({ pain })}
           onBack={() => update({ step: "alarma" })}
-          onSubmit={(pain) => update({ pain, step: "mapa" })}
+          onSubmit={(pain) => update({ pain, step: "resultado" })}
         />
-      )}
-
-      {draft.step === "mapa" && (
-        <div className={styles.pendiente}>
-          <h1>Mapa del cuerpo</h1>
-          <p>Este paso todavía está en construcción.</p>
-          <button type="button" className={styles.reintentar} onClick={() => update({ step: "dolor" })}>
-            Volver a tu dolor
-          </button>
-          <Link href="/">Volver al inicio</Link>
-        </div>
       )}
     </div>
   );

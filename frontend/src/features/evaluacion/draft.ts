@@ -26,7 +26,7 @@ const painDraftSchema = z
 export type PainDraft = z.infer<typeof painDraftSchema>;
 
 const draftSchema = z.object({
-  step: z.enum(["alarma", "dolor", "mapa"]),
+  step: z.enum(["alarma", "dolor", "resultado"]),
   triage: z.record(z.string(), answer),
   pain: painDraftSchema.optional(),
 });
