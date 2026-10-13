@@ -1,0 +1,74 @@
+.figuras {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  max-width: 34rem;
+}
+
+.figura {
+  margin: 0;
+  display: grid;
+  gap: 0.25rem;
+  justify-items: center;
+}
+
+.figura figcaption {
+  font-size: var(--texto-sm);
+  font-weight: 700;
+}
+
+.svg {
+  width: 100%;
+  height: auto;
+  touch-action: manipulation;
+}
+
+/* Piel sin zona: tono hueso más hondo, para que las zonas marcables se distingan. */
+.piel {
+  fill: var(--hueso-hondo);
+  stroke: none;
+}
+
+/* Relieves anatómicos de referencia: líneas finas que no reciben clics. */
+.relieve {
+  fill: none;
+  stroke: var(--linea);
+  stroke-width: 0.9;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+/* El contorno va encima de las zonas y tapa la mitad recortada de sus bordes. */
+.contorno {
+  fill: none;
+  stroke: var(--tinta);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.zona {
+  fill: var(--papel);
+  stroke: var(--tinta-suave);
+  stroke-width: 0.6;
+  cursor: pointer;
+  transition: fill 120ms ease;
+}
+
+.zona:hover {
+  fill: var(--nervio-claro);
+}
+
+/* Marcada: amarillo nervio con contorno de tinta más grueso, para no depender solo del color. */
+.zona.marcada {
+  fill: var(--nervio);
+  stroke: var(--tinta);
+  stroke-width: 1.6;
+}
+
+/* En unidades del viewBox: escala con el dibujo, así que debe ser grande para leerse en móvil. */
+.lado {
+  font-size: 17px;
+  font-weight: 700;
+  fill: var(--tinta);
+}

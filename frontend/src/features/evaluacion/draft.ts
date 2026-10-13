@@ -26,9 +26,11 @@ const painDraftSchema = z
 export type PainDraft = z.infer<typeof painDraftSchema>;
 
 const draftSchema = z.object({
-  step: z.enum(["alarma", "dolor", "resultado"]),
+  step: z.enum(["alarma", "dolor", "mapa", "resultado"]),
   triage: z.record(z.string(), answer),
   pain: painDraftSchema.optional(),
+  /** Zonas marcadas con su lado, p. ej. "GREAT_TOE-RIGHT" (mismo id que el path del mapa SVG). */
+  sensoryZones: z.array(z.string().regex(/^[A-Z_]+-(RIGHT|LEFT)$/)).optional(),
 });
 export type Draft = z.infer<typeof draftSchema>;
 export type StepId = Draft["step"];
@@ -100,5 +102,9 @@ export function buildRequest(draft: Draft, today = todayIso()): AssessmentReques
           relievers: pain.relievers ?? [],
         } as AssessmentRequest["pain"])
       : undefined,
+    sensoryZones: (draft.sensoryZones ?? []).map((key) => {
+      const i = key.lastIndexOf("-");
+      return { finding: key.slice(0, i), side: key.slice(i + 1) };
+    }) as AssessmentRequest["sensoryZones"],
   };
 }

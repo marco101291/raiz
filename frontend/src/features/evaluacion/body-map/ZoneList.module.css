@@ -1,0 +1,44 @@
+.grupos {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla caption {
+  text-align: left;
+  font-weight: 700;
+  padding-bottom: 0.4rem;
+}
+
+.tabla thead th {
+  font-size: var(--texto-sm);
+  color: var(--tinta-suave);
+  font-weight: 700;
+  width: 5.5rem;
+  text-align: center;
+}
+
+.tabla tbody th {
+  text-align: left;
+  font-weight: 400;
+  padding: 0.45rem 0.5rem 0.45rem 0;
+}
+
+.tabla tbody tr {
+  border-top: 1px solid var(--linea);
+}
+
+.tabla td {
+  text-align: center;
+}
+
+.tabla input {
+  width: 1.5rem;
+  height: 1.5rem;
+  accent-color: var(--tinta);
+  cursor: pointer;
+}

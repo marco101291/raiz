@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { api, type Schemas } from "@/lib/api/client";
 import { buildRequest, getDraft, resetDraft, setDraft, subscribeDraft, type Draft } from "./draft";
+import { MapStep } from "./MapStep";
 import { PainStep } from "./PainStep";
 import { Progress } from "./Progress";
 import { ResultStep } from "./ResultStep";
@@ -12,15 +13,20 @@ import styles from "./Wizard.module.css";
 type Catalog =
   | { status: "loading" }
   | { status: "error" }
-  | { status: "ready"; flags: Schemas["RedFlagView"][]; painOptions: Schemas["PainOptionsView"] };
+  | {
+      status: "ready";
+      flags: Schemas["RedFlagView"][];
+      painOptions: Schemas["PainOptionsView"];
+      bodyZones: Schemas["BodyZoneView"][];
+    };
 
 /** En el servidor no hay sessionStorage: se renderiza el estado de carga y el cliente hidrata. */
 const serverDraft = () => null;
 
 /**
  * Orquesta los pasos. Cada paso solo junta respuestas; aquí se decide a cuál ir.
- * Flujo actual: alarma → (sin alarma) dolor → resultado. Con alarma se salta directo al resultado.
- * El mapa corporal y la fuerza guiada se insertarán entre dolor y resultado.
+ * Flujo actual: alarma → (sin alarma) dolor → mapa → resultado. Con alarma se salta al resultado.
+ * La fuerza guiada se insertará entre mapa y resultado.
  */
 export function Wizard() {
   const draft = useSyncExternalStore(subscribeDraft, getDraft, serverDraft);
@@ -28,8 +34,8 @@ export function Wizard() {
 
   const loadCatalog = useCallback(() => {
     // Los catálogos del formulario se piden en paralelo; si falla cualquiera, se puede reintentar.
-    Promise.all([api.redFlags(), api.painOptions()]).then(
-      ([flags, painOptions]) => setCatalog({ status: "ready", flags, painOptions }),
+    Promise.all([api.redFlags(), api.painOptions(), api.bodyZones()]).then(
+      ([flags, painOptions, bodyZones]) => setCatalog({ status: "ready", flags, painOptions, bodyZones }),
       () => setCatalog({ status: "error" }),
     );
   }, []);
@@ -65,7 +71,7 @@ export function Wizard() {
     return (
       <ResultStep
         request={buildRequest(draft)}
-        onEdit={() => update({ step: alarm ? "alarma" : "dolor" })}
+        onEdit={() => update({ step: alarm ? "alarma" : "mapa" })}
         onRestart={resetDraft}
       />
     );
@@ -91,7 +97,18 @@ export function Wizard() {
           defaultValues={draft.pain ?? {}}
           onChange={(pain) => update({ pain })}
           onBack={() => update({ step: "alarma" })}
-          onSubmit={(pain) => update({ pain, step: "resultado" })}
+          onSubmit={(pain) => update({ pain, step: "mapa" })}
+        />
+      )}
+
+      {draft.step === "mapa" && (
+        <MapStep
+          zones={catalog.bodyZones}
+          distribution={draft.pain?.distribution}
+          defaultValue={draft.sensoryZones ?? []}
+          onChange={(sensoryZones) => update({ sensoryZones })}
+          onBack={() => update({ step: "dolor" })}
+          onSubmit={(sensoryZones) => update({ sensoryZones, step: "resultado" })}
         />
       )}
     </div>

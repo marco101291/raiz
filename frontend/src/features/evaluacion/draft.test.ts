@@ -58,6 +58,7 @@ describe("buildRequest", () => {
       {
         step: "resultado",
         triage: { FEVER: "no" },
+        sensoryZones: ["GROIN-RIGHT", "UPPER_ANTERIOR_THIGH-RIGHT"],
         pain: {
           intensity: 4,
           onsetDate: "2026-10-04",
@@ -79,6 +80,10 @@ describe("buildRequest", () => {
         aggravators: ["SITTING"],
         relievers: [],
       },
+      sensoryZones: [
+        { finding: "GROIN", side: "RIGHT" },
+        { finding: "UPPER_ANTERIOR_THIGH", side: "RIGHT" },
+      ],
     });
   });
 

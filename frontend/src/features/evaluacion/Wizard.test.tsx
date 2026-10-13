@@ -4,10 +4,18 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const redFlags = vi.fn();
 const painOptions = vi.fn();
+const bodyZones = vi.fn();
 const assess = vi.fn();
 vi.mock("@/lib/api/client", () => ({
-  api: { redFlags: () => redFlags(), painOptions: () => painOptions(), assess: (b: unknown) => assess(b) },
+  api: {
+    redFlags: () => redFlags(),
+    painOptions: () => painOptions(),
+    bodyZones: () => bodyZones(),
+    assess: (b: unknown) => assess(b),
+  },
 }));
+
+const zones = [{ id: "GREAT_TOE", label: "Dedo gordo del pie", region: { id: "LUMBOSACRAL", label: "Lumbosacra" } }];
 
 const options = {
   qualities: [
@@ -45,6 +53,7 @@ describe("Wizard", () => {
   beforeEach(() => {
     redFlags.mockReset().mockResolvedValue(flags);
     painOptions.mockReset().mockResolvedValue(options);
+    bodyZones.mockReset().mockResolvedValue(zones);
     assess.mockReset();
   });
 
@@ -67,7 +76,7 @@ describe("Wizard", () => {
     await answer(/Fiebre/, "No");
     await userEvent.click(screen.getByRole("button", { name: "Ver qué hacer" }));
 
-    expect(assess).toHaveBeenCalledWith({ redFlags: ["SADDLE_ANESTHESIA"] });
+    expect(assess).toHaveBeenCalledWith({ redFlags: ["SADDLE_ANESTHESIA"], sensoryZones: [] });
     expect(await screen.findByRole("heading", { level: 1, name: "Acude a urgencias hoy" })).toBeInTheDocument();
     expect(screen.getByText(/llama al 911/)).toBeInTheDocument();
     expect(screen.queryByRole("navigation", { name: "Progreso de la evaluación" })).not.toBeInTheDocument();
@@ -104,10 +113,11 @@ describe("Wizard: cuestionario de dolor", () => {
     assess.mockReset();
     redFlags.mockReset().mockResolvedValue(flags);
     painOptions.mockReset().mockResolvedValue(options);
+    bodyZones.mockReset().mockResolvedValue(zones);
     sessionStorage.setItem("raiz.evaluacion.v1", JSON.stringify({ step: "dolor", triage: { FEVER: "no" } }));
   });
 
-  it("pide los campos obligatorios y luego envía la evaluación con el triage y el dolor", async () => {
+  it("pide los campos obligatorios, pasa por el mapa y envía triage, dolor y zonas", async () => {
     assess.mockResolvedValue({
       type: "NO_ROOT_CORRELATION",
       referral: {
@@ -133,11 +143,17 @@ describe("Wizard: cuestionario de dolor", () => {
     await userEvent.click(screen.getByRole("checkbox", { name: "Ardor o quemazón" }));
     await userEvent.click(screen.getByRole("button", { name: "Continuar" }));
 
+    expect(await screen.findByRole("heading", { name: "¿Dónde sientes el dolor o el hormigueo?" })).toBeInTheDocument();
+    expect(screen.getByText("Paso 3 de 5:", { exact: false })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("checkbox", { name: "Dedo gordo del pie, derecha" }));
+    await userEvent.click(screen.getByRole("button", { name: "Continuar" }));
+
     expect(await screen.findByRole("heading", { name: "Agenda una valoración con un especialista" })).toBeInTheDocument();
     expect(assess).toHaveBeenCalledWith(
       expect.objectContaining({
         redFlags: [],
         pain: expect.objectContaining({ intensity: 6, distribution: "DISTAL", qualities: ["BURNING"] }),
+        sensoryZones: [{ finding: "GREAT_TOE", side: "RIGHT" }],
       }),
     );
     const saved = JSON.parse(sessionStorage.getItem("raiz.evaluacion.v1") ?? "{}");
