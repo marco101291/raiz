@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.raiz.domain.assessment.PatternInsight;
 import com.raiz.domain.model.Side;
+import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
@@ -16,6 +18,13 @@ import java.util.List;
         @JsonSubTypes.Type(value = AssessmentResponse.UrgentReferral.class, name = "URGENT_REFERRAL"),
         @JsonSubTypes.Type(value = AssessmentResponse.RootCorrelation.class, name = "ROOT_CORRELATION"),
         @JsonSubTypes.Type(value = AssessmentResponse.NoRootCorrelation.class, name = "NO_ROOT_CORRELATION")
+})
+// Jackson usa @JsonSubTypes para serializar; OpenAPI necesita el mapping explícito para que los
+// clientes generados (openapi-typescript) sepan qué esquema corresponde a cada valor de "type".
+@Schema(discriminatorProperty = "type", discriminatorMapping = {
+        @DiscriminatorMapping(value = "URGENT_REFERRAL", schema = AssessmentResponse.UrgentReferral.class),
+        @DiscriminatorMapping(value = "ROOT_CORRELATION", schema = AssessmentResponse.RootCorrelation.class),
+        @DiscriminatorMapping(value = "NO_ROOT_CORRELATION", schema = AssessmentResponse.NoRootCorrelation.class)
 })
 public sealed interface AssessmentResponse {
 

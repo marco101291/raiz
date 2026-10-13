@@ -14,3 +14,7 @@ spring:
     properties:
       # Carga las colecciones de varias raíces en una sola consulta (evita N+1 al arrancar).
       hibernate.default_batch_fetch_size: 16
+
+springdoc:
+  # Sin esto las respuestas se documentan como */* y los clientes generados pierden los tipos.
+  default-produces-media-type: application/json
