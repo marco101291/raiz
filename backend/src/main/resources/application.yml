@@ -2,7 +2,7 @@ spring:
   application:
     name: raiz-backend
   datasource:
-    url: ${RAIZ_DB_URL:jdbc:postgresql://localhost:5434/raiz}
+    url: ${RAIZ_DB_URL:jdbc:postgresql://localhost:5435/raiz}
     username: ${RAIZ_DB_USER:raiz}
     password: ${RAIZ_DB_PASSWORD:raiz}
   jpa:

@@ -461,4 +461,4 @@ Contrato compartido:
 **Reglas que no se rompen**
 - Ninguna respuesta de evaluación sin `referral`.
 - Con `audience=PATIENT` no salen notas clínicas, pruebas de provocación ni dosis.
-- No inventes contenido clínico: si falta un dato, deja un `TODO(clinico)` y avisa.
+- Todo contenido clínico lleva fuente y queda pendiente de revisión clínica (hoja de ruta, paso 5). Si no hay fuente para un dato, deja un `TODO(clinico)` y avisa.

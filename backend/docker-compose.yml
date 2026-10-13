@@ -1,4 +1,4 @@
-# PostgreSQL local para desarrollo. Puerto 5434 para no chocar con otros Postgres en 5432/5433.
+# PostgreSQL local para desarrollo. Puerto 5435 para no chocar con otros Postgres locales (5432–5434).
 services:
   postgres:
     image: postgres:16-alpine
@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: raiz
       POSTGRES_PASSWORD: raiz
     ports:
-      - "5434:5432"
+      - "5435:5432"
     volumes:
       - raiz-pgdata:/var/lib/postgresql/data
     healthcheck:
