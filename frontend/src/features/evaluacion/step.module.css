@@ -1,0 +1,64 @@
+/* Estructura común a todos los pasos del asistente. */
+.form {
+  display: grid;
+  gap: 2rem;
+}
+
+.encabezado {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.titulo {
+  font-size: var(--titulo);
+}
+
+.intro {
+  color: var(--tinta-suave);
+  max-width: 34rem;
+}
+
+.resumenError,
+.error {
+  color: var(--urgencia);
+  font-weight: 700;
+}
+
+.error {
+  font-size: var(--texto-sm);
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.principal,
+.secundario {
+  min-height: 3.25rem;
+  padding: 0 1.75rem;
+  border-radius: var(--radio-control);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.principal {
+  border: 0;
+  background: var(--tinta);
+  color: var(--papel);
+}
+
+.principal:hover {
+  background: #2c3f49;
+}
+
+.principal:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.secundario {
+  border: 2px solid var(--tinta);
+  background: transparent;
+}

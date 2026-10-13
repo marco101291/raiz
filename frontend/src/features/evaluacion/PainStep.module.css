@@ -1,0 +1,109 @@
+/* Cada pregunta es una sección separada por una línea, igual que el triage: sin tarjetas. */
+.seccion {
+  margin: 0;
+  padding: 1.5rem 0 0;
+  border: 0;
+  border-top: 1px solid var(--linea);
+  display: grid;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.pregunta {
+  float: left; /* el legend participa en el grid del fieldset */
+  width: 100%;
+  padding: 0;
+  font-size: var(--texto-lg);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.ayuda {
+  color: var(--tinta-suave);
+  font-size: var(--texto-sm);
+  margin-top: -0.2rem;
+}
+
+.fecha {
+  justify-self: start;
+  min-height: 3rem;
+  padding: 0 1rem;
+  border: 2px solid var(--linea);
+  border-radius: 8px;
+  background: var(--papel);
+}
+
+.fecha:hover {
+  border-color: var(--tinta-suave);
+}
+
+.fecha[aria-invalid] {
+  border-color: var(--urgencia);
+}
+
+.duracion {
+  font-weight: 700;
+}
+
+.distribuciones {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.distribucion {
+  position: relative;
+}
+
+.distribucion input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.distribucion span {
+  height: 100%;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 0.75rem;
+  padding: 1rem 0.75rem;
+  border: 2px solid var(--linea);
+  border-radius: var(--radio);
+  background: var(--papel);
+  font-size: var(--texto-sm);
+  line-height: 1.35;
+  text-align: center;
+}
+
+.distribucion:hover span {
+  border-color: var(--tinta-suave);
+}
+
+.distribucion input:checked + span {
+  border-color: var(--tinta);
+  box-shadow: inset 0 0 0 2px var(--tinta);
+  background: var(--nervio-claro);
+  font-weight: 700;
+}
+
+.distribucion input:focus-visible + span {
+  outline: 3px solid var(--tinta);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 7px var(--nervio);
+}
+
+@media (max-width: 36rem) {
+  .distribuciones {
+    grid-template-columns: 1fr;
+  }
+
+  .distribucion span {
+    grid-template-columns: auto 1fr;
+    justify-items: start;
+    align-items: center;
+    text-align: left;
+  }
+}

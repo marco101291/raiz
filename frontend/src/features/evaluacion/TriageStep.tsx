@@ -6,6 +6,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import type { Schemas } from "@/lib/api/client";
 import { reportedRedFlags, type Answer } from "./draft";
+import step from "./step.module.css";
 import styles from "./TriageStep.module.css";
 
 type RedFlag = Schemas["RedFlagView"];
@@ -60,20 +61,20 @@ export function TriageStep({ flags, defaultValues, onChange, onSubmit, submittin
 
   return (
     <form
-      className={styles.form}
+      className={step.form}
       noValidate
       onSubmit={handleSubmit((values) => onSubmit(reportedRedFlags(values)))}
     >
-      <header className={styles.encabezado}>
-        <h1 className={styles.titulo}>Antes de empezar, ¿te pasa alguna de estas cosas?</h1>
-        <p className={styles.intro}>
+      <header className={step.encabezado}>
+        <h1 className={step.titulo}>Antes de empezar, ¿te pasa alguna de estas cosas?</h1>
+        <p className={step.intro}>
           Algunas señales necesitan atención médica sin esperar. Responde cada una; si alguna es sí, te
           decimos qué hacer.
         </p>
       </header>
 
       {isSubmitted && missing > 0 && (
-        <p role="alert" className={styles.resumenError}>
+        <p role="alert" className={step.resumenError}>
           {missing === 1 ? "Te falta 1 pregunta por responder." : `Te faltan ${missing} preguntas por responder.`}
         </p>
       )}
@@ -94,7 +95,7 @@ export function TriageStep({ flags, defaultValues, onChange, onSubmit, submittin
                 ))}
               </div>
               {error && (
-                <p id={`${id}-error`} className={styles.error}>
+                <p id={`${id}-error`} className={`${step.error} ${styles.errorPregunta}`}>
                   {error}
                 </p>
               )}
@@ -103,7 +104,7 @@ export function TriageStep({ flags, defaultValues, onChange, onSubmit, submittin
         })}
       </div>
 
-      <button type="submit" className={styles.enviar} disabled={submitting}>
+      <button type="submit" className={step.principal} disabled={submitting}>
         {submitting ? "Consultando…" : anyYes ? "Ver qué hacer" : "Continuar"}
       </button>
     </form>

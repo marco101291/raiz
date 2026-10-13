@@ -50,3 +50,40 @@ describe("draft", () => {
     ]);
   });
 });
+
+describe("buildRequest", () => {
+  it("calcula la duración desde la fecha de inicio al momento de enviar", async () => {
+    const { buildRequest } = await freshDraft();
+    const request = buildRequest(
+      {
+        step: "mapa",
+        triage: { FEVER: "no" },
+        pain: {
+          intensity: 4,
+          onsetDate: "2026-10-04",
+          distribution: "PROXIMAL",
+          qualities: ["BURNING"],
+          aggravators: ["SITTING"],
+          relievers: [],
+        },
+      },
+      "2026-10-13",
+    );
+    expect(request).toEqual({
+      redFlags: [],
+      pain: {
+        intensity: 4,
+        durationDays: 9,
+        distribution: "PROXIMAL",
+        qualities: ["BURNING"],
+        aggravators: ["SITTING"],
+        relievers: [],
+      },
+    });
+  });
+
+  it("no envía un cuestionario de dolor incompleto", async () => {
+    const { buildRequest } = await freshDraft();
+    expect(buildRequest({ step: "mapa", triage: {}, pain: { intensity: 4 } }).pain).toBeUndefined();
+  });
+});
