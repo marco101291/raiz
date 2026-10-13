@@ -1,0 +1,116 @@
+/*
+ * Tokens de Raíz. El acento es el amarillo con que los atlas de anatomía pintan los nervios.
+ * Nervio nunca va como texto ni como única señal (contraste 1.5:1 sobre Hueso): se usa como
+ * relleno con texto en Tinta encima. Los tres colores de urgencia solo aparecen en la derivación.
+ */
+:root {
+  --hueso: #eef1ef;
+  --hueso-hondo: #e2e7e4;
+  --papel: #f8faf9;
+  --tinta: #1f2d35;
+  --tinta-suave: #4c5c64;
+  --linea: #c5cdc9;
+  --nervio: #f2c230;
+  --nervio-claro: #fbeab0;
+
+  --urgencia: #b8322a;
+  --pronto: #9a4f0a;
+  --rutina: #3e6b5c;
+
+  /* Escala modular 1.25 sobre 18 px: legible para quien lee con dolor o en el celular. */
+  --texto-sm: 0.889rem;
+  --texto: 1.125rem;
+  --texto-lg: 1.406rem;
+  --titulo: clamp(1.75rem, 1.2rem + 2.4vw, 2.75rem);
+  --titulo-xl: clamp(2.25rem, 1.4rem + 3.8vw, 3.75rem);
+
+  --medida: 38rem;
+  --gutter: 1rem;
+  --radio: 10px;
+  --radio-control: 999px;
+}
+
+@media (min-width: 40rem) {
+  :root {
+    --gutter: 2rem;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--hueso);
+  color: var(--tinta);
+  font-size: var(--texto);
+  line-height: 1.55;
+  font-variant-numeric: lining-nums;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* Foco visible en cualquier fondo: anillo de tinta con halo nervio. */
+:focus-visible {
+  outline: 3px solid var(--tinta);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 7px var(--nervio);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

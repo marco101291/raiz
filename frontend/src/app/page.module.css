@@ -1,0 +1,55 @@
+.page {
+  max-width: calc(var(--medida) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: clamp(3rem, 10vh, 7rem) var(--gutter) 4rem;
+  display: grid;
+  gap: 2.5rem;
+}
+
+.marca {
+  font-size: var(--texto-lg);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.titulo {
+  font-size: var(--titulo-xl);
+  max-width: 20ch;
+}
+
+.intro {
+  display: grid;
+  gap: 1rem;
+  max-width: 34rem;
+  color: var(--tinta-suave);
+}
+
+.empezar {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 3.25rem;
+  padding: 0 1.75rem;
+  border-radius: var(--radio-control);
+  background: var(--tinta);
+  color: var(--papel);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.empezar:hover {
+  background: #2c3f49;
+}
+
+/* El triage va primero también aquí: si es urgente, no hace falta llenar nada. */
+.urgente {
+  border-left: 4px solid var(--urgencia);
+  padding: 0.25rem 0 0.25rem 1rem;
+  max-width: 34rem;
+}
+
+.urgente strong {
+  color: var(--urgencia);
+}
