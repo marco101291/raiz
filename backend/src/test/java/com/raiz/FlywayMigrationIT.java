@@ -53,6 +53,15 @@ class FlywayMigrationIT {
         assertThat(incomplete).isEmpty();
     }
 
+    @Test
+    void groinRootsWarnThatGroinPainMayComeFromLowerLevels() {
+        var summaries = column("SELECT patient_summary FROM nerve_root WHERE code IN ('L1', 'L2')");
+
+        assertThat(summaries).hasSize(2).allSatisfy(summary -> assertThat(summary)
+                .contains("discos más bajos de la columna")
+                .contains("pubalgia"));
+    }
+
     private List<String> column(String sql) {
         return jdbc.sql(sql).query(String.class).list();
     }
