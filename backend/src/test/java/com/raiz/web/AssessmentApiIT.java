@@ -10,6 +10,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -126,6 +127,7 @@ class AssessmentApiIT extends ApiIntegrationTest {
                 """)
                 .andExpect(jsonPath("$.type").value("ROOT_CORRELATION"))
                 .andExpect(jsonPath("$.referral.urgency.id").value("PROMPT"))
+                .andExpect(jsonPath("$.referral.message", startsWith("Sientes síntomas en la ingle de ambos lados.")))
                 .andExpect(jsonPath("$.otherCauses[*].id",
                         contains("PUBALGIA", "HIP", "GROIN_NERVE_ENTRAPMENT", "REFERRED_LOW_LUMBAR")));
     }

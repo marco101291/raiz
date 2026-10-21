@@ -4,25 +4,22 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Derivación a un especialista. Toda evaluación la lleva: es una invariante del dominio,
- * no una decisión de la capa web. Por eso el constructor no acepta valores nulos ni vacíos.
+ * Referral to a specialist. Every assessment carries one: it is a domain invariant, not a web-layer
+ * decision. That is why the constructor rejects null or empty values.
+ *
+ * @param reasons why it refers this way, in the order they are explained to the person
  */
-public record Referral(Urgency urgency, List<Specialist> specialists, String message) {
-
-    public static final String DISCLAIMER =
-            "Esta herramienta es educativa y no sustituye una valoración médica. "
-            + "Solo un profesional puede confirmar qué estructura está afectada.";
+public record Referral(Urgency urgency, List<Specialist> specialists, List<ReferralReason> reasons) {
 
     public Referral {
         Objects.requireNonNull(urgency, "urgency");
-        Objects.requireNonNull(message, "message");
         if (specialists == null || specialists.isEmpty()) {
-            throw new IllegalArgumentException("Una derivación debe nombrar al menos un especialista");
+            throw new IllegalArgumentException("A referral must name at least one specialist");
+        }
+        if (reasons == null || reasons.isEmpty()) {
+            throw new IllegalArgumentException("A referral must give at least one reason");
         }
         specialists = List.copyOf(specialists);
-    }
-
-    public String disclaimer() {
-        return DISCLAIMER;
+        reasons = List.copyOf(reasons);
     }
 }

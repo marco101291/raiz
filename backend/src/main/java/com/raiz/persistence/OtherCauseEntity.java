@@ -34,6 +34,8 @@ class OtherCauseEntity {
     @Column(columnDefinition = "text")
     private String sourceReference;
 
+    private boolean commonBilateral;
+
     @ElementCollection
     @CollectionTable(name = "other_cause_zone", joinColumns = @JoinColumn(name = "other_cause_id"))
     @Column(name = "zone")
@@ -45,6 +47,6 @@ class OtherCauseEntity {
     }
 
     OtherCause toRecord() {
-        return new OtherCause(id, title, description, sourceReference, zones);
+        return new OtherCause(id, title, description, sourceReference, commonBilateral, zones);
     }
 }

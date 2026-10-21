@@ -71,6 +71,14 @@ class FlywayMigrationIT {
         assertThat(incomplete).isEmpty();
     }
 
+    @Test
+    void commonBilateralCausesCoverGroinAndMedianFingers() {
+        var zones = column("SELECT DISTINCT z.zone FROM other_cause c JOIN other_cause_zone z ON z.other_cause_id = c.id "
+                + "WHERE c.common_bilateral");
+
+        assertThat(zones).containsExactlyInAnyOrder("GROIN", "THUMB", "INDEX_FINGER", "MIDDLE_FINGER");
+    }
+
     private List<String> column(String sql) {
         return jdbc.sql(sql).query(String.class).list();
     }

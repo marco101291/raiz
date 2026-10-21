@@ -27,7 +27,12 @@ class CorrelationEngineTest {
             Set.of(MotorAction.ANKLE_PLANTAR_FLEXION, MotorAction.FOOT_EVERSION),
             Set.of(Reflex.ACHILLES));
 
-    private final CorrelationEngine engine = new CorrelationEngine(new FixedCatalog(List.of(L4, L5, S1)));
+    // Same zones as the V6/V7 catalog: groin (pubalgia, hips) and median-nerve fingers (carpal tunnel).
+    private static final Set<BodyZone> COMMON_BILATERAL =
+            Set.of(BodyZone.GROIN, BodyZone.THUMB, BodyZone.INDEX_FINGER, BodyZone.MIDDLE_FINGER);
+
+    private final CorrelationEngine engine =
+            new CorrelationEngine(new FixedCatalog(List.of(L4, L5, S1)), COMMON_BILATERAL::contains);
 
     // --- Triage ---
 
@@ -119,7 +124,8 @@ class CorrelationEngineTest {
 
         assertThat(referral.urgency()).isEqualTo(Urgency.PROMPT);
         assertThat(referral.specialists()).first().isEqualTo(Specialist.PHYSICIAN);
-        assertThat(referral.message()).contains("pubalgia").contains("Acude a urgencias si además");
+        assertThat(referral.reasons()).first()
+                .isEqualTo(ReferralReason.bilateralCommonCause(SpinalRegion.LUMBOSACRAL));
     }
 
     @Test
@@ -131,7 +137,8 @@ class CorrelationEngineTest {
 
         assertThat(assessment).isNotInstanceOf(Assessment.UrgentReferral.class);
         assertThat(assessment.referral().urgency()).isEqualTo(Urgency.PROMPT);
-        assertThat(assessment.referral().message()).contains("túnel carpiano");
+        assertThat(assessment.referral().reasons())
+                .contains(ReferralReason.bilateralCommonCause(SpinalRegion.CERVICAL));
     }
 
     @Test
@@ -154,6 +161,23 @@ class CorrelationEngineTest {
 
         assertThat(engine.assess(report)).asInstanceOf(type(Assessment.UrgentReferral.class))
                 .satisfies(u -> assertThat(u.inferred()).containsExactly(RedFlag.BILATERAL_SYMPTOMS));
+    }
+
+    @Test
+    void whichZonesHaveCommonBilateralCausesComesFromTheCatalog() {
+        var report = new SymptomReport(null, null,
+                Set.of(Sided.right(BodyZone.GROIN), Sided.left(BodyZone.GROIN)), null, null);
+        var engineWithoutCommonCauses = new CorrelationEngine(new FixedCatalog(List.of(L4, L5, S1)), zone -> false);
+
+        assertThat(engineWithoutCommonCauses.assess(report)).isInstanceOf(Assessment.UrgentReferral.class);
+    }
+
+    @Test
+    void sensoryOnlySymptomsGiveASingleReason() {
+        var report = new SymptomReport(null, radicularPain(4, 5), Set.of(Sided.right(BodyZone.LATERAL_LEG)), null, null);
+
+        assertThat(engine.assess(report).referral().reasons())
+                .containsExactly(ReferralReason.of(ReferralReason.Kind.SENSORY_ONLY));
     }
 
     @Test
@@ -184,7 +208,7 @@ class CorrelationEngineTest {
 
         assertThat(engine.assess(report)).asInstanceOf(type(Assessment.NoRootCorrelation.class))
                 .satisfies(n -> assertThat(n.pattern().type()).isEqualTo(PatternInsight.Type.RADICULAR))
-                .satisfies(n -> assertThat(n.note()).contains("mapa"));
+                .satisfies(n -> assertThat(n.note()).isEqualTo(Assessment.NoRootCorrelation.Note.RADICULAR_UNMAPPED));
     }
 
     @Test

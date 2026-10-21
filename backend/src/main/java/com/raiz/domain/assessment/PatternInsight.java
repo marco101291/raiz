@@ -6,17 +6,18 @@ import java.util.List;
  * Lectura educativa del patrón de dolor ("¿es una hernia?"). Describe compatibilidades,
  * nunca un diagnóstico.
  *
+ * The explanation of each type is text for the person and lives outside the domain (table {@code result_text}).
+ *
  * @param features rasgos del cuestionario que apoyan la lectura, en lenguaje claro
  */
-public record PatternInsight(Type type, PainProfile.Chronicity chronicity, List<String> features, String explanation) {
+public record PatternInsight(Type type, PainProfile.Chronicity chronicity, List<String> features) {
 
     public PatternInsight {
         features = List.copyOf(features);
     }
 
     public static PatternInsight notAssessed() {
-        return new PatternInsight(Type.NOT_ASSESSED, null, List.of(),
-                "No se respondió el cuestionario de dolor.");
+        return new PatternInsight(Type.NOT_ASSESSED, null, List.of());
     }
 
     public enum Type {

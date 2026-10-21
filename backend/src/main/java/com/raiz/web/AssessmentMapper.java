@@ -10,6 +10,7 @@ import com.raiz.domain.assessment.Specialist;
 import com.raiz.domain.assessment.SymptomReport;
 import com.raiz.domain.model.Sided;
 import com.raiz.persistence.OtherCause;
+import com.raiz.persistence.ResultTextCatalog;
 import com.raiz.web.dto.AssessmentRequest;
 import com.raiz.web.dto.AssessmentResponse;
 import com.raiz.web.dto.AssessmentResponse.EvidenceView;
@@ -51,13 +52,15 @@ final class AssessmentMapper {
     }
 
     /**
-     * switch exhaustivo: si el dominio agrega un caso a Assessment, esto deja de compilar.
+     * Exhaustive switch: if the domain adds a case to Assessment, this stops compiling.
      *
-     * @param otherCauses se omiten en la derivación urgente: ahí lo único que importa es ir a urgencias
+     * @param otherCauses omitted on an urgent referral: there the only thing that matters is going to the ER
+     * @param texts       turns the engine's reasons into text for the person
      */
-    static AssessmentResponse toResponse(Assessment assessment, List<OtherCause> otherCauses) {
-        ReferralView referral = toView(assessment.referral());
-        PatternView pattern = toView(assessment.pattern());
+    static AssessmentResponse toResponse(Assessment assessment, List<OtherCause> otherCauses,
+                                         ResultTextCatalog texts) {
+        ReferralView referral = toView(assessment.referral(), texts);
+        PatternView pattern = toView(assessment.pattern(), texts);
         List<OtherCauseView> causes = otherCauses.stream()
                 .map(c -> new OtherCauseView(c.id(), c.title(), c.description(), c.sourceReference()))
                 .toList();
@@ -67,20 +70,22 @@ final class AssessmentMapper {
             case Assessment.RootCorrelation c -> new AssessmentResponse.RootCorrelation(referral, pattern,
                     c.matches().stream().map(AssessmentMapper::toView).toList(), causes);
             case Assessment.NoRootCorrelation n ->
-                    new AssessmentResponse.NoRootCorrelation(referral, pattern, n.note(), causes);
+                    new AssessmentResponse.NoRootCorrelation(referral, pattern, texts.note(n.note()), causes);
         };
     }
 
-    private static ReferralView toView(Referral referral) {
+    /** The reasons are joined into a single message, in the order the engine gave them. */
+    private static ReferralView toView(Referral referral, ResultTextCatalog texts) {
+        String message = referral.reasons().stream().map(texts::referral).collect(Collectors.joining(" "));
         return new ReferralView(CodeLabel.of(referral.urgency(), referral.urgency().label()),
                 referral.specialists().stream().map(s -> CodeLabel.of(s, s.label())).toList(),
-                referral.message(), referral.disclaimer());
+                message, texts.disclaimer());
     }
 
-    private static PatternView toView(PatternInsight pattern) {
+    private static PatternView toView(PatternInsight pattern, ResultTextCatalog texts) {
         var chronicity = pattern.chronicity() == null ? null
                 : CodeLabel.of(pattern.chronicity(), pattern.chronicity().label());
-        return new PatternView(pattern.type(), chronicity, pattern.features(), pattern.explanation());
+        return new PatternView(pattern.type(), chronicity, pattern.features(), texts.pattern(pattern.type()));
     }
 
     private static RootMatchView toView(RootMatch match) {

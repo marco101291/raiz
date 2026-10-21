@@ -52,6 +52,16 @@ public sealed interface Assessment {
     }
 
     /** No hay datos suficientes para correlacionar con una raíz; puede haber lectura de patrón. */
-    record NoRootCorrelation(PatternInsight pattern, String note, Referral referral) implements Assessment {
+    record NoRootCorrelation(PatternInsight pattern, Note note, Referral referral) implements Assessment {
+
+        /** Why there was no correlation. The text for the person lives outside the domain, as with {@link ReferralReason}. */
+        public enum Note {
+            /** Zones were marked, but none follows the territory of a root. */
+            NO_TERRITORY_MATCH,
+            /** Nerve-type pain with no zones marked: the map is missing. */
+            RADICULAR_UNMAPPED,
+            /** What was described is not nerve-type pain. */
+            NOT_RADICULAR
+        }
     }
 }
