@@ -32,7 +32,7 @@ class StrengthTestEntity {
     private MotorAction motorAction;
 
     protected StrengthTestEntity() {
-        // Requerido por JPA.
+        // Required by JPA.
     }
 
     StrengthTest toRecord() {

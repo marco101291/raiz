@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class NerveRootApiIT extends ApiIntegrationTest {
 
-    // --- Regla del README: con audience=PATIENT no salen notas clínicas ni pruebas de provocación ---
+    // --- README rule: with audience=PATIENT no clinical notes or provocation tests are returned ---
 
     @Test
     void patientListNeverExposesClinicalFields() throws Exception {
@@ -45,7 +45,7 @@ class NerveRootApiIT extends ApiIntegrationTest {
                 .andExpect(jsonPath("$.dermatome[?(@.id == 'GREAT_TOE')].label").value("Dedo gordo del pie"));
     }
 
-    // --- Listado ---
+    // --- Listing ---
 
     @Test
     void listFollowsAnatomicalOrder() throws Exception {
@@ -65,7 +65,7 @@ class NerveRootApiIT extends ApiIntegrationTest {
         mvc.perform(get("/api/v1/nerve-roots/s1")).andExpect(jsonPath("$.code").value("S1"));
     }
 
-    // --- Errores ---
+    // --- Errors ---
 
     @Test
     void unknownRootIs404ProblemDetail() throws Exception {

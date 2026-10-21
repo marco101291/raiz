@@ -2,7 +2,7 @@ package com.raiz.web.dto;
 
 import java.util.List;
 
-/** Respuestas de {@code /api/v1/catalog/**}. */
+/** Responses of {@code /api/v1/catalog/**}. */
 public final class CatalogViews {
 
     private CatalogViews() {
@@ -15,7 +15,7 @@ public final class CatalogViews {
                                   List<CodeLabel> relievers, List<CodeLabel> distributions) {
     }
 
-    /** @param roots raíces cuyo miotoma incluye el movimiento, en orden anatómico */
+    /** @param roots roots whose myotome includes the movement, in anatomical order */
     public record StrengthTestView(String id, String name, String instructions, String safetyNote,
                                    CodeLabel motorAction, List<String> roots) {
     }

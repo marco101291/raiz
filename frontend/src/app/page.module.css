@@ -43,7 +43,7 @@
   background: #2c3f49;
 }
 
-/* El triage va primero también aquí: si es urgente, no hace falta llenar nada. */
+/* The triage comes first here too: if it is urgent, nothing else needs filling in. */
 .urgente {
   border-left: 4px solid var(--urgencia);
   padding: 0.25rem 0 0.25rem 1rem;

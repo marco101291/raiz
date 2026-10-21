@@ -3,16 +3,16 @@ import type { AssessmentRequest } from "@/lib/api/client";
 import { daysBetween, todayIso } from "./dates";
 
 /**
- * Borrador de la evaluación. Vive solo en el navegador (README: Raíz no guarda evaluaciones).
- * La fuente de verdad es la memoria; sessionStorage solo persiste entre recargas y puede fallar
- * (modo privado, almacenamiento bloqueado), así que todo acceso va en try/catch.
+ * Assessment draft. It lives only in the browser (README: Raíz does not store assessments).
+ * Memory is the source of truth; sessionStorage only persists across reloads and can fail (private mode,
+ * blocked storage), so every access is wrapped in try/catch.
  */
 const STORAGE_KEY = "raiz.evaluacion.v1";
 
 const answer = z.enum(["si", "no"]);
 export type Answer = z.infer<typeof answer>;
 
-/** Respuestas del cuestionario de dolor mientras se llena: todo puede faltar. */
+/** Pain questionnaire answers while it is being filled in: anything may be missing. */
 const painDraftSchema = z
   .object({
     intensity: z.number().int().min(0).max(10).nullable(),
@@ -29,7 +29,7 @@ const draftSchema = z.object({
   step: z.enum(["alarma", "dolor", "mapa", "resultado"]),
   triage: z.record(z.string(), answer),
   pain: painDraftSchema.optional(),
-  /** Zonas marcadas con su lado, p. ej. "GREAT_TOE-RIGHT" (mismo id que el path del mapa SVG). */
+  /** Marked zones with their side, e.g. "GREAT_TOE-RIGHT" (same id as the SVG map path). */
   sensoryZones: z.array(z.string().regex(/^[A-Z_]+-(RIGHT|LEFT)$/)).optional(),
 });
 export type Draft = z.infer<typeof draftSchema>;
@@ -43,7 +43,7 @@ const listeners = new Set<() => void>();
 function readStorage(): Draft {
   try {
     const raw = sessionStorage.getItem(STORAGE_KEY);
-    // Lo guardado puede venir de otra versión o estar corrupto: si no valida, se empieza de cero.
+    // Stored data may come from another version or be corrupt: if it does not validate, start over.
     const parsed = raw ? draftSchema.safeParse(JSON.parse(raw)) : undefined;
     return parsed?.success ? parsed.data : emptyDraft;
   } catch {
@@ -51,7 +51,7 @@ function readStorage(): Draft {
   }
 }
 
-/** Para useSyncExternalStore: devuelve siempre la misma referencia mientras no cambie. */
+/** For useSyncExternalStore: always returns the same reference until it changes. */
 export function getDraft(): Draft {
   current ??= readStorage();
   return current;
@@ -62,7 +62,7 @@ export function setDraft(next: Draft): void {
   try {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   } catch {
-    // Sin almacenamiento el asistente sigue funcionando; solo se pierde el progreso al recargar.
+    // Without storage the wizard still works; only progress is lost on reload.
   }
   listeners.forEach((listener) => listener());
 }
@@ -76,7 +76,7 @@ export function subscribeDraft(listener: () => void): () => void {
   return () => listeners.delete(listener);
 }
 
-/** Datos de alarma que la persona contestó con "sí", en el orden del catálogo. */
+/** Red flags the person answered "sí" to, in catalog order. */
 export function reportedRedFlags(triage: Draft["triage"]): string[] {
   return Object.entries(triage)
     .filter(([, value]) => value === "si")
@@ -84,8 +84,8 @@ export function reportedRedFlags(triage: Draft["triage"]): string[] {
 }
 
 /**
- * Convierte el borrador en la petición al motor. La duración se calcula aquí, al enviar, a partir de
- * la fecha de inicio. Si el cuestionario de dolor está incompleto no se envía (el motor lo acepta).
+ * Turns the draft into the engine request. The duration is computed here, on submit, from the start date.
+ * If the pain questionnaire is incomplete it is not sent (the engine accepts that).
  */
 export function buildRequest(draft: Draft, today = todayIso()): AssessmentRequest {
   const pain = draft.pain;

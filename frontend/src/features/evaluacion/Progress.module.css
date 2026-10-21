@@ -28,7 +28,7 @@
   box-shadow: inset 0 0 0 1px var(--linea);
 }
 
-/* Los segmentos recorridos llevan el amarillo nervio con borde de tinta para no depender del color. */
+/* Completed segments use nerve yellow with an ink border so they do not rely on color. */
 .segmentos li.hecho {
   background: var(--nervio);
   box-shadow: inset 0 0 0 1px var(--tinta);

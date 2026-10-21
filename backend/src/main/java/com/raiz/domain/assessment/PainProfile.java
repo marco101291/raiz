@@ -9,10 +9,10 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Características del dolor reportadas en el cuestionario.
+ * Pain features reported in the questionnaire.
  *
- * @param intensity    escala numérica 0–10 (NRS)
- * @param durationDays días desde que empezó el episodio actual
+ * @param intensity    numeric rating scale 0–10 (NRS)
+ * @param durationDays days since the current episode started
  */
 public record PainProfile(
         int intensity,

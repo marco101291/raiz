@@ -5,7 +5,7 @@ import com.raiz.domain.model.Side;
 
 import java.util.List;
 
-/** Una raíz de un lado concreto ("L5 derecha") con la evidencia que la apoya. */
+/** A root on a specific side ("L5 derecha") with the evidence that supports it. */
 public record RootMatch(NerveRoot root, Side side, List<Evidence> evidence) {
 
     public RootMatch {
@@ -20,7 +20,7 @@ public record RootMatch(NerveRoot root, Side side, List<Evidence> evidence) {
         return evidence.stream().mapToInt(Evidence::weight).sum();
     }
 
-    /** Hay hallazgo motor o reflejo: sugiere compromiso neurológico, no solo irritación. */
+    /** There is a motor or reflex finding: suggests neurological compromise, not just irritation. */
     public boolean hasNeurologicalDeficit() {
         return evidence.stream().anyMatch(e -> switch (e) {
             case Evidence.MotorMatch m -> true;

@@ -5,9 +5,9 @@ import com.raiz.domain.model.MotorAction;
 import com.raiz.domain.model.Reflex;
 
 /**
- * Por qué una raíz obtuvo puntos. Sealed para que el compilador obligue a manejar cada
- * tipo de hallazgo en los switch (peso, explicación, serialización). El lado lo lleva
- * {@link RootMatch}: toda la evidencia de un match es del mismo lado.
+ * Why a root scored points. Sealed so the compiler forces every switch (weight, explanation,
+ * serialization) to handle each kind of finding. The side lives in {@link RootMatch}: all the evidence
+ * of a match is on the same side.
  */
 public sealed interface Evidence {
 

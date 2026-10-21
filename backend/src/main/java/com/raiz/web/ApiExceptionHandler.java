@@ -16,9 +16,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.List;
 
 /**
- * Errores como {@link ProblemDetail} (RFC 9457), con textos en español. Extender
- * {@link ResponseEntityExceptionHandler} cubre las excepciones estándar de Spring MVC; aquí solo se
- * ajustan los mensajes y se agregan las propias.
+ * Errors as {@link ProblemDetail} (RFC 9457), with texts in Spanish. Extending
+ * {@link ResponseEntityExceptionHandler} covers the standard Spring MVC exceptions; here the messages are
+ * only adjusted and the application's own exceptions are added.
  */
 @RestControllerAdvice
 class ApiExceptionHandler extends ResponseEntityExceptionHandler {
@@ -30,7 +30,7 @@ class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return problem;
     }
 
-    /** Las invariantes del dominio (p. ej. intensidad fuera de 0–10) lanzan IllegalArgumentException. */
+    /** Domain invariants (e.g. intensity outside 0–10) throw IllegalArgumentException. */
     @ExceptionHandler(IllegalArgumentException.class)
     ProblemDetail invalidDomainData(IllegalArgumentException ex) {
         var problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());

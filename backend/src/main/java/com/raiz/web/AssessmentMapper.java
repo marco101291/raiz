@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/** Traduce entre los DTOs de la API y el dominio. No toma decisiones clínicas. */
+/** Translates between the API DTOs and the domain. It makes no clinical decisions. */
 final class AssessmentMapper {
 
     private AssessmentMapper() {

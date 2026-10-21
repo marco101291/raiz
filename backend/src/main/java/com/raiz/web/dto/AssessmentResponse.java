@@ -10,8 +10,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
 /**
- * Resultado de una evaluación. El campo {@code type} distingue los tres casos; todos llevan
- * {@code referral} y {@code pattern}, igual que la sealed interface del dominio.
+ * Result of an assessment. The {@code type} field tells the three cases apart; all carry
+ * {@code referral} and {@code pattern}, like the domain's sealed interface.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
@@ -19,8 +19,8 @@ import java.util.List;
         @JsonSubTypes.Type(value = AssessmentResponse.RootCorrelation.class, name = "ROOT_CORRELATION"),
         @JsonSubTypes.Type(value = AssessmentResponse.NoRootCorrelation.class, name = "NO_ROOT_CORRELATION")
 })
-// Jackson usa @JsonSubTypes para serializar; OpenAPI necesita el mapping explícito para que los
-// clientes generados (openapi-typescript) sepan qué esquema corresponde a cada valor de "type".
+// Jackson uses @JsonSubTypes to serialize; OpenAPI needs the explicit mapping so generated clients
+// (openapi-typescript) know which schema belongs to each "type" value.
 @Schema(discriminatorProperty = "type", discriminatorMapping = {
         @DiscriminatorMapping(value = "URGENT_REFERRAL", schema = AssessmentResponse.UrgentReferral.class),
         @DiscriminatorMapping(value = "ROOT_CORRELATION", schema = AssessmentResponse.RootCorrelation.class),
@@ -32,12 +32,12 @@ public sealed interface AssessmentResponse {
 
     PatternView pattern();
 
-    /** @param inferred alarmas que detectó el motor (p. ej. síntomas en ambas piernas), no la persona */
+    /** @param inferred red flags detected by the engine (e.g. symptoms in both legs), not by the person */
     record UrgentReferral(ReferralView referral, PatternView pattern,
                           List<RedFlagView> reported, List<RedFlagView> inferred) implements AssessmentResponse {
     }
 
-    /** @param otherCauses causas distintas de una raíz que también explican las zonas marcadas */
+    /** @param otherCauses causes other than a root that also explain the marked zones */
     record RootCorrelation(ReferralView referral, PatternView pattern,
                            List<RootMatchView> matches, List<OtherCauseView> otherCauses) implements AssessmentResponse {
     }
@@ -52,7 +52,7 @@ public sealed interface AssessmentResponse {
     record ReferralView(CodeLabel urgency, List<CodeLabel> specialists, String message, String disclaimer) {
     }
 
-    /** @param chronicity null cuando no hubo cuestionario de dolor */
+    /** @param chronicity null when there was no pain questionnaire */
     record PatternView(PatternInsight.Type type, CodeLabel chronicity, List<String> features, String explanation) {
     }
 

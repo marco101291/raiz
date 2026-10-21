@@ -10,25 +10,25 @@ import step from "./step.module.css";
 import styles from "./TriageStep.module.css";
 
 type RedFlag = Schemas["RedFlagView"];
-/** Mientras se llena: una pregunta sin responder vale null (radios de React Hook Form) o undefined. */
+/** While filling in: an unanswered question is null (React Hook Form radios) or undefined. */
 type Answers = Record<string, Answer | null | undefined>;
 
 interface Props {
   flags: RedFlag[];
   defaultValues: Record<string, Answer>;
   onChange: (answers: Record<string, Answer>) => void;
-  /** Recibe los datos de alarma marcados con "sí" (vacío si no hay ninguno). */
+  /** Receives the red flags answered "sí" (empty if none). */
   onSubmit: (redFlags: string[]) => void;
 }
 
-/** Paso 1. Todas las preguntas son obligatorias: no se puede avanzar sin responder cada una. */
+/** Step 1. Every question is required: the person cannot continue without answering each one. */
 export function TriageStep({ flags, defaultValues, onChange, onSubmit }: Props) {
-  // El esquema depende del catálogo que llega del backend: una pregunta por dato de alarma.
+  // The schema depends on the catalog from the backend: one question per red flag.
   const schema = useMemo(
     () =>
       z.object(
         Object.fromEntries(
-          // Entrada: puede faltar o ser null (pregunta sin responder). Salida validada: siempre "si" o "no".
+          // Input: may be missing or null (unanswered). Validated output: always "si" or "no".
           flags.map((flag) => [
             flag.id ?? "",
             z.enum(["si", "no"]).nullish().pipe(z.enum(["si", "no"], { error: "Elige sí o no." })),
@@ -46,8 +46,8 @@ export function TriageStep({ flags, defaultValues, onChange, onSubmit }: Props) 
     formState: { errors, isSubmitted },
   } = useForm<Answers, unknown, Record<string, Answer>>({ resolver: zodResolver(schema), defaultValues, shouldFocusError: true });
 
-  // subscribe entrega los valores ya actualizados; el evento onChange del <form> llega antes que
-  // React Hook Form y guardaría la respuesta anterior. useEffectEvent evita resuscribirse en cada render.
+  // subscribe delivers the already updated values; the <form> onChange event arrives before React Hook
+  // Form and would save the previous answer. useEffectEvent avoids resubscribing on every render.
   const notifyChange = useEffectEvent((values: Answers) => onChange(onlyAnswered(values)));
   useEffect(
     () => subscribe({ formState: { values: true }, callback: ({ values }) => notifyChange(values) }),

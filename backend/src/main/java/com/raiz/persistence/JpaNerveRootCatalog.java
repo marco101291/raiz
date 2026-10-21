@@ -13,9 +13,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Adaptador del puerto {@link NerveRootCatalog}. El catálogo solo cambia con una migración, que
- * implica reiniciar la aplicación, así que se carga una vez al arrancar y se guarda inmutable:
- * cada evaluación lee memoria, no la base de datos.
+ * Adapter for the {@link NerveRootCatalog} port. The catalog only changes with a migration, which means
+ * restarting the application, so it is loaded once at startup and kept immutable: each assessment reads
+ * memory, not the database.
  */
 @Component
 public class JpaNerveRootCatalog implements NerveRootCatalog {
@@ -26,7 +26,7 @@ public class JpaNerveRootCatalog implements NerveRootCatalog {
     JpaNerveRootCatalog(NerveRootRepository repository, PlatformTransactionManager transactionManager) {
         var readOnly = new TransactionTemplate(transactionManager);
         readOnly.setReadOnly(true);
-        // Orden anatómico (sort_order): el motor lo usa para desempatar matches con la misma puntuación.
+        // Anatomical order (sort_order): the engine uses it to break ties between matches with the same score.
         this.roots = List.copyOf(readOnly.execute(status -> repository.findAllByOrderBySortOrderAsc().stream()
                 .map(NerveRootEntity::toDomain)
                 .toList()));

@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Fila de {@code nerve_root} con sus colecciones. Solo existe para leer el catálogo y convertirlo
- * al record del dominio; el contenido entra por migraciones Flyway, nunca desde la aplicación.
+ * A {@code nerve_root} row with its collections. It only exists to read the catalog and turn it into the
+ * domain record; content comes in through Flyway migrations, never from the application.
  */
 @Entity
 @Immutable
@@ -79,10 +79,10 @@ class NerveRootEntity {
     private List<String> provocationTests = new ArrayList<>();
 
     protected NerveRootEntity() {
-        // Requerido por JPA.
+        // Required by JPA.
     }
 
-    /** Debe llamarse dentro de una transacción: las colecciones se cargan de forma perezosa. */
+    /** Must be called inside a transaction: the collections are loaded lazily. */
     NerveRoot toDomain() {
         return new NerveRoot(code, region, dermatome, myotome, reflexes, typicalDiscLevels, provocationTests,
                 patientSummary, clinicalNotes, sourceReference);

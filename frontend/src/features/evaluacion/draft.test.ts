@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-// draft.ts guarda estado a nivel de módulo: cada prueba importa una copia nueva.
+// draft.ts keeps module-level state: each test imports a fresh copy.
 async function freshDraft() {
   vi.resetModules();
   return import("./draft");

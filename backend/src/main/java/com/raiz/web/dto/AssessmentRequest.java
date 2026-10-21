@@ -17,8 +17,8 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Set;
 
 /**
- * Cuerpo de {@code POST /api/v1/assessments}. Valida la forma (tipos, rangos, nulos); las reglas
- * clínicas las aplica el dominio. Las listas pueden faltar: equivalen a vacías.
+ * Body of {@code POST /api/v1/assessments}. It validates the shape (types, ranges, nulls); the domain
+ * applies the clinical rules. Lists may be missing: that means empty.
  */
 public record AssessmentRequest(
         Set<@NotNull(message = "no puede contener valores nulos") RedFlag> redFlags,
@@ -42,7 +42,7 @@ public record AssessmentRequest(
             Set<@NotNull(message = "no puede contener valores nulos") Reliever> relievers) {
     }
 
-    /** Un hallazgo con su lado, p. ej. {@code {"finding": "GREAT_TOE", "side": "RIGHT"}}. */
+    /** A finding with its side, e.g. {@code {"finding": "GREAT_TOE", "side": "RIGHT"}}. */
     public record SidedFinding<T>(
             @NotNull(message = "es obligatorio") T finding,
             @NotNull(message = "es obligatorio") Side side) {

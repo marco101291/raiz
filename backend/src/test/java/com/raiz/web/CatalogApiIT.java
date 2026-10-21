@@ -38,7 +38,7 @@ class CatalogApiIT extends ApiIntegrationTest {
                 .andExpect(jsonPath("$.relievers[?(@.id == 'NOTHING')].label").value("Nada lo alivia"));
     }
 
-    /** Las raíces de cada prueba salen del miotoma; deben coincidir con la tabla del README. */
+    /** Each test's roots come from the myotome; they must match the README table. */
     @Test
     void strengthTestRootsMatchReadmeTable() throws Exception {
         mvc.perform(get("/api/v1/catalog/strength-tests"))

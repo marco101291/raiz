@@ -13,8 +13,8 @@ interface Props {
 }
 
 /**
- * Una vista del cuerpo. Es solo para puntero (ratón o dedo): el control accesible es la lista de
- * casillas que va debajo y comparte el mismo estado, así que el SVG queda fuera del árbol de accesibilidad.
+ * One view of the body. It is pointer-only (mouse or finger): the accessible control is the checkbox list
+ * below, which shares the same state, so the SVG stays out of the accessibility tree.
  */
 export function BodyFigure({ view, selected, labels, onToggle }: Props) {
   const halves = [
@@ -23,7 +23,7 @@ export function BodyFigure({ view, selected, labels, onToggle }: Props) {
   ];
   const sideLabel = { RIGHT: "Derecha", LEFT: "Izquierda" } as const;
 
-  // El id del recorte debe ser único en la página: las dos vistas se muestran a la vez.
+  // The clip id must be unique on the page: both views are shown at once.
   const clipId = useId();
 
   return (
@@ -34,7 +34,7 @@ export function BodyFigure({ view, selected, labels, onToggle }: Props) {
             <path d={SILHOUETTE[view]} />
           </clipPath>
         </defs>
-        {/* Capas: piel, relieves, zonas recortadas a la piel y, encima, el contorno. */}
+        {/* Layers: skin, details, zones clipped to the skin and, on top, the outline. */}
         {halves.map(({ side, transform }) => (
           <g key={side} transform={transform} className={styles.piel}>
             <path d={SILHOUETTE[view]} />
@@ -52,7 +52,7 @@ export function BodyFigure({ view, selected, labels, onToggle }: Props) {
             <path key={d} d={d} />
           ))}
         </g>
-        {/* El recorte va en el mismo grupo que el reflejo: así la silueta se refleja junto con las zonas. */}
+        {/* The clip is in the same group as the mirroring: that way the silhouette mirrors along with the zones. */}
         {halves.map(({ side, transform }) => (
           <g key={side} transform={transform} clipPath={`url(#${clipId})`}>
             {ZONES[view].map(({ zone, d }) => {
@@ -75,7 +75,7 @@ export function BodyFigure({ view, selected, labels, onToggle }: Props) {
         {halves.map(({ side, transform }) => (
           <path key={side} d={SILHOUETTE[view]} transform={transform} className={styles.contorno} />
         ))}
-        {/* Rótulos de lado, junto a la cabeza: de frente, la derecha del paciente queda a la izquierda. */}
+        {/* Side labels, next to the head: in the front view, the patient's right is on the left. */}
         <text x="4" y="22" className={styles.lado}>
           {sideLabel[halves[0].side]}
         </text>

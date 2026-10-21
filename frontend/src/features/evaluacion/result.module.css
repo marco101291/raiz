@@ -30,7 +30,7 @@
   font-weight: 700;
 }
 
-/* Las raíces sí son una secuencia: van ordenadas de más a menos compatible. */
+/* The roots really are a sequence: ordered from most to least compatible. */
 .raices {
   margin: 0;
   padding: 0;
@@ -50,7 +50,7 @@
   font-size: var(--texto-lg);
 }
 
-/* Otra causa posible: mismo formato que una raíz, con borde neutro para no competir con ellas. */
+/* Another possible cause: same format as a root, with a neutral border so it does not compete with them. */
 .otraCausa {
   border-left-color: var(--linea);
 }

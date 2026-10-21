@@ -4,14 +4,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-/** Igual que el catálogo de raíces: se carga una vez al arrancar y queda inmutable en memoria. */
+/** Like the root catalog: loaded once at startup and kept immutable in memory. */
 @Component
 public class StrengthTestCatalog {
 
     private final List<StrengthTest> tests;
 
     StrengthTestCatalog(StrengthTestRepository repository) {
-        // Sin colecciones perezosas: no hace falta abrir una transacción para mapear.
+        // No lazy collections: no transaction is needed to map.
         this.tests = repository.findAllByOrderBySortOrderAsc().stream().map(StrengthTestEntity::toRecord).toList();
     }
 

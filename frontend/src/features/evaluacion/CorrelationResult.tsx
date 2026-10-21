@@ -5,8 +5,8 @@ import result from "./result.module.css";
 type Assessment = Schemas["RootCorrelation"] | Schemas["NoRootCorrelation"];
 
 /**
- * Sin alarma: derivación, lectura del patrón de dolor y, si las hay, raíces compatibles con su
- * evidencia. Siempre "compatible con", nunca "tienes" (README, principio 3).
+ * No red flag: referral, pain pattern reading and, if any, compatible roots with their evidence.
+ * Always "compatible with", never "you have" (README, principle 3).
  */
 export function CorrelationResult({ result: assessment }: { result: Assessment }) {
   const { referral, pattern } = assessment;

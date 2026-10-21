@@ -1,4 +1,4 @@
-/** Marca de Raíz: un tronco nervioso que se divide en raíces, en el amarillo de los atlas. */
+/** Raíz logo: a nerve trunk splitting into roots, in the yellow of anatomy atlases. */
 export function RootMark({ size = 28 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" focusable="false">

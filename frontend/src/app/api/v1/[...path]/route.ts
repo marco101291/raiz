@@ -1,7 +1,7 @@
 /**
- * Proxy hacia el backend de Spring: el navegador solo habla con Next, así que no hace falta CORS y
- * la URL del backend no llega al cliente. Es un Route Handler y no un rewrite porque un rewrite no
- * puede atrapar el error de conexión: si el backend está caído, aquí se responde un ProblemDetail 503.
+ * Proxy to the Spring backend: the browser only talks to Next, so no CORS is needed and the backend URL
+ * never reaches the client. It is a Route Handler rather than a rewrite because a rewrite cannot catch the
+ * connection error: if the backend is down, this responds with a 503 ProblemDetail.
  */
 const API_URL = process.env.RAIZ_API_URL ?? "http://localhost:8080";
 
@@ -27,7 +27,7 @@ async function proxy(request: Request, { params }: Context): Promise<Response> {
       cache: "no-store",
     });
   } catch {
-    // Una línea en el log en lugar de la traza completa de ECONNREFUSED.
+    // One log line instead of the full ECONNREFUSED stack trace.
     console.warn(`[raiz] Backend no disponible en ${API_URL}`);
     return Response.json(
       {

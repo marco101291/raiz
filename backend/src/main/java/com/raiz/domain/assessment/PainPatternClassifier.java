@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Clasifica el patrón de dolor a partir del cuestionario. Heurística educativa: los rasgos
- * orientan, no confirman. Prioridad: radicular > discal > sensible a extensión > inespecífico.
+ * Classifies the pain pattern from the questionnaire. Educational heuristic: the features suggest, they
+ * do not confirm. Priority: radicular > discogenic > extension-sensitive > nonspecific.
  */
 public final class PainPatternClassifier {
 
@@ -22,7 +22,7 @@ public final class PainPatternClassifier {
         PainProfile pain = report.painProfile().get();
         var features = new ArrayList<String>();
 
-        // Radicular: dolor de tipo nervioso que sigue una extremidad.
+        // Radicular: nerve-type pain that follows a limb.
         boolean followsLimb = pain.distribution() == PainDistribution.DISTAL || !report.sensoryZones().isEmpty();
         if (pain.hasNeuropathicQuality() && followsLimb) {
             pain.qualities().stream().filter(q -> q.neuropathic())
@@ -33,7 +33,7 @@ public final class PainPatternClassifier {
             return new PatternInsight(PatternInsight.Type.RADICULAR, pain.chronicity(), features);
         }
 
-        // Discal: empeora con lo que aumenta la presión dentro del disco.
+        // Discogenic: worse with whatever raises the pressure inside the disc.
         int discogenicScore = 0;
         for (Aggravator a : pain.aggravators()) {
             if (a.discogenicHint()) {
@@ -49,7 +49,7 @@ public final class PainPatternClassifier {
             return new PatternInsight(PatternInsight.Type.DISCOGENIC, pain.chronicity(), features);
         }
 
-        // Sensible a extensión: típico de articulaciones facetarias.
+        // Extension-sensitive: typical of facet joints.
         features.clear();
         boolean extensionAggravated = pain.aggravators().contains(Aggravator.BACKWARD_BENDING)
                 || pain.aggravators().contains(Aggravator.STANDING_LONG);

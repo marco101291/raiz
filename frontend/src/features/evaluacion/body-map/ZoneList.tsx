@@ -14,8 +14,8 @@ interface Props {
 }
 
 /**
- * Alternativa accesible obligatoria (README): la misma selección como casillas agrupadas por región.
- * En el móvil es también la forma cómoda de elegir zonas pequeñas como los dedos.
+ * Required accessible alternative (README): the same selection as checkboxes grouped by region.
+ * On mobile it is also the comfortable way to pick small zones such as the fingers.
  */
 export function ZoneList({ zones, selected, onToggle }: Props) {
   return (

@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
-/** @param emergency true = urgencias hoy; false = valoración médica pronto */
+/** @param emergency true = emergency room today; false = prompt medical visit */
 public record RedFlagView(String id, String label, boolean emergency) {
 
     public static RedFlagView of(RedFlag flag) {

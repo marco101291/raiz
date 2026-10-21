@@ -5,17 +5,17 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Una raíz nerviosa con su territorio clínico.
+ * A nerve root with its clinical territory.
  *
- * @param code             código de la raíz, p. ej. "L5"
- * @param dermatome        zonas sensitivas que inerva
- * @param myotome          movimientos que dependen principalmente de ella
- * @param reflexes         reflejos asociados (puede estar vacío: L5, C8, T1)
- * @param typicalDiscLevels niveles discales que típicamente la comprimen, con el tipo de hernia
- * @param provocationTests pruebas de tensión o provocación útiles para el profesional
- * @param patientSummary   explicación en lenguaje claro
- * @param clinicalNotes    notas para fisios, neurólogos y traumatólogos
- * @param sourceReference  referencias bibliográficas que respaldan el contenido clínico
+ * @param code             root code, e.g. "L5"
+ * @param dermatome        sensory zones it supplies
+ * @param myotome          movements that depend mainly on it
+ * @param reflexes         associated reflexes (may be empty: L5, C8, T1)
+ * @param typicalDiscLevels disc levels that typically compress it, with the herniation type
+ * @param provocationTests tension or provocation tests useful to the professional
+ * @param patientSummary   plain-language explanation
+ * @param clinicalNotes    notes for physiotherapists, neurologists and orthopedists
+ * @param sourceReference  bibliographic references backing the clinical content
  */
 public record NerveRoot(
         String code,

@@ -1,6 +1,6 @@
 import type { components } from "./schema";
 
-/** Tipos generados desde el OpenAPI del backend (`npm run gen:api`). No se escriben a mano. */
+/** Types generated from the backend's OpenAPI (`npm run gen:api`). Never written by hand. */
 export type Schemas = components["schemas"];
 export type AssessmentRequest = Schemas["AssessmentRequest"];
 export type AssessmentResponse =
@@ -8,7 +8,7 @@ export type AssessmentResponse =
   | Schemas["RootCorrelation"]
   | Schemas["NoRootCorrelation"];
 
-/** Error de la API con el ProblemDetail (RFC 9457) que devuelve el backend. */
+/** API error carrying the ProblemDetail (RFC 9457) returned by the backend. */
 export class ApiError extends Error {
   constructor(
     readonly status: number,

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Evaluación sin estado: no se guarda nada (README, principio 6). La respuesta no lleva campos
- * clínicos de las raíces, solo su código, así que no depende de la audiencia.
+ * Stateless assessment: nothing is stored (README, principle 6). The response carries no clinical fields
+ * of the roots, only their code, so it does not depend on the audience.
  */
 @RestController
 @RequestMapping("/api/v1/assessments")

@@ -45,13 +45,13 @@ class JpaNerveRootCatalogIT {
 
     @Test
     void findAllFollowsAnatomicalOrderNotCodeOrder() {
-        // Por código, T1 iría al final (C..., L..., S1, T1); en orden anatómico va antes de L1.
+        // By code, T1 would come last (C..., L..., S1, T1); in anatomical order it comes before L1.
         assertThat(catalog.findAll()).extracting(NerveRoot::code)
                 .containsExactly("C5", "C6", "C7", "C8", "T1", "L1", "L2", "L3", "L4", "L5", "S1");
     }
 
     @Test
-    @Transactional // revierte el UPDATE al terminar
+    @Transactional // rolls back the UPDATE when done
     void findAllOrdersBySortOrderColumn() {
         jdbc.sql("UPDATE nerve_root SET sort_order = 0 WHERE code = 'S1'").update();
 

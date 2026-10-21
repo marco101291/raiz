@@ -1,6 +1,6 @@
 package com.raiz.domain.model;
 
-/** Qué alivia el dolor. */
+/** What relieves the pain. */
 public enum Reliever {
     LYING_DOWN("Acostarse"),
     WALKING("Caminar suave"),

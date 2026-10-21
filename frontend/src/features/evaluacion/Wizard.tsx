@@ -20,20 +20,20 @@ type Catalog =
       bodyZones: Schemas["BodyZoneView"][];
     };
 
-/** En el servidor no hay sessionStorage: se renderiza el estado de carga y el cliente hidrata. */
+/** There is no sessionStorage on the server: the loading state is rendered and the client hydrates. */
 const serverDraft = () => null;
 
 /**
- * Orquesta los pasos. Cada paso solo junta respuestas; aquí se decide a cuál ir.
- * Flujo actual: alarma → (sin alarma) dolor → mapa → resultado. Con alarma se salta al resultado.
- * La fuerza guiada se insertará entre mapa y resultado.
+ * Orchestrates the steps. Each step only collects answers; this decides where to go next.
+ * Current flow: red flags → (none) pain → map → result. With a red flag it jumps to the result.
+ * Guided strength will go between the map and the result.
  */
 export function Wizard() {
   const draft = useSyncExternalStore(subscribeDraft, getDraft, serverDraft);
   const [catalog, setCatalog] = useState<Catalog>({ status: "loading" });
 
   const loadCatalog = useCallback(() => {
-    // Los catálogos del formulario se piden en paralelo; si falla cualquiera, se puede reintentar.
+    // The form catalogs are fetched in parallel; if any fails, the person can retry.
     Promise.all([api.redFlags(), api.painOptions(), api.bodyZones()]).then(
       ([flags, painOptions, bodyZones]) => setCatalog({ status: "ready", flags, painOptions, bodyZones }),
       () => setCatalog({ status: "error" }),
@@ -86,7 +86,7 @@ export function Wizard() {
           flags={catalog.flags}
           defaultValues={draft.triage}
           onChange={(triage) => update({ triage })}
-          // Con alarma se envía en ese momento y se salta al resultado (README, Formularios).
+          // With a red flag it is sent right away and jumps to the result (README, Forms).
           onSubmit={(redFlags) => update({ step: redFlags.length > 0 ? "resultado" : "dolor" })}
         />
       )}

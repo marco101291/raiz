@@ -1,6 +1,6 @@
 /**
- * Fechas como "AAAA-MM-DD" en la zona horaria de la persona. Se guarda la fecha de inicio y no los
- * días transcurridos: si recarga mañana, la duración sigue siendo correcta.
+ * Dates as "YYYY-MM-DD" in the person's time zone. The start date is stored rather than the elapsed
+ * days: if they reload tomorrow, the duration is still right.
  */
 export function todayIso(now = new Date()): string {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -14,7 +14,7 @@ export function isIsoDate(value: string): boolean {
   return date.getUTCFullYear() === y && date.getUTCMonth() === m - 1 && date.getUTCDate() === d;
 }
 
-/** Días completos entre dos fechas ISO. En UTC para que el cambio de horario no reste un día. */
+/** Whole days between two ISO dates. In UTC so a daylight-saving change does not subtract a day. */
 export function daysBetween(fromIso: string, toIso: string): number {
   const utc = (iso: string) => {
     const [y, m, d] = iso.split("-").map(Number);

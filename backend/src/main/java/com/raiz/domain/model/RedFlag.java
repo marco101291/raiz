@@ -1,8 +1,8 @@
 package com.raiz.domain.model;
 
 /**
- * Datos de alarma. Cualquiera de ellos corta la evaluación educativa y deriva a urgencias
- * o a valoración médica prioritaria.
+ * Red flags. Any of them stops the educational assessment and refers to the emergency room or to a
+ * prompt medical visit.
  */
 public enum RedFlag {
     SADDLE_ANESTHESIA("Adormecimiento en zona genital, perineal o glúteos (\"en silla de montar\")", true),
@@ -28,7 +28,7 @@ public enum RedFlag {
         return label;
     }
 
-    /** true = urgencias hoy; false = valoración médica pronto, sin esperar. */
+    /** true = emergency room today; false = prompt medical visit, without waiting. */
     public boolean emergency() {
         return emergency;
     }

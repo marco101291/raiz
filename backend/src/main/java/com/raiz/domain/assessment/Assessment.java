@@ -7,21 +7,21 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Resultado de una evaluación. Los tres casos están cerrados (sealed) y todos exponen
- * {@link #referral()}: no existe una evaluación sin derivación.
+ * Result of an assessment. The three cases are closed (sealed) and all expose {@link #referral()}: there
+ * is no assessment without a referral.
  */
 public sealed interface Assessment {
 
     Referral referral();
 
-    /** Lectura del patrón de dolor. NOT_ASSESSED si no hubo cuestionario o hubo alarma. */
+    /** Reading of the pain pattern. NOT_ASSESSED if there was no questionnaire or there was a red flag. */
     PatternInsight pattern();
 
     /**
-     * Hubo datos de alarma: no se evalúa nada más, se deriva de inmediato.
+     * There were red flags: nothing else is assessed, the person is referred right away.
      *
-     * @param reported los que la persona marcó en el triage
-     * @param inferred los que el motor detectó en los hallazgos (p. ej. síntomas en ambos lados)
+     * @param reported the ones the person marked in the triage
+     * @param inferred the ones the engine detected in the findings (e.g. symptoms on both sides)
      */
     record UrgentReferral(Set<RedFlag> reported, Set<RedFlag> inferred, Referral referral)
             implements Assessment {
@@ -43,7 +43,7 @@ public sealed interface Assessment {
         }
     }
 
-    /** Raíces (con lado) ordenadas por compatibilidad con los síntomas reportados. */
+    /** Roots (with side) ordered by compatibility with the reported symptoms. */
     record RootCorrelation(PatternInsight pattern, List<RootMatch> matches, Referral referral)
             implements Assessment {
         public RootCorrelation {
@@ -51,7 +51,7 @@ public sealed interface Assessment {
         }
     }
 
-    /** No hay datos suficientes para correlacionar con una raíz; puede haber lectura de patrón. */
+    /** Not enough data to correlate with a root; there may be a pattern reading. */
     record NoRootCorrelation(PatternInsight pattern, Note note, Referral referral) implements Assessment {
 
         /** Why there was no correlation. The text for the person lives outside the domain, as with {@link ReferralReason}. */

@@ -55,7 +55,7 @@ class CorrelationEngineTest {
         assertThat(result.referral().urgency()).isEqualTo(Urgency.PROMPT);
     }
 
-    // --- Correlación ---
+    // --- Correlation ---
 
     @Test
     void greatToeAndDorsumFootPointToL5() {
@@ -102,7 +102,7 @@ class CorrelationEngineTest {
         assertThat(engine.assess(report).referral().specialists().getFirst()).isEqualTo(Specialist.SPINE_SURGEON);
     }
 
-    // --- Lateralidad ---
+    // --- Laterality ---
 
     @Test
     void findingsOnBothLegsInferBilateralRedFlag() {
@@ -200,7 +200,7 @@ class CorrelationEngineTest {
                 .satisfies(m -> assertThat(m.score()).isEqualTo(5));
     }
 
-    // --- Patrón de dolor ---
+    // --- Pain pattern ---
 
     @Test
     void radicularPainWithoutMapSelectionAsksToUseTheMap() {

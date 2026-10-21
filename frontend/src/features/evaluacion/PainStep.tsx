@@ -25,7 +25,7 @@ const schema = z.object({
   aggravators: z.array(z.string()),
   relievers: z.array(z.string()),
 });
-/** Valores mientras se llena (puede faltar intensidad o distribución) y ya validados. */
+/** Values while filling in (intensity or distribution may be missing) and once validated. */
 type PainForm = z.input<typeof schema>;
 export type PainAnswers = z.output<typeof schema>;
 
@@ -37,7 +37,7 @@ interface Props {
   onSubmit: (pain: PainAnswers) => void;
 }
 
-/** Paso 2. Cuestionario de dolor (README, Formularios: PainProfile). */
+/** Step 2. Pain questionnaire (README, Forms: PainProfile). */
 export function PainStep({ options, defaultValues, onChange, onBack, onSubmit }: Props) {
   const {
     register,
@@ -59,7 +59,7 @@ export function PainStep({ options, defaultValues, onChange, onBack, onSubmit }:
     },
   });
 
-  // Igual que en el triage: subscribe entrega el valor ya actualizado para guardar el borrador.
+  // Same as in the triage: subscribe delivers the already updated value to save the draft.
   const notifyChange = useEffectEvent((values: Partial<PainForm>) => onChange(values as PainDraft));
   useEffect(() => subscribe({ formState: { values: true }, callback: ({ values }) => notifyChange(values) }), [subscribe]);
 

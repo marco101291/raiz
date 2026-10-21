@@ -82,8 +82,8 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-            <!-- Unitarias (*Test) en surefire; integración (*IT) en failsafe durante verify.
-                 Las ejecuciones ya vienen configuradas en spring-boot-starter-parent. -->
+            <!-- Unit tests (*Test) in surefire; integration tests (*IT) in failsafe during verify.
+                 The executions are already configured in spring-boot-starter-parent. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>

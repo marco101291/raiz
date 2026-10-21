@@ -2,7 +2,7 @@ import styles from "./PainScale.module.css";
 
 const VALUES = Array.from({ length: 11 }, (_, i) => i);
 
-/** Bandas habituales de la escala numérica (NRS): leve 1–3, moderado 4–6, intenso 7–10. */
+/** Usual bands of the numeric rating scale (NRS): mild 1–3, moderate 4–6, severe 7–10. */
 export function describeIntensity(value: number): string {
   if (value === 0) return "Sin dolor";
   if (value <= 3) return "Leve";
@@ -20,8 +20,8 @@ interface Props {
 }
 
 /**
- * Escala 0–10 como once opciones en fila que se llenan hasta el número elegido. A diferencia de un
- * input range, empieza sin valor: así se sabe que la persona eligió y no que dejó el control donde estaba.
+ * 0–10 scale as eleven options in a row that fill up to the chosen number. Unlike a range input, it
+ * starts with no value: that way we know the person chose, rather than leaving the control where it was.
  */
 export function PainScale({ name, value, onChange, describedBy, invalid }: Props) {
   return (

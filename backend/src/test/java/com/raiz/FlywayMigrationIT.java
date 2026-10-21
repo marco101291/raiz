@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** Las migraciones corren en PostgreSQL real y dejan el catálogo del README. */
+/** The migrations run on real PostgreSQL and leave the catalog described in the README. */
 @SpringBootTest
 @Import(TestcontainersConfiguration.class)
 class FlywayMigrationIT {

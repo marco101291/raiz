@@ -1,4 +1,4 @@
-/* Cada pregunta es una sección separada por una línea, igual que el triage: sin tarjetas. */
+/* Each question is a section separated by a rule, like the triage: no cards. */
 .seccion {
   margin: 0;
   padding: 1.5rem 0 0;
@@ -10,7 +10,7 @@
 }
 
 .pregunta {
-  float: left; /* el legend participa en el grid del fieldset */
+  float: left; /* the legend takes part in the fieldset grid */
   width: 100%;
   padding: 0;
   font-size: var(--texto-lg);

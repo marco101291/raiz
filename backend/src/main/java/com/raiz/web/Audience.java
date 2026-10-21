@@ -1,6 +1,6 @@
 package com.raiz.web;
 
-/** Quién consulta. Decide qué campos salen en la respuesta, no qué calcula el motor. */
+/** Who is asking. It decides which fields the response includes, not what the engine computes. */
 public enum Audience {
     PATIENT,
     PROFESSIONAL

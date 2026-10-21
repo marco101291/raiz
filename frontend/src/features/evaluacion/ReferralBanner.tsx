@@ -7,7 +7,7 @@ const TONE: Record<string, string> = {
   ROUTINE: styles.rutina,
 };
 
-/** La derivación: siempre arriba y con el color de su urgencia. Es lo único que usa esos colores. */
+/** The referral: always on top and in its urgency color. It is the only thing that uses those colors. */
 export function ReferralBanner({ referral }: { referral?: Schemas["ReferralView"] }) {
   const urgency = referral?.urgency?.id ?? "ROUTINE";
   return (

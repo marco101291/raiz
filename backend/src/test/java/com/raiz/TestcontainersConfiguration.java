@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
 /**
- * PostgreSQL real para las pruebas de integración. {@code @ServiceConnection} hace que Spring
- * tome la URL, el usuario y la contraseña del contenedor, sin propiedades a mano.
+ * Real PostgreSQL for the integration tests. {@code @ServiceConnection} makes Spring take the URL,
+ * user and password from the container, with no hand-written properties.
  */
 @TestConfiguration(proxyBeanMethods = false)
 public class TestcontainersConfiguration {

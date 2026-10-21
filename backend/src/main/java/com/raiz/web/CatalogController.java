@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Arrays;
 import java.util.List;
 
-/** Opciones de los formularios con sus etiquetas, para que el frontend no las duplique. */
+/** Form options with their labels, so the frontend does not duplicate them. */
 @RestController
 @RequestMapping("/api/v1/catalog")
 class CatalogController {

@@ -69,7 +69,7 @@ describe("MapStep", () => {
 
   it("de frente, la derecha del paciente queda a la izquierda de la pantalla; de espalda, al revés", () => {
     const { path } = setup();
-    // La extremidad de la izquierda de la pantalla es el grupo sin reflejar.
+    // The limb on the left of the screen is the unmirrored group.
     const onScreenLeft = (key: string) => path(key).closest("g")?.getAttribute("transform") === null;
 
     expect(onScreenLeft("GREAT_TOE-RIGHT")).toBe(true);

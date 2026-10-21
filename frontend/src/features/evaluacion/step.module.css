@@ -1,4 +1,4 @@
-/* Estructura común a todos los pasos del asistente. */
+/* Structure shared by every wizard step. */
 .form {
   display: grid;
   gap: 2rem;

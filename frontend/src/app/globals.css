@@ -1,7 +1,7 @@
 /*
- * Tokens de Raíz. El acento es el amarillo con que los atlas de anatomía pintan los nervios.
- * Nervio nunca va como texto ni como única señal (contraste 1.5:1 sobre Hueso): se usa como
- * relleno con texto en Tinta encima. Los tres colores de urgencia solo aparecen en la derivación.
+ * Raíz tokens. The accent is the yellow anatomy atlases paint nerves with.
+ * Nervio is never used as text or as the only cue (1.5:1 contrast on Hueso): it is used as a fill with
+ * Tinta text on top. The three urgency colors only appear in the referral.
  */
 :root {
   --hueso: #eef1ef;
@@ -17,7 +17,7 @@
   --pronto: #9a4f0a;
   --rutina: #3e6b5c;
 
-  /* Escala modular 1.25 sobre 18 px: legible para quien lee con dolor o en el celular. */
+  /* 1.25 modular scale on 18 px: readable for someone reading in pain or on a phone. */
   --texto-sm: 0.889rem;
   --texto: 1.125rem;
   --texto-lg: 1.406rem;
@@ -85,7 +85,7 @@ textarea {
   color: inherit;
 }
 
-/* Foco visible en cualquier fondo: anillo de tinta con halo nervio. */
+/* Focus visible on any background: ink ring with a nerve halo. */
 :focus-visible {
   outline: 3px solid var(--tinta);
   outline-offset: 2px;

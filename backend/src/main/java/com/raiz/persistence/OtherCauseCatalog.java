@@ -21,13 +21,13 @@ public class OtherCauseCatalog implements CommonBilateralCauses {
     OtherCauseCatalog(OtherCauseRepository repository, PlatformTransactionManager transactionManager) {
         var readOnly = new TransactionTemplate(transactionManager);
         readOnly.setReadOnly(true);
-        // Las zonas son una colección perezosa: se mapean dentro de la transacción.
+        // The zones are a lazy collection: they are mapped inside the transaction.
         this.causes = List.copyOf(readOnly.execute(status -> repository.findAllByOrderBySortOrderAsc().stream()
                 .map(OtherCauseEntity::toRecord)
                 .toList()));
     }
 
-    /** Causas que aplican a alguna de las zonas, sin repetir y en el orden del catálogo. */
+    /** Causes that apply to any of the zones, without duplicates and in catalog order. */
     public List<OtherCause> forZones(Collection<BodyZone> zones) {
         return causes.stream().filter(cause -> zones.stream().anyMatch(cause.zones()::contains)).toList();
     }

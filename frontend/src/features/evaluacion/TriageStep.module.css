@@ -2,7 +2,7 @@
   display: grid;
 }
 
-/* Sin tarjetas: cada pregunta es una fila separada por una línea. */
+/* No cards: each question is a row separated by a rule. */
 .pregunta {
   margin: 0;
   padding: 1.1rem 0;
@@ -19,7 +19,7 @@
 }
 
 .enunciado {
-  float: left; /* hace que el legend participe en el grid del fieldset */
+  float: left; /* makes the legend take part in the fieldset grid */
   padding: 0;
 }
 
@@ -57,7 +57,7 @@
   border-color: var(--tinta-suave);
 }
 
-/* Lo elegido se marca en amarillo nervio con borde de tinta: no depende solo del color. */
+/* The selection is marked in nerve yellow with an ink border: it does not rely on color alone. */
 .opcion input:checked + span {
   background: var(--nervio);
   border-color: var(--tinta);

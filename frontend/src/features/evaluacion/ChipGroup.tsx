@@ -10,12 +10,12 @@ interface Props {
   options: Option[];
   value: string[];
   onChange: (value: string[]) => void;
-  /** Opción que excluye a las demás, p. ej. "Nada lo alivia". */
+  /** Option that excludes the others, e.g. "Nada lo alivia". */
   exclusive?: string;
   describedBy?: string;
 }
 
-/** Selección múltiple como chips. Son checkboxes reales: teclado, lector de pantalla y formularios funcionan. */
+/** Multiple choice as chips. They are real checkboxes: keyboard, screen reader and forms all work. */
 export function ChipGroup({ name, options, value, onChange, exclusive, describedBy }: Props) {
   const toggle = (id: string, checked: boolean) => {
     if (!checked) {

@@ -10,7 +10,7 @@ import mapStyles from "./MapStep.module.css";
 
 interface Props {
   zones: Schemas["BodyZoneView"][];
-  /** "AXIAL_ONLY" = el dolor no se irradia: el mapa es opcional (README, Formularios). */
+  /** "AXIAL_ONLY" = the pain does not radiate: the map is optional (README, Forms). */
   distribution?: string | null;
   defaultValue: string[];
   onChange: (zones: string[]) => void;
@@ -18,7 +18,7 @@ interface Props {
   onSubmit: (zones: string[]) => void;
 }
 
-/** Paso 3. Zonas con su lado ("GREAT_TOE-RIGHT"). Un solo campo: no hace falta React Hook Form. */
+/** Step 3. Zones with their side ("GREAT_TOE-RIGHT"). A single field: no need for React Hook Form. */
 export function MapStep({ zones, distribution, defaultValue, onChange, onBack, onSubmit }: Props) {
   const [marked, setMarked] = useState<string[]>(defaultValue);
   const [error, setError] = useState(false);
@@ -57,7 +57,7 @@ export function MapStep({ zones, distribution, defaultValue, onChange, onBack, o
           Toca las zonas de brazos y piernas donde lo sientes.
           {optional && " Como el dolor no se irradia, este paso es opcional."}
         </p>
-        {/* El glúteo no es una BodyZone: no orienta a ninguna raíz y ya se pregunta en el paso del dolor. */}
+        {/* The buttock is not a BodyZone: it points to no root and is already asked in the pain step. */}
         <p className={step.intro}>
           ¿Te duele la espalda, el cuello o la nalga? Eso ya lo contaste en el paso anterior; aquí marca
           hasta dónde baja el dolor.
@@ -112,7 +112,7 @@ export function MapStep({ zones, distribution, defaultValue, onChange, onBack, o
   );
 }
 
-/** "GREAT_TOE-RIGHT" → ["GREAT_TOE", "RIGHT"]. Las zonas usan "_", así que el último "-" separa el lado. */
+/** "GREAT_TOE-RIGHT" → ["GREAT_TOE", "RIGHT"]. Zones use "_", so the last "-" separates the side. */
 export function splitKey(key: string): [string, "RIGHT" | "LEFT"] {
   const i = key.lastIndexOf("-");
   return [key.slice(0, i), key.slice(i + 1) as "RIGHT" | "LEFT"];

@@ -12,12 +12,12 @@ public enum Side {
         this.rootLabel = rootLabel;
     }
 
-    /** "lado derecho", para zonas y movimientos. */
+    /** "lado derecho", for zones and movements. */
     public String label() {
         return label;
     }
 
-    /** "derecha", para nombrar la raíz: "L5 derecha". */
+    /** "derecha", for naming the root: "L5 derecha". */
     public String rootLabel() {
         return rootLabel;
     }

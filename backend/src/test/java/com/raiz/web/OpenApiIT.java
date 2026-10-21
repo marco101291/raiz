@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/** El frontend y Alivia generan sus tipos de este documento: el contrato debe estar completo. */
+/** The frontend and Alivia generate their types from this document: the contract must be complete. */
 class OpenApiIT extends ApiIntegrationTest {
 
     private static final String DISCRIMINATOR = "$.components.schemas.AssessmentResponse.discriminator";

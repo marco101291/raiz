@@ -1,6 +1,6 @@
 package com.raiz.domain.model;
 
-/** Movimientos que se exploran para valorar el miotoma de cada raíz. */
+/** Movements examined to assess each root's myotome. */
 public enum MotorAction {
     SHOULDER_ABDUCTION("Separar el brazo del cuerpo"),
     ELBOW_FLEXION("Doblar el codo"),

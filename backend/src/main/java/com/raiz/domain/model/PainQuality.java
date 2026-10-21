@@ -21,7 +21,7 @@ public enum PainQuality {
         return label;
     }
 
-    /** Descriptores típicos de dolor de origen nervioso. */
+    /** Typical descriptors of nerve pain. */
     public boolean neuropathic() {
         return neuropathic;
     }

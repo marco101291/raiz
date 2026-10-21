@@ -1,6 +1,6 @@
 package com.raiz.domain.model;
 
-/** Qué empeora el dolor. Varios orientan a origen discal (flexión, sentado, Valsalva). */
+/** What makes the pain worse. Several point to a disc origin (flexion, sitting, Valsalva). */
 public enum Aggravator {
     SITTING("Estar sentado", true),
     FORWARD_BENDING("Agacharse o inclinarse hacia adelante", true),

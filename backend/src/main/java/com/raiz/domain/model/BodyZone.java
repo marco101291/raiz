@@ -1,11 +1,11 @@
 package com.raiz.domain.model;
 
 /**
- * Zonas sensitivas del cuerpo. Los IDs coinciden con los del mapa SVG de dermatomas
- * en el frontend: el usuario toca una zona y el cliente envía este nombre.
+ * Sensory zones of the body. The IDs match those of the SVG dermatome map in the frontend: the user
+ * taps a zone and the client sends this name.
  */
 public enum BodyZone {
-    // Miembro superior
+    // Upper limb
     LATERAL_SHOULDER("Cara lateral del hombro y brazo"),
     LATERAL_FOREARM("Cara lateral del antebrazo"),
     THUMB("Pulgar"),
@@ -16,7 +16,7 @@ public enum BodyZone {
     MEDIAL_FOREARM("Cara medial del antebrazo"),
     MEDIAL_ARM("Cara medial del brazo"),
 
-    // Miembro inferior
+    // Lower limb
     GROIN("Ingle"),
     UPPER_ANTERIOR_THIGH("Parte alta y anterior del muslo"),
     ANTERIOR_THIGH("Cara anterior del muslo"),

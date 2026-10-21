@@ -3,12 +3,12 @@ package com.raiz.domain.assessment;
 import java.util.List;
 
 /**
- * Lectura educativa del patrón de dolor ("¿es una hernia?"). Describe compatibilidades,
- * nunca un diagnóstico.
+ * Educational reading of the pain pattern ("is it a herniation?"). It describes compatibilities, never a
+ * diagnosis.
  *
  * The explanation of each type is text for the person and lives outside the domain (table {@code result_text}).
  *
- * @param features rasgos del cuestionario que apoyan la lectura, en lenguaje claro
+ * @param features questionnaire features that support the reading, in plain language
  */
 public record PatternInsight(Type type, PainProfile.Chronicity chronicity, List<String> features) {
 
@@ -21,13 +21,13 @@ public record PatternInsight(Type type, PainProfile.Chronicity chronicity, List<
     }
 
     public enum Type {
-        /** Dolor de tipo nervioso que sigue una extremidad: compatible con irritación de raíz. */
+        /** Nerve-type pain that follows a limb: compatible with root irritation. */
         RADICULAR,
-        /** Empeora con flexión, sentado o Valsalva: compatible con origen discal sin irritación de raíz. */
+        /** Worse with flexion, sitting or Valsalva: compatible with a disc origin without root irritation. */
         DISCOGENIC,
-        /** Empeora con extensión o de pie y mejora sentado: compatible con origen articular (facetario). */
+        /** Worse with extension or standing and better sitting: compatible with a facet joint origin. */
         EXTENSION_SENSITIVE,
-        /** Sin rasgos que orienten a una estructura concreta. */
+        /** No features pointing to a specific structure. */
         NONSPECIFIC,
         NOT_ASSESSED
     }

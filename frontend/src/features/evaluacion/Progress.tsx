@@ -8,7 +8,7 @@ const STEPS = [
   { id: "resultado", label: "Resultado" },
 ] as const;
 
-/** Barra de progreso en segmentos, como vértebras. Los pasos sí son una secuencia. */
+/** Segmented progress bar, like vertebrae. The steps really are a sequence. */
 export function Progress({ current }: { current: (typeof STEPS)[number]["id"] }) {
   const index = STEPS.findIndex((step) => step.id === current);
   return (

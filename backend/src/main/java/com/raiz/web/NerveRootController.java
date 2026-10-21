@@ -22,7 +22,7 @@ class NerveRootController {
         this.catalog = catalog;
     }
 
-    /** Sin {@code audience} se responde como paciente: la opción segura por defecto. */
+    /** Without {@code audience} the response is for a patient: the safe default. */
     @GetMapping
     List<NerveRootView> list(@RequestParam(required = false) SpinalRegion region,
                              @RequestParam(defaultValue = "PATIENT") Audience audience) {

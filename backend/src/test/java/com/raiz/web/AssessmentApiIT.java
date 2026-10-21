@@ -19,7 +19,7 @@ class AssessmentApiIT extends ApiIntegrationTest {
 
     private static final String URI = "/api/v1/assessments";
 
-    /** El ejemplo de la sección "API (v1)" del README. */
+    /** The example from the README's "API (v1)" section. */
     private static final String README_EXAMPLE = """
             {
               "redFlags": [],
@@ -40,7 +40,7 @@ class AssessmentApiIT extends ApiIntegrationTest {
             }
             """;
 
-    // --- Regla del README: ninguna respuesta de evaluación sin referral ---
+    // --- README rule: no assessment response without a referral ---
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -61,7 +61,7 @@ class AssessmentApiIT extends ApiIntegrationTest {
                 .andExpect(jsonPath("$.pattern.type").isNotEmpty());
     }
 
-    // --- Los tres tipos de respuesta ---
+    // --- The three response types ---
 
     @Test
     void readmeExampleCorrelatesWithHighLumbarRoots() throws Exception {
@@ -166,7 +166,7 @@ class AssessmentApiIT extends ApiIntegrationTest {
                 .andExpect(jsonPath("$.note").isNotEmpty());
     }
 
-    // --- Errores: 400 con ProblemDetail, nunca 500 ---
+    // --- Errors: 400 with ProblemDetail, never 500 ---
 
     @Test
     void outOfRangeIntensityNamesTheField() throws Exception {

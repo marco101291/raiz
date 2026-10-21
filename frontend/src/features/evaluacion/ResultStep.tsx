@@ -16,8 +16,8 @@ interface Props {
 }
 
 /**
- * Paso 5. Se pide al motor al llegar aquí: una sola petición por evaluación, y si la persona recarga
- * se vuelve a pedir (Raíz no guarda evaluaciones). Orden fijo: derivación, patrón, raíces, aviso.
+ * Step 5. The engine is called on arrival: one request per assessment, repeated if the person reloads
+ * (Raíz does not store assessments). Fixed order: referral, pattern, roots, disclaimer.
  */
 export function ResultStep({ request, onEdit, onRestart }: Props) {
   const [state, setState] = useState<State>({ status: "loading" });

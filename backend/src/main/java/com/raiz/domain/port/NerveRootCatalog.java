@@ -5,7 +5,7 @@ import com.raiz.domain.model.NerveRoot;
 import java.util.List;
 import java.util.Optional;
 
-/** Puerto de salida: de dónde vienen las raíces. El dominio no sabe que existe JPA. */
+/** Outbound port: where the roots come from. The domain does not know JPA exists. */
 public interface NerveRootCatalog {
 
     List<NerveRoot> findAll();

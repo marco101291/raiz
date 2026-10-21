@@ -12,9 +12,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 /**
- * Base de las pruebas de la API: aplicación completa, PostgreSQL real con el catálogo de las
- * migraciones y MockMvc (peticiones HTTP simuladas, sin abrir un puerto). Todas las subclases
- * comparten configuración, así que Spring reutiliza el mismo contexto y el mismo contenedor.
+ * Base for the API tests: full application, real PostgreSQL with the catalog from the migrations, and
+ * MockMvc (simulated HTTP requests, no open port). All subclasses share configuration, so Spring reuses
+ * the same context and the same container.
  */
 @SpringBootTest
 @AutoConfigureMockMvc

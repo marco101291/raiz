@@ -1,8 +1,8 @@
 package com.raiz.domain.model;
 
 /**
- * Hasta dónde llega el dolor. La irradiación por debajo de la rodilla (o del codo) es uno de
- * los datos que más separa el dolor radicular del dolor referido.
+ * How far the pain reaches. Radiation below the knee (or the elbow) is one of the findings that best
+ * separates radicular pain from referred pain.
  */
 public enum PainDistribution {
     AXIAL_ONLY("Solo en la espalda o el cuello"),

@@ -1,13 +1,13 @@
 /**
- * Silueta esquemática para "¿Hasta dónde llega el dolor?". El tramo con dolor se pinta en amarillo
- * nervio sobre trazo de tinta, sobre un lado del cuerpo: espalda o cuello, luego muslo y brazo, luego
- * por debajo de la rodilla y el codo.
+ * Schematic silhouette for "¿Hasta dónde llega el dolor?". The painful stretch is painted in nerve yellow
+ * over an ink stroke, on one side of the body: back or neck, then thigh and arm, then below the knee and
+ * the elbow.
  */
 const BODY = [
-  "M18 26 L10 52 L8 74", // brazo izquierdo
-  "M42 26 L50 52 L52 74", // brazo derecho
-  "M25 62 L24 90 L23 116", // pierna izquierda
-  "M35 62 L36 90 L37 116", // pierna derecha
+  "M18 26 L10 52 L8 74", // left arm
+  "M42 26 L50 52 L52 74", // right arm
+  "M25 62 L24 90 L23 116", // left leg
+  "M35 62 L36 90 L37 116", // right leg
 ];
 
 const REACH: Record<string, string[]> = {

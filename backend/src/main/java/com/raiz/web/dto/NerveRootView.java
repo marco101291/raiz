@@ -9,8 +9,8 @@ import com.raiz.web.Audience;
 import java.util.List;
 
 /**
- * Ficha de una raíz. Hay un tipo por audiencia: la vista de paciente no tiene los campos
- * clínicos, así que no hay forma de que salgan por descuido.
+ * A root's profile. There is one type per audience: the patient view has no clinical fields, so they
+ * cannot leak by accident.
  */
 public sealed interface NerveRootView {
 

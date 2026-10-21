@@ -2,6 +2,6 @@ package com.raiz.persistence;
 
 import com.raiz.domain.model.MotorAction;
 
-/** Prueba de fuerza guiada. Es contenido de formulario, no del motor: por eso no vive en el dominio. */
+/** Guided strength test. It is form content, not engine logic: that is why it does not live in the domain. */
 public record StrengthTest(String id, String name, String instructions, String safetyNote, MotorAction motorAction) {
 }

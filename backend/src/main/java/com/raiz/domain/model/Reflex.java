@@ -1,6 +1,6 @@
 package com.raiz.domain.model;
 
-/** Reflejos osteotendinosos. Solo un profesional puede explorarlos con fiabilidad. */
+/** Deep tendon reflexes. Only a professional can examine them reliably. */
 public enum Reflex {
     BICEPS("Bicipital"),
     BRACHIORADIALIS("Braquiorradial (estilorradial)"),

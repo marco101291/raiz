@@ -6,15 +6,15 @@ spring:
     username: ${RAIZ_DB_USER:raiz}
     password: ${RAIZ_DB_PASSWORD:raiz}
   jpa:
-    # El esquema lo gobierna Flyway; Hibernate solo valida que las entidades coincidan.
+    # Flyway owns the schema; Hibernate only validates that the entities match.
     hibernate:
       ddl-auto: validate
-    # Sin sesión abierta durante la vista: las consultas ocurren en la capa de servicio/adaptador.
+    # No open session during the view: queries happen in the service/adapter layer.
     open-in-view: false
     properties:
-      # Carga las colecciones de varias raíces en una sola consulta (evita N+1 al arrancar).
+      # Loads the collections of several roots in a single query (avoids N+1 at startup).
       hibernate.default_batch_fetch_size: 16
 
 springdoc:
-  # Sin esto las respuestas se documentan como */* y los clientes generados pierden los tipos.
+  # Without this, responses are documented as */* and generated clients lose the types.
   default-produces-media-type: application/json

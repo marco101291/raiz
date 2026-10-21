@@ -6,7 +6,7 @@ import com.raiz.domain.port.NerveRootCatalog;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/** El dominio no conoce Spring: el motor se registra aquí como bean, con el catálogo inyectado. */
+/** The domain does not know Spring: the engine is registered here as a bean, with its ports injected. */
 @Configuration(proxyBeanMethods = false)
 public class EngineConfig {
 

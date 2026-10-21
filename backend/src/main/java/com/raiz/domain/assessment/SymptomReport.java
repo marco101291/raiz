@@ -9,11 +9,11 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
- * Lo que la persona (o el profesional) reporta en los formularios. Zonas, debilidad y reflejos
- * llevan siempre su lado.
+ * What the person (or the professional) reports in the forms. Zones, weakness and reflexes always
+ * carry their side.
  *
- * @param pain               cuestionario de dolor; puede faltar en modo profesional
- * @param diminishedReflexes normalmente los aporta un profesional; en modo paciente llegan vacíos
+ * @param pain               pain questionnaire; may be missing in professional mode
+ * @param diminishedReflexes usually provided by a professional; empty in patient mode
  */
 public record SymptomReport(
         Set<RedFlag> redFlags,
@@ -38,16 +38,16 @@ public record SymptomReport(
     }
 
     /**
-     * Regiones (cervical o lumbosacra) con hallazgos en ambos lados. Síntomas en las dos piernas
-     * o los dos brazos son un dato de alarma aunque el triage no lo haya marcado.
+     * Regions (cervical or lumbosacral) with findings on both sides. Symptoms in both legs or both arms
+     * are a red flag even if the triage did not mark it.
      */
     public Set<SpinalRegion> bilateralRegions() {
         return bilateralRegions(zone -> true);
     }
 
     /**
-     * Como {@link #bilateralRegions()}, pero solo cuentan las zonas sensitivas que cumplen
-     * {@code countsZone}. Debilidad y reflejos cuentan siempre: son pérdida de función, no solo síntomas.
+     * Like {@link #bilateralRegions()}, but only the sensory zones that satisfy {@code countsZone} count.
+     * Weakness and reflexes always count: they are loss of function, not just symptoms.
      */
     public Set<SpinalRegion> bilateralRegions(Predicate<BodyZone> countsZone) {
         Set<SpinalRegion> result = EnumSet.noneOf(SpinalRegion.class);

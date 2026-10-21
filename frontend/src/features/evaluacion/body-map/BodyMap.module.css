@@ -23,13 +23,13 @@
   touch-action: manipulation;
 }
 
-/* Piel sin zona: tono hueso más hondo, para que las zonas marcables se distingan. */
+/* Skin without a zone: a deeper bone tone, so the selectable zones stand out. */
 .piel {
   fill: var(--hueso-hondo);
   stroke: none;
 }
 
-/* Relieves anatómicos de referencia: líneas finas que no reciben clics. */
+/* Anatomical reference details: thin lines that do not receive clicks. */
 .relieve {
   fill: none;
   stroke: var(--linea);
@@ -38,7 +38,7 @@
   pointer-events: none;
 }
 
-/* El contorno va encima de las zonas y tapa la mitad recortada de sus bordes. */
+/* The outline goes over the zones and covers the clipped half of their edges. */
 .contorno {
   fill: none;
   stroke: var(--tinta);
@@ -59,14 +59,14 @@
   fill: var(--nervio-claro);
 }
 
-/* Marcada: amarillo nervio con contorno de tinta más grueso, para no depender solo del color. */
+/* Marked: nerve yellow with a thicker ink outline, so it does not rely on color alone. */
 .zona.marcada {
   fill: var(--nervio);
   stroke: var(--tinta);
   stroke-width: 1.6;
 }
 
-/* En unidades del viewBox: escala con el dibujo, así que debe ser grande para leerse en móvil. */
+/* In viewBox units: it scales with the drawing, so it must be large to be readable on mobile. */
 .lado {
   font-size: 17px;
   font-weight: 700;

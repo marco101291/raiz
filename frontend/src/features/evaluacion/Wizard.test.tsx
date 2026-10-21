@@ -40,7 +40,7 @@ const flags = [
 ];
 
 async function renderWizard() {
-  vi.resetModules(); // borrador nuevo en cada prueba
+  vi.resetModules(); // fresh draft in each test
   const { Wizard } = await import("./Wizard");
   render(<Wizard />);
   await screen.findByRole("heading", { name: /te pasa alguna de estas cosas/ });

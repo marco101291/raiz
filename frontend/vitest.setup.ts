@@ -4,6 +4,6 @@ import { afterEach } from "vitest";
 
 afterEach(() => {
   cleanup();
-  // Las pruebas con entorno node (p. ej. el proxy) no tienen sessionStorage.
+  // Tests with the node environment (e.g. the proxy) have no sessionStorage.
   globalThis.sessionStorage?.clear();
 });

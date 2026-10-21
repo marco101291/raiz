@@ -3,8 +3,8 @@ import { ReferralBanner } from "./ReferralBanner";
 import result from "./result.module.css";
 
 /**
- * Hubo alarma: la pantalla muestra solo la derivación y los datos de alarma (README, paso 5).
- * Sin patrón de dolor, sin raíces y sin rehabilitación.
+ * There was a red flag: the screen shows only the referral and the red flags (README, step 5).
+ * No pain pattern, no roots and no rehab.
  */
 export function UrgentResult({ result: assessment }: { result: Schemas["UrgentReferral"] }) {
   const { referral, reported = [], inferred = [] } = assessment;

@@ -43,7 +43,7 @@ class OtherCauseEntity {
     private Set<BodyZone> zones = new HashSet<>();
 
     protected OtherCauseEntity() {
-        // Requerido por JPA.
+        // Required by JPA.
     }
 
     OtherCause toRecord() {
