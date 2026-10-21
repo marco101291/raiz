@@ -9,15 +9,18 @@ import com.raiz.domain.assessment.RootMatch;
 import com.raiz.domain.assessment.Specialist;
 import com.raiz.domain.assessment.SymptomReport;
 import com.raiz.domain.model.Sided;
+import com.raiz.persistence.OtherCause;
 import com.raiz.web.dto.AssessmentRequest;
 import com.raiz.web.dto.AssessmentResponse;
 import com.raiz.web.dto.AssessmentResponse.EvidenceView;
+import com.raiz.web.dto.AssessmentResponse.OtherCauseView;
 import com.raiz.web.dto.AssessmentResponse.PatternView;
 import com.raiz.web.dto.AssessmentResponse.ReferralView;
 import com.raiz.web.dto.AssessmentResponse.RootMatchView;
 import com.raiz.web.dto.CodeLabel;
 import com.raiz.web.dto.RedFlagView;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -47,16 +50,24 @@ final class AssessmentMapper {
         return findings.stream().map(f -> new Sided<>(f.finding(), f.side())).collect(Collectors.toSet());
     }
 
-    /** switch exhaustivo: si el dominio agrega un caso a Assessment, esto deja de compilar. */
-    static AssessmentResponse toResponse(Assessment assessment) {
+    /**
+     * switch exhaustivo: si el dominio agrega un caso a Assessment, esto deja de compilar.
+     *
+     * @param otherCauses se omiten en la derivación urgente: ahí lo único que importa es ir a urgencias
+     */
+    static AssessmentResponse toResponse(Assessment assessment, List<OtherCause> otherCauses) {
         ReferralView referral = toView(assessment.referral());
         PatternView pattern = toView(assessment.pattern());
+        List<OtherCauseView> causes = otherCauses.stream()
+                .map(c -> new OtherCauseView(c.id(), c.title(), c.description(), c.sourceReference()))
+                .toList();
         return switch (assessment) {
             case Assessment.UrgentReferral u -> new AssessmentResponse.UrgentReferral(referral, pattern,
                     RedFlagView.sorted(u.reported()), RedFlagView.sorted(u.inferred()));
             case Assessment.RootCorrelation c -> new AssessmentResponse.RootCorrelation(referral, pattern,
-                    c.matches().stream().map(AssessmentMapper::toView).toList());
-            case Assessment.NoRootCorrelation n -> new AssessmentResponse.NoRootCorrelation(referral, pattern, n.note());
+                    c.matches().stream().map(AssessmentMapper::toView).toList(), causes);
+            case Assessment.NoRootCorrelation n ->
+                    new AssessmentResponse.NoRootCorrelation(referral, pattern, n.note(), causes);
         };
     }
 

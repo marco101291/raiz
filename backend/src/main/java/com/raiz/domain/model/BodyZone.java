@@ -41,6 +41,24 @@ public enum BodyZone {
         return label;
     }
 
+    /**
+     * Zonas donde los síntomas en ambos lados tienen causas frecuentes que no son urgentes, así que
+     * por sí solos no indican compresión central:
+     * <ul>
+     *   <li>Ingle: el pubis está en la línea media y la pubalgia o las dos caderas duelen de ambos
+     *       lados (Weir 2015, consenso de Doha).</li>
+     *   <li>Pulgar, índice y medio: territorio del nervio mediano; el túnel carpiano es bilateral en
+     *       la mayoría de los casos con estudio eléctrico (PLoS ONE 2021;16(12):e0260578).</li>
+     * </ul>
+     * Pendiente de revisión clínica (README, hoja de ruta, paso 5).
+     */
+    public boolean hasCommonBilateralCause() {
+        return switch (this) {
+            case GROIN, THUMB, INDEX_FINGER, MIDDLE_FINGER -> true;
+            default -> false;
+        };
+    }
+
     public SpinalRegion region() {
         return switch (this) {
             case LATERAL_SHOULDER, LATERAL_FOREARM, THUMB, INDEX_FINGER, MIDDLE_FINGER, RING_FINGER,

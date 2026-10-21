@@ -75,6 +75,23 @@ describe("ResultStep", () => {
     expect(screen.queryByRole("heading", { name: "Raíces compatibles con tus síntomas" })).not.toBeInTheDocument();
   });
 
+  it("muestra otras causas posibles de las zonas marcadas, con su fuente", async () => {
+    assess.mockResolvedValue({
+      type: "NO_ROOT_CORRELATION",
+      referral: referral("PROMPT", "Busca valoración médica en los próximos días"),
+      pattern: { type: "NOT_ASSESSED", features: [], explanation: "" },
+      note: "Nota",
+      otherCauses: [
+        { id: "PUBALGIA", title: "Pubalgia", description: "Dolor en el pubis.", sourceReference: "Weir 2015" },
+      ],
+    });
+    renderResult();
+
+    expect(await screen.findByRole("heading", { name: "También puede deberse a" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Pubalgia" })).toBeInTheDocument();
+    expect(screen.getByText("Fuente: Weir 2015")).toBeInTheDocument();
+  });
+
   it("alarma: solo la derivación, el 911 y por qué; sin patrón ni raíces", async () => {
     assess.mockResolvedValue({
       type: "URGENT_REFERRAL",

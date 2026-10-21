@@ -1,14 +1,17 @@
 package com.raiz.domain.assessment;
 
+import com.raiz.domain.model.BodyZone;
 import com.raiz.domain.model.NerveRoot;
 import com.raiz.domain.model.RedFlag;
 import com.raiz.domain.model.Side;
 import com.raiz.domain.model.Sided;
+import com.raiz.domain.model.SpinalRegion;
 import com.raiz.domain.port.NerveRootCatalog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -20,7 +23,9 @@ import static com.raiz.domain.assessment.Specialist.*;
  *
  * <ol>
  *   <li>Triage: cualquier dato de alarma, reportado o inferido (síntomas en ambos lados), corta
- *       la evaluación.</li>
+ *       la evaluación. Si lo bilateral está solo en zonas con causas frecuentes no urgentes
+ *       ({@link BodyZone#hasCommonBilateralCause()}), no corta: se evalúa y se pide valoración pronto,
+ *       con las señales que sí obligan a ir a urgencias.</li>
  *   <li>Patrón de dolor: lectura del cuestionario ("¿es una hernia?").</li>
  *   <li>Correlación: cada raíz, por lado, suma puntos por zona sensitiva (2), debilidad (3) y reflejo (3)
  *       que coincidan con su territorio.</li>
@@ -66,19 +71,54 @@ public final class CorrelationEngine {
         if (matches.isEmpty()) {
             return new Assessment.NoRootCorrelation(pattern,
                     "Los síntomas reportados no coinciden con un territorio radicular del catálogo.",
-                    new Referral(Urgency.ROUTINE, List.of(PHYSICIAN, PHYSIATRIST),
-                            "Un profesional puede explorar otras causas."));
+                    withBilateralCaution(new Referral(Urgency.ROUTINE, List.of(PHYSICIAN, PHYSIATRIST),
+                            "Un profesional puede explorar otras causas."), report));
         }
 
-        return new Assessment.RootCorrelation(pattern, matches, referralFor(matches, pattern, report));
+        return new Assessment.RootCorrelation(pattern, matches,
+                withBilateralCaution(referralFor(matches, pattern, report), report));
     }
 
-    /** Síntomas en ambos lados de una misma región cuentan como dato de alarma. */
+    /**
+     * Síntomas en ambos lados de una misma región cuentan como dato de alarma, salvo que lo bilateral
+     * esté solo en zonas con causas frecuentes no urgentes (ingle, dedos del mediano).
+     */
     private static Set<RedFlag> inferRedFlags(SymptomReport report) {
-        if (!report.bilateralRegions().isEmpty() && !report.redFlags().contains(RedFlag.BILATERAL_SYMPTOMS)) {
+        boolean alarming = !report.bilateralRegions(zone -> !zone.hasCommonBilateralCause()).isEmpty();
+        if (alarming && !report.redFlags().contains(RedFlag.BILATERAL_SYMPTOMS)) {
             return Set.of(RedFlag.BILATERAL_SYMPTOMS);
         }
         return Set.of();
+    }
+
+    /**
+     * Lo bilateral que no llegó a alarma (solo zonas con causas frecuentes) sube la derivación a
+     * "en los próximos días" y antepone qué otras causas hay y qué señales sí obligan a ir a urgencias.
+     */
+    private static Referral withBilateralCaution(Referral referral, SymptomReport report) {
+        Set<SpinalRegion> regions = report.bilateralRegions();
+        if (regions.isEmpty()) {
+            return referral;
+        }
+        var message = new StringBuilder();
+        if (regions.contains(SpinalRegion.LUMBOSACRAL)) {
+            message.append("Sientes síntomas en la ingle de ambos lados. Suele deberse a causas frecuentes que no "
+                    + "son urgentes, como la pubalgia o las caderas, pero conviene una valoración en los próximos "
+                    + "días. Acude a urgencias si además se te duerme la zona entre las piernas o los genitales, "
+                    + "te cuesta orinar o evacuar, o pierdes fuerza en las piernas. ");
+        }
+        if (regions.contains(SpinalRegion.CERVICAL)) {
+            message.append("Sientes síntomas en los dedos de ambas manos. Suele deberse a causas frecuentes que no "
+                    + "son urgentes, como el túnel carpiano, pero conviene una valoración en los próximos días. "
+                    + "Acude a urgencias si además notas torpeza al usar las manos o al caminar, o pierdes fuerza. ");
+        }
+        message.append(referral.message());
+
+        var specialists = new LinkedHashSet<Specialist>();
+        specialists.add(PHYSICIAN);
+        specialists.addAll(referral.specialists());
+        Urgency urgency = referral.urgency() == Urgency.ROUTINE ? Urgency.PROMPT : referral.urgency();
+        return new Referral(urgency, List.copyOf(specialists), message.toString());
     }
 
     private static List<Evidence> evidenceFor(NerveRoot root, Side side, SymptomReport report) {

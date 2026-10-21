@@ -5,6 +5,7 @@ import com.raiz.domain.model.*;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -41,9 +42,17 @@ public record SymptomReport(
      * o los dos brazos son un dato de alarma aunque el triage no lo haya marcado.
      */
     public Set<SpinalRegion> bilateralRegions() {
+        return bilateralRegions(zone -> true);
+    }
+
+    /**
+     * Como {@link #bilateralRegions()}, pero solo cuentan las zonas sensitivas que cumplen
+     * {@code countsZone}. Debilidad y reflejos cuentan siempre: son pérdida de función, no solo síntomas.
+     */
+    public Set<SpinalRegion> bilateralRegions(Predicate<BodyZone> countsZone) {
         Set<SpinalRegion> result = EnumSet.noneOf(SpinalRegion.class);
         for (SpinalRegion region : SpinalRegion.values()) {
-            Set<Side> sides = findingsIn(region).map(RegionSide::side).collect(
+            Set<Side> sides = findingsIn(region, countsZone).map(RegionSide::side).collect(
                     () -> EnumSet.noneOf(Side.class), Set::add, Set::addAll);
             if (sides.size() == Side.values().length) {
                 result.add(region);
@@ -52,9 +61,10 @@ public record SymptomReport(
         return result;
     }
 
-    private Stream<RegionSide> findingsIn(SpinalRegion region) {
+    private Stream<RegionSide> findingsIn(SpinalRegion region, Predicate<BodyZone> countsZone) {
         return Stream.of(
-                        sensoryZones.stream().map(s -> new RegionSide(s.finding().region(), s.side())),
+                        sensoryZones.stream().filter(s -> countsZone.test(s.finding()))
+                                .map(s -> new RegionSide(s.finding().region(), s.side())),
                         weakness.stream().map(s -> new RegionSide(s.finding().region(), s.side())),
                         diminishedReflexes.stream().map(s -> new RegionSide(s.finding().region(), s.side())))
                 .flatMap(s -> s)

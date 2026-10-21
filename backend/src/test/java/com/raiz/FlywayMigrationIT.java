@@ -62,6 +62,15 @@ class FlywayMigrationIT {
                 .contains("pubalgia"));
     }
 
+    @Test
+    void everyOtherCauseHasZonesAndSource() {
+        var incomplete = column("SELECT id FROM other_cause c WHERE c.source_reference = '' "
+                + "OR NOT EXISTS (SELECT 1 FROM other_cause_zone z WHERE z.other_cause_id = c.id)");
+
+        assertThat(column("SELECT id FROM other_cause")).isNotEmpty();
+        assertThat(incomplete).isEmpty();
+    }
+
     private List<String> column(String sql) {
         return jdbc.sql(sql).query(String.class).list();
     }

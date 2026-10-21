@@ -1,6 +1,9 @@
 package com.raiz.web;
 
 import com.raiz.domain.assessment.CorrelationEngine;
+import com.raiz.domain.assessment.SymptomReport;
+import com.raiz.domain.model.Sided;
+import com.raiz.persistence.OtherCauseCatalog;
 import com.raiz.web.dto.AssessmentRequest;
 import com.raiz.web.dto.AssessmentResponse;
 import jakarta.validation.Valid;
@@ -18,13 +21,17 @@ import org.springframework.web.bind.annotation.RestController;
 class AssessmentController {
 
     private final CorrelationEngine engine;
+    private final OtherCauseCatalog otherCauses;
 
-    AssessmentController(CorrelationEngine engine) {
+    AssessmentController(CorrelationEngine engine, OtherCauseCatalog otherCauses) {
         this.engine = engine;
+        this.otherCauses = otherCauses;
     }
 
     @PostMapping
     AssessmentResponse assess(@Valid @RequestBody AssessmentRequest request) {
-        return AssessmentMapper.toResponse(engine.assess(AssessmentMapper.toReport(request)));
+        SymptomReport report = AssessmentMapper.toReport(request);
+        var zones = report.sensoryZones().stream().map(Sided::finding).toList();
+        return AssessmentMapper.toResponse(engine.assess(report), otherCauses.forZones(zones));
     }
 }

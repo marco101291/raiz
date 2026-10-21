@@ -12,6 +12,7 @@ export function CorrelationResult({ result: assessment }: { result: Assessment }
   const { referral, pattern } = assessment;
   const matches = assessment.type === "ROOT_CORRELATION" ? (assessment.matches ?? []) : [];
   const note = assessment.type === "NO_ROOT_CORRELATION" ? assessment.note : undefined;
+  const otherCauses = assessment.otherCauses ?? [];
 
   return (
     <>
@@ -49,6 +50,25 @@ export function CorrelationResult({ result: assessment }: { result: Assessment }
               </li>
             ))}
           </ol>
+        </section>
+      )}
+
+      {otherCauses.length > 0 && (
+        <section className={result.seccion} aria-labelledby="otras-causas">
+          <h2 id="otras-causas">También puede deberse a</h2>
+          <p className={result.ayuda}>
+            Lo que marcaste no siempre viene de una raíz nerviosa. Estas causas son frecuentes en esas zonas
+            y un profesional puede distinguirlas.
+          </p>
+          <ul className={result.raices}>
+            {otherCauses.map((cause) => (
+              <li key={cause.id} className={`${result.raiz} ${result.otraCausa}`}>
+                <h3>{cause.title}</h3>
+                <p>{cause.description}</p>
+                <p className={result.ayuda}>Fuente: {cause.sourceReference}</p>
+              </li>
+            ))}
+          </ul>
         </section>
       )}
 

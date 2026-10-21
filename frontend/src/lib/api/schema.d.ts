@@ -175,12 +175,19 @@ export interface components {
             referral?: components["schemas"]["ReferralView"];
             pattern?: components["schemas"]["PatternView"];
             note?: string;
+            otherCauses?: components["schemas"]["OtherCauseView"][];
         } & {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
             type: "NO_ROOT_CORRELATION";
+        };
+        OtherCauseView: {
+            id?: string;
+            title?: string;
+            description?: string;
+            sourceReference?: string;
         };
         PatternView: {
             /** @enum {string} */
@@ -204,6 +211,7 @@ export interface components {
             referral?: components["schemas"]["ReferralView"];
             pattern?: components["schemas"]["PatternView"];
             matches?: components["schemas"]["RootMatchView"][];
+            otherCauses?: components["schemas"]["OtherCauseView"][];
         } & {
             /**
              * @description discriminator enum property added by openapi-typescript

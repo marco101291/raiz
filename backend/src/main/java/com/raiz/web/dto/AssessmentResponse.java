@@ -37,12 +37,16 @@ public sealed interface AssessmentResponse {
                           List<RedFlagView> reported, List<RedFlagView> inferred) implements AssessmentResponse {
     }
 
+    /** @param otherCauses causas distintas de una raíz que también explican las zonas marcadas */
     record RootCorrelation(ReferralView referral, PatternView pattern,
-                           List<RootMatchView> matches) implements AssessmentResponse {
+                           List<RootMatchView> matches, List<OtherCauseView> otherCauses) implements AssessmentResponse {
     }
 
     record NoRootCorrelation(ReferralView referral, PatternView pattern,
-                             String note) implements AssessmentResponse {
+                             String note, List<OtherCauseView> otherCauses) implements AssessmentResponse {
+    }
+
+    record OtherCauseView(String id, String title, String description, String sourceReference) {
     }
 
     record ReferralView(CodeLabel urgency, List<CodeLabel> specialists, String message, String disclaimer) {

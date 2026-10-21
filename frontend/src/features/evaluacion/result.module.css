@@ -50,6 +50,11 @@
   font-size: var(--texto-lg);
 }
 
+/* Otra causa posible: mismo formato que una raíz, con borde neutro para no competir con ellas. */
+.otraCausa {
+  border-left-color: var(--linea);
+}
+
 .deficit {
   font-weight: 700;
 }

@@ -115,7 +115,37 @@ class AssessmentApiIT extends ApiIntegrationTest {
                 .andExpect(jsonPath("$.type").value("URGENT_REFERRAL"))
                 .andExpect(jsonPath("$.reported", empty()))
                 .andExpect(jsonPath("$.inferred[*].id", contains("BILATERAL_SYMPTOMS")))
-                .andExpect(jsonPath("$.referral.urgency.id").value("EMERGENCY_NOW"));
+                .andExpect(jsonPath("$.referral.urgency.id").value("EMERGENCY_NOW"))
+                .andExpect(jsonPath("$.otherCauses").doesNotExist());
+    }
+
+    @Test
+    void groinOnBothSidesIsPromptAndListsOtherCauses() throws Exception {
+        postJson(URI, """
+                { "sensoryZones": [{ "finding": "GROIN", "side": "RIGHT" }, { "finding": "GROIN", "side": "LEFT" }] }
+                """)
+                .andExpect(jsonPath("$.type").value("ROOT_CORRELATION"))
+                .andExpect(jsonPath("$.referral.urgency.id").value("PROMPT"))
+                .andExpect(jsonPath("$.otherCauses[*].id",
+                        contains("PUBALGIA", "HIP", "GROIN_NERVE_ENTRAPMENT", "REFERRED_LOW_LUMBAR")));
+    }
+
+    @Test
+    void otherCauseSharedByMarkedZonesAppearsOnce() throws Exception {
+        postJson(URI, """
+                { "sensoryZones": [{ "finding": "THUMB", "side": "RIGHT" }, { "finding": "INDEX_FINGER", "side": "RIGHT" },
+                                   { "finding": "MIDDLE_FINGER", "side": "RIGHT" }] }
+                """)
+                .andExpect(jsonPath("$.otherCauses[*].id", contains("CARPAL_TUNNEL")))
+                .andExpect(jsonPath("$.otherCauses[0].sourceReference").isNotEmpty());
+    }
+
+    @Test
+    void zonesWithoutOtherCausesReturnAnEmptyList() throws Exception {
+        postJson(URI, """
+                { "sensoryZones": [{ "finding": "SOLE", "side": "RIGHT" }] }
+                """)
+                .andExpect(jsonPath("$.otherCauses", empty()));
     }
 
     @Test

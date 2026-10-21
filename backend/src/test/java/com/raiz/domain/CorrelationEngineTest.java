@@ -111,6 +111,52 @@ class CorrelationEngineTest {
     }
 
     @Test
+    void groinOnBothSidesIsPromptWithOtherCausesNotAnEmergency() {
+        var report = new SymptomReport(null, radicularPain(4, 5),
+                Set.of(Sided.right(BodyZone.GROIN), Sided.left(BodyZone.GROIN)), null, null);
+
+        var referral = engine.assess(report).referral();
+
+        assertThat(referral.urgency()).isEqualTo(Urgency.PROMPT);
+        assertThat(referral.specialists()).first().isEqualTo(Specialist.PHYSICIAN);
+        assertThat(referral.message()).contains("pubalgia").contains("Acude a urgencias si además");
+    }
+
+    @Test
+    void medianFingersOnBothHandsMentionCarpalTunnel() {
+        var report = new SymptomReport(null, null,
+                Set.of(Sided.right(BodyZone.THUMB), Sided.left(BodyZone.INDEX_FINGER)), null, null);
+
+        var assessment = engine.assess(report);
+
+        assertThat(assessment).isNotInstanceOf(Assessment.UrgentReferral.class);
+        assertThat(assessment.referral().urgency()).isEqualTo(Urgency.PROMPT);
+        assertThat(assessment.referral().message()).contains("túnel carpiano");
+    }
+
+    @Test
+    void groinDoesNotCountTowardsBilateralLegSymptoms() {
+        var report = new SymptomReport(null, radicularPain(4, 5),
+                Set.of(Sided.left(BodyZone.GROIN), Sided.right(BodyZone.GROIN), Sided.right(BodyZone.LATERAL_LEG)),
+                null, null);
+
+        assertThat(engine.assess(report)).asInstanceOf(type(Assessment.RootCorrelation.class))
+                .satisfies(c -> assertThat(c.matches()).extracting(RootMatch::label).containsExactly("L5 derecha"))
+                .satisfies(c -> assertThat(c.referral().urgency()).isEqualTo(Urgency.PROMPT));
+    }
+
+    @Test
+    void bilateralWeaknessIsAnEmergencyEvenWithGroinSymptoms() {
+        var report = new SymptomReport(null, radicularPain(4, 5),
+                Set.of(Sided.right(BodyZone.GROIN), Sided.left(BodyZone.GROIN)),
+                Set.of(Sided.right(MotorAction.ANKLE_DORSIFLEXION), Sided.left(MotorAction.ANKLE_DORSIFLEXION)),
+                null);
+
+        assertThat(engine.assess(report)).asInstanceOf(type(Assessment.UrgentReferral.class))
+                .satisfies(u -> assertThat(u.inferred()).containsExactly(RedFlag.BILATERAL_SYMPTOMS));
+    }
+
+    @Test
     void oneArmAndTheOtherLegIsNotBilateral() {
         var report = new SymptomReport(null, null,
                 Set.of(Sided.left(BodyZone.THUMB), Sided.right(BodyZone.LATERAL_LEG)), null, null);
