@@ -100,6 +100,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/catalog/functional-questions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["functionalQuestions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/catalog/body-zones": {
         parameters: {
             query?: never;
@@ -287,6 +303,12 @@ export interface components {
             label?: string;
             distributions?: components["schemas"]["CodeLabel"][];
         };
+        FunctionalQuestionView: {
+            id?: string;
+            question?: string;
+            motorAction?: components["schemas"]["CodeLabel"];
+            roots?: string[];
+        };
         BodyZoneView: {
             id?: string;
             label?: string;
@@ -428,6 +450,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PainOptionsView"];
+                };
+            };
+        };
+    };
+    functionalQuestions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FunctionalQuestionView"][];
                 };
             };
         };

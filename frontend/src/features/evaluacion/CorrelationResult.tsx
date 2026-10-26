@@ -8,6 +8,8 @@ interface Props {
   result: Assessment;
   /** Emergency red flags from the triage catalog: what should send the person to the ER from now on. */
   warningSigns: Schemas["RedFlagView"][];
+  /** From the strength step: not weakness for the engine, but worth a professional examination. */
+  notes?: string[];
 }
 
 /**
@@ -15,7 +17,7 @@ interface Props {
  * last, folded, the compatible roots, which matter more to the professional than to the patient.
  * Always "compatible with", never "you have" (README, principle 3).
  */
-export function CorrelationResult({ result: assessment, warningSigns }: Props) {
+export function CorrelationResult({ result: assessment, warningSigns, notes = [] }: Props) {
   const { referral, pattern } = assessment;
   const matches = assessment.type === "ROOT_CORRELATION" ? (assessment.matches ?? []) : [];
   const note = assessment.type === "NO_ROOT_CORRELATION" ? assessment.note : undefined;
@@ -71,6 +73,18 @@ export function CorrelationResult({ result: assessment, warningSigns }: Props) {
               </ul>
             </div>
           )}
+        </section>
+      )}
+
+      {notes.length > 0 && (
+        <section className={result.seccion} aria-labelledby="consulta">
+          <h2 id="consulta">Coméntalo en tu consulta</h2>
+          <p className={result.ayuda}>Un profesional puede explorar tu fuerza con más precisión.</p>
+          <ul className={result.lista}>
+            {notes.map((note) => (
+              <li key={note}>{note}</li>
+            ))}
+          </ul>
         </section>
       )}
 

@@ -24,4 +24,8 @@ public final class CatalogViews {
     public record StrengthTestView(String id, String name, String instructions, String safetyNote,
                                    CodeLabel motorAction, List<String> roots) {
     }
+
+    /** @param roots roots whose myotome includes the movement, in anatomical order */
+    public record FunctionalQuestionView(String id, String question, CodeLabel motorAction, List<String> roots) {
+    }
 }

@@ -103,6 +103,16 @@ describe("ResultStep", () => {
     expect(screen.getByText("Fuente: Weir 2015")).toBeInTheDocument();
   });
 
+  it("muestra lo que conviene comentar en la consulta", async () => {
+    assess.mockResolvedValue({ type: "NO_ROOT_CORRELATION", referral: referral("ROUTINE", "Agenda"), note: "Nota" });
+    render(
+      <ResultStep request={{}} notes={["No pudiste hacer «Caminar de talones» por dolor."]} onEdit={vi.fn()} onRestart={vi.fn()} />,
+    );
+
+    expect(await screen.findByRole("heading", { name: "Coméntalo en tu consulta" })).toBeInTheDocument();
+    expect(screen.getByText("No pudiste hacer «Caminar de talones» por dolor.")).toBeInTheDocument();
+  });
+
   it("alarma: solo la derivación, el 911 y por qué; sin patrón ni raíces", async () => {
     assess.mockResolvedValue({
       type: "URGENT_REFERRAL",

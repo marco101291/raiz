@@ -102,7 +102,7 @@ Los pesos y umbrales son heurísticos y deben revisarse con un profesional antes
 | `GET` | `/api/v1/catalog/body-zones` | Zonas para el mapa SVG (id + etiqueta) |
 | `GET` | `/api/v1/catalog/red-flags` | Datos de alarma para el triage |
 
-Además: `GET /api/v1/catalog/pain-options` (descriptores, agravantes, aliviantes y, por región, hasta dónde llega el dolor) y `GET /api/v1/catalog/strength-tests` (pruebas guiadas), para que el frontend no duplique etiquetas.
+Además: `GET /api/v1/catalog/pain-options` (descriptores, agravantes, aliviantes y, por región, hasta dónde llega el dolor) `GET /api/v1/catalog/strength-tests` (pruebas guiadas) y `GET /api/v1/catalog/functional-questions` (preguntas de tareas diarias para el cuello), para que el frontend no duplique etiquetas.
 
 Ejemplo de `POST /api/v1/assessments`:
 
@@ -196,7 +196,9 @@ Pruebas que una persona puede hacer sola, con instrucciones, ilustración y avis
 
 Respuestas por prueba: "Igual en ambos lados", "Más débil del lado derecho", "Más débil del lado izquierdo", "No pude por dolor", "No la hice". **Solo las opciones de "más débil" cuentan como `weakness`, con su lado.** "No pude por dolor" no es debilidad y se muestra como nota en el resultado.
 
-En cervical la autoexploración es poco fiable. En lugar de pruebas se pregunta por síntomas funcionales ("se me caen las cosas", "me cuesta levantar el brazo"), que se muestran en el resultado como motivo para exploración profesional, sin mapearse a `weakness`.
+En cervical la autoexploración es poco fiable. En lugar de pruebas se pregunta por tareas de todos los días, una por movimiento clave del miotoma: levantar el brazo (C5), doblar el codo (C5-C6), estirar el brazo para empujar (C7) y apretar con la mano (C8). Respuestas: "No", "Sí, el brazo derecho", "Sí, el brazo izquierdo", "Sí, los dos". Se muestran en el resultado ("Coméntalo en tu consulta") como motivo para exploración profesional, sin mapearse a `weakness`.
+
+Las pruebas de pierna se muestran si el dolor empieza en la espalda baja; las preguntas de brazo, si empieza en el cuello.
 
 ### Paso 5. Resultado
 

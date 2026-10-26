@@ -1,0 +1,87 @@
+.seccion {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.seccion h2 {
+  font-size: var(--texto-lg);
+  padding-top: 0.5rem;
+}
+
+/* Each test is a row separated by a rule, like the triage: no cards. */
+.prueba {
+  margin: 0;
+  padding: 1.25rem 0;
+  border: 0;
+  border-top: 1px solid var(--linea);
+  display: grid;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.nombre {
+  float: left; /* makes the legend take part in the fieldset grid */
+  width: 100%;
+  padding: 0;
+  font-size: var(--texto-lg);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.cuidado {
+  color: var(--tinta-suave);
+  font-size: var(--texto-sm);
+}
+
+.opciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 0.5rem;
+}
+
+.opcion {
+  position: relative;
+}
+
+.opcion input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.opcion span {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  min-height: 3rem;
+  padding: 0.4rem 1rem;
+  border-radius: var(--radio-control);
+  border: 2px solid var(--linea);
+  background: var(--papel);
+  font-weight: 700;
+  font-size: var(--texto-sm);
+  text-align: center;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.opcion:hover span {
+  border-color: var(--tinta-suave);
+}
+
+/* The selection is marked in nerve yellow with an ink border: it does not rely on color alone. */
+.opcion input:checked + span {
+  background: var(--nervio);
+  border-color: var(--tinta);
+}
+
+.opcion input:focus-visible + span {
+  outline: 3px solid var(--tinta);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 7px var(--nervio);
+}
+
+.prueba[aria-invalid] .opcion span {
+  border-color: var(--urgencia);
+}

@@ -35,6 +35,7 @@ export const api = {
   painOptions: () => request<Schemas["PainOptionsView"]>("/catalog/pain-options"),
   bodyZones: () => request<Schemas["BodyZoneView"][]>("/catalog/body-zones"),
   strengthTests: () => request<Schemas["StrengthTestView"][]>("/catalog/strength-tests"),
+  functionalQuestions: () => request<Schemas["FunctionalQuestionView"][]>("/catalog/functional-questions"),
   assess: (body: AssessmentRequest) =>
     request<AssessmentResponse>("/assessments", {
       method: "POST",

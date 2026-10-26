@@ -85,6 +85,7 @@ describe("buildRequest", () => {
         { finding: "GROIN", side: "RIGHT" },
         { finding: "UPPER_ANTERIOR_THIGH", side: "RIGHT" },
       ],
+      weakness: [],
     });
   });
 
@@ -93,6 +94,14 @@ describe("buildRequest", () => {
     expect(buildRequest({ step: "resultado", triage: {}, pain: { intensity: 4 } }).pain).toBeUndefined();
     const missingReach = { intensity: 4, onsetDate: "2026-10-04", regions: ["CERVICAL", "LUMBOSACRAL"], reach: {} };
     expect(buildRequest({ step: "resultado", triage: {}, pain: missingReach }).pain).toBeUndefined();
+  });
+
+  it("la fuerza guiada aplica si el dolor baja o si hay zonas marcadas", async () => {
+    const { strengthApplies } = await freshDraft();
+    const axial = { regions: ["LUMBOSACRAL"], reach: { LUMBOSACRAL: "AXIAL_ONLY" } };
+    expect(strengthApplies({ pain: axial })).toBe(false);
+    expect(strengthApplies({ pain: axial, sensoryZones: ["SOLE-LEFT"] })).toBe(true);
+    expect(strengthApplies({ pain: { regions: ["LUMBOSACRAL"], reach: { LUMBOSACRAL: "DISTAL" } } })).toBe(true);
   });
 
   it("el mapa es opcional solo si el dolor no baja desde ninguna región", async () => {

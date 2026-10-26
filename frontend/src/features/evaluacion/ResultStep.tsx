@@ -13,6 +13,8 @@ interface Props {
   request: AssessmentRequest;
   /** Emergency red flags from the triage catalog, shown on every non-urgent result. */
   warningSigns?: Schemas["RedFlagView"][];
+  /** From the strength step: tests not done because of pain, weak arms in everyday tasks. */
+  notes?: string[];
   onEdit: () => void;
   onRestart: () => void;
 }
@@ -22,7 +24,7 @@ interface Props {
  * (Raíz does not store assessments). Fixed order: referral, when to go to the ER, what it may be, roots
  * for the doctor, disclaimer.
  */
-export function ResultStep({ request, warningSigns = [], onEdit, onRestart }: Props) {
+export function ResultStep({ request, warningSigns = [], notes = [], onEdit, onRestart }: Props) {
   const [state, setState] = useState<State>({ status: "loading" });
   const [attempt, setAttempt] = useState(0);
   const body = JSON.stringify(request);
@@ -76,7 +78,7 @@ export function ResultStep({ request, warningSigns = [], onEdit, onRestart }: Pr
       {assessment.type === "URGENT_REFERRAL" ? (
         <UrgentResult result={assessment} />
       ) : (
-        <CorrelationResult result={assessment} warningSigns={warningSigns} />
+        <CorrelationResult result={assessment} warningSigns={warningSigns} notes={notes} />
       )}
       <p className={result.aviso}>{assessment.referral?.disclaimer}</p>
       <div className={step.acciones}>

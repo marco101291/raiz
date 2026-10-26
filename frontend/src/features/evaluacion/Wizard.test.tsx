@@ -11,6 +11,17 @@ vi.mock("@/lib/api/client", () => ({
     redFlags: () => redFlags(),
     painOptions: () => painOptions(),
     bodyZones: () => bodyZones(),
+    strengthTests: () =>
+      Promise.resolve([
+        {
+          id: "TOE_WALK",
+          name: "Caminar de puntas",
+          instructions: "Da 10 pasos.",
+          safetyNote: "Apóyate en una pared.",
+          motorAction: { id: "ANKLE_PLANTAR_FLEXION", label: "Pararse de puntas" },
+        },
+      ]),
+    functionalQuestions: () => Promise.resolve([]),
     assess: (b: unknown) => assess(b),
   },
 }));
@@ -89,7 +100,7 @@ describe("Wizard", () => {
     await answer(/Fiebre/, "No");
     await userEvent.click(screen.getByRole("button", { name: "Ver qué hacer" }));
 
-    expect(assess).toHaveBeenCalledWith({ redFlags: ["SADDLE_ANESTHESIA"], sensoryZones: [] });
+    expect(assess).toHaveBeenCalledWith({ redFlags: ["SADDLE_ANESTHESIA"], sensoryZones: [], weakness: [] });
     expect(await screen.findByRole("heading", { level: 1, name: "Acude a urgencias hoy" })).toBeInTheDocument();
     expect(screen.getByText(/llama al 911/)).toBeInTheDocument();
     expect(screen.queryByRole("navigation", { name: "Progreso de la evaluación" })).not.toBeInTheDocument();
@@ -130,7 +141,7 @@ describe("Wizard: cuestionario de dolor", () => {
     sessionStorage.setItem("raiz.evaluacion.v1", JSON.stringify({ step: "dolor", triage: { FEVER: "no" } }));
   });
 
-  it("pide los campos obligatorios, pasa por el mapa y envía triage, dolor y zonas", async () => {
+  it("pide los campos obligatorios, pasa por el mapa y la fuerza, y envía triage, dolor, zonas y debilidad", async () => {
     assess.mockResolvedValue({
       type: "NO_ROOT_CORRELATION",
       referral: {
@@ -164,6 +175,11 @@ describe("Wizard: cuestionario de dolor", () => {
     await userEvent.click(screen.getByRole("checkbox", { name: "Dedo gordo del pie, derecha" }));
     await userEvent.click(screen.getByRole("button", { name: "Continuar" }));
 
+    expect(await screen.findByRole("heading", { name: "¿Has perdido fuerza?" })).toBeInTheDocument();
+    const toeWalk = screen.getByRole("group", { name: "Caminar de puntas" });
+    await userEvent.click(within(toeWalk).getByRole("radio", { name: "Más débil del lado derecho" }));
+    await userEvent.click(screen.getByRole("button", { name: "Ver mi resultado" }));
+
     expect(await screen.findByRole("heading", { name: "Agenda una valoración con un especialista" })).toBeInTheDocument();
     expect(assess).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -174,6 +190,7 @@ describe("Wizard: cuestionario de dolor", () => {
           qualities: ["BURNING"],
         }),
         sensoryZones: [{ finding: "GREAT_TOE", side: "RIGHT" }],
+        weakness: [{ finding: "ANKLE_PLANTAR_FLEXION", side: "RIGHT" }],
       }),
     );
     const saved = JSON.parse(sessionStorage.getItem("raiz.evaluacion.v1") ?? "{}");

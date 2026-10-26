@@ -29,11 +29,16 @@ const painDraftSchema = z
 export type PainDraft = z.infer<typeof painDraftSchema>;
 
 const draftSchema = z.object({
-  step: z.enum(["alarma", "dolor", "mapa", "resultado"]),
+  step: z.enum(["alarma", "dolor", "mapa", "fuerza", "resultado"]),
   triage: z.record(z.string(), answer),
   pain: painDraftSchema.optional(),
   /** Marked zones with their side, e.g. "GREAT_TOE-RIGHT" (same id as the SVG map path). */
   sensoryZones: z.array(z.string().regex(/^[A-Z_]+-(RIGHT|LEFT)$/)).optional(),
+  /** Strength test id → answer, and functional question id → answer (step 4). */
+  strength: z.record(z.string(), z.string()).optional(),
+  functional: z.record(z.string(), z.string()).optional(),
+  /** Weakness derived from the strength answers, e.g. "ANKLE_DORSIFLEXION-RIGHT". */
+  weakness: z.array(z.string().regex(/^[A-Z_]+-(RIGHT|LEFT)$/)).optional(),
 });
 export type Draft = z.infer<typeof draftSchema>;
 export type StepId = Draft["step"];
@@ -86,6 +91,11 @@ export function painStaysAxial(pain: PainDraft | undefined): boolean {
   return regions.length > 0 && regions.every((region) => pain?.reach?.[region] === "AXIAL_ONLY");
 }
 
+/** Guided strength applies only if the pain radiates or zones were marked (README, Forms). */
+export function strengthApplies(draft: Pick<Draft, "pain" | "sensoryZones">): boolean {
+  return !painStaysAxial(draft.pain) || (draft.sensoryZones?.length ?? 0) > 0;
+}
+
 export function reportedRedFlags(triage: Draft["triage"]): string[] {
   return Object.entries(triage)
     .filter(([, value]) => value === "si")
@@ -113,9 +123,13 @@ export function buildRequest(draft: Draft, today = todayIso()): AssessmentReques
           relievers: pain.relievers ?? [],
         } as AssessmentRequest["pain"])
       : undefined,
-    sensoryZones: (draft.sensoryZones ?? []).map((key) => {
-      const i = key.lastIndexOf("-");
-      return { finding: key.slice(0, i), side: key.slice(i + 1) };
-    }) as AssessmentRequest["sensoryZones"],
+    sensoryZones: (draft.sensoryZones ?? []).map(sided) as AssessmentRequest["sensoryZones"],
+    weakness: (draft.weakness ?? []).map(sided) as AssessmentRequest["weakness"],
   };
+}
+
+/** "GREAT_TOE-RIGHT" → { finding: "GREAT_TOE", side: "RIGHT" }. The last "-" separates the side. */
+function sided(key: string) {
+  const i = key.lastIndexOf("-");
+  return { finding: key.slice(0, i), side: key.slice(i + 1) };
 }

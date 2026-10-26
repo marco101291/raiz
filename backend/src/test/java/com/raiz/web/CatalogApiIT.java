@@ -56,4 +56,15 @@ class CatalogApiIT extends ApiIntegrationTest {
                 .andExpect(jsonPath("$[0].motorAction.id").value("ANKLE_DORSIFLEXION"))
                 .andExpect(jsonPath("$[0].safetyNote").isNotEmpty());
     }
+
+    @Test
+    void functionalQuestionsCoverTheKeyCervicalRoots() throws Exception {
+        mvc.perform(get("/api/v1/catalog/functional-questions"))
+                .andExpect(jsonPath("$[*].id", contains("ARM_RAISE", "ELBOW_BEND", "ARM_PUSH", "HAND_GRIP")))
+                .andExpect(jsonPath("$[0].roots", contains("C5")))
+                .andExpect(jsonPath("$[1].roots", contains("C5", "C6")))
+                .andExpect(jsonPath("$[2].roots", contains("C7")))
+                .andExpect(jsonPath("$[3].roots", contains("C8")))
+                .andExpect(jsonPath("$[3].question").value(org.hamcrest.Matchers.startsWith("¿Te falta fuerza")));
+    }
 }
