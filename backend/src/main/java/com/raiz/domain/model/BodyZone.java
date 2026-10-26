@@ -6,30 +6,30 @@ package com.raiz.domain.model;
  */
 public enum BodyZone {
     // Upper limb
-    LATERAL_SHOULDER("Cara lateral del hombro y brazo"),
-    LATERAL_FOREARM("Cara lateral del antebrazo"),
+    LATERAL_SHOULDER("Hombro y brazo, por fuera"),
+    LATERAL_FOREARM("Antebrazo, lado del pulgar"),
     THUMB("Pulgar"),
     INDEX_FINGER("Dedo índice"),
     MIDDLE_FINGER("Dedo medio"),
     RING_FINGER("Dedo anular"),
     LITTLE_FINGER("Dedo meñique"),
-    MEDIAL_FOREARM("Cara medial del antebrazo"),
-    MEDIAL_ARM("Cara medial del brazo"),
+    MEDIAL_FOREARM("Antebrazo, lado del meñique"),
+    MEDIAL_ARM("Brazo, por dentro"),
 
     // Lower limb
     GROIN("Ingle"),
-    UPPER_ANTERIOR_THIGH("Parte alta y anterior del muslo"),
-    ANTERIOR_THIGH("Cara anterior del muslo"),
-    MEDIAL_KNEE("Cara medial de la rodilla"),
-    MEDIAL_LEG("Cara medial de la pierna"),
-    MEDIAL_MALLEOLUS("Tobillo, lado interno"),
-    LATERAL_LEG("Cara lateral de la pierna"),
+    UPPER_ANTERIOR_THIGH("Muslo por delante, parte de arriba"),
+    ANTERIOR_THIGH("Muslo por delante, hasta la rodilla"),
+    MEDIAL_KNEE("Rodilla, por dentro"),
+    MEDIAL_LEG("Debajo de la rodilla, por dentro"),
+    MEDIAL_MALLEOLUS("Tobillo, por dentro"),
+    LATERAL_LEG("Debajo de la rodilla, por fuera"),
     DORSUM_FOOT("Empeine"),
     GREAT_TOE("Dedo gordo del pie"),
-    LATERAL_FOOT("Borde externo del pie"),
+    LATERAL_FOOT("Pie, borde de afuera"),
     SOLE("Planta del pie"),
     POSTERIOR_CALF("Pantorrilla"),
-    POSTERIOR_THIGH("Cara posterior del muslo");
+    POSTERIOR_THIGH("Muslo por detrás");
 
     private final String label;
 

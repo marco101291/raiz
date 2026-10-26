@@ -79,6 +79,14 @@ class FlywayMigrationIT {
         assertThat(zones).containsExactlyInAnyOrder("GROIN", "THUMB", "INDEX_FINGER", "MIDDLE_FINGER");
     }
 
+    @Test
+    void resultTextsForThePersonAvoidTechnicalTerms() {
+        var technical = column("SELECT code FROM result_text "
+                + "WHERE text ~* '(radicular|territorio|raíz|raíces|irradia|cola de caballo|estructura)'");
+
+        assertThat(technical).isEmpty();
+    }
+
     private List<String> column(String sql) {
         return jdbc.sql(sql).query(String.class).list();
     }

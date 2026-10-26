@@ -57,9 +57,9 @@ public record PainProfile(
     }
 
     public enum Chronicity {
-        ACUTE("Agudo (menos de 6 semanas)"),
-        SUBACUTE("Subagudo (6 a 12 semanas)"),
-        CHRONIC("Crónico (más de 12 semanas)");
+        ACUTE("Empezó hace menos de 6 semanas"),
+        SUBACUTE("Lleva de 6 a 12 semanas"),
+        CHRONIC("Lleva más de 12 semanas");
 
         private final String label;
 
