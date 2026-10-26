@@ -5,6 +5,11 @@
   max-width: 34rem;
 }
 
+/* A single view (arm and hand only have zones from the front): it takes the whole width. */
+.figuras:has(> :only-child) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .figura {
   margin: 0;
   display: grid;
@@ -66,9 +71,10 @@
   stroke-width: 1.6;
 }
 
-/* In viewBox units: it scales with the drawing, so it must be large to be readable on mobile. */
-.lado {
-  font-size: 17px;
+.lados {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--texto-sm);
   font-weight: 700;
-  fill: var(--tinta);
 }

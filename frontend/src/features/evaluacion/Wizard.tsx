@@ -106,6 +106,7 @@ export function Wizard() {
         <MapStep
           zones={catalog.bodyZones}
           optional={painStaysAxial(draft.pain)}
+          regions={draft.pain?.regions ?? []}
           defaultValue={draft.sensoryZones ?? []}
           onChange={(sensoryZones) => update({ sensoryZones })}
           onBack={() => update({ step: "dolor" })}

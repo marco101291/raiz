@@ -124,6 +124,13 @@ export const ZONES: Record<View, ZoneShape[]> = {
   ],
 };
 
+/** Full drawing, and the crop for each region so the map shows only the limb that matters, larger. */
+export const FULL_VIEWBOX = "0 0 220 516";
+export const REGION_VIEWBOX: Record<string, string> = {
+  CERVICAL: "0 62 220 238",
+  LUMBOSACRAL: "0 186 220 330",
+};
+
 /** Patient side for the half on the left of the screen, per view. */
 export const SCREEN_LEFT_SIDE: Record<View, "RIGHT" | "LEFT"> = { front: "RIGHT", back: "LEFT" };
 

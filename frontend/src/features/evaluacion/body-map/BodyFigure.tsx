@@ -7,6 +7,9 @@ const OTHER = { RIGHT: "LEFT", LEFT: "RIGHT" } as const;
 
 interface Props {
   view: View;
+  /** Zones that can be marked; the others are drawn as plain skin. */
+  visible: ReadonlySet<string>;
+  viewBox: string;
   selected: ReadonlySet<string>;
   labels: Record<string, string>;
   onToggle: (key: string) => void;
@@ -16,7 +19,7 @@ interface Props {
  * One view of the body. It is pointer-only (mouse or finger): the accessible control is the checkbox list
  * below, which shares the same state, so the SVG stays out of the accessibility tree.
  */
-export function BodyFigure({ view, selected, labels, onToggle }: Props) {
+export function BodyFigure({ view, visible, viewBox, selected, labels, onToggle }: Props) {
   const halves = [
     { side: SCREEN_LEFT_SIDE[view], transform: undefined },
     { side: OTHER[SCREEN_LEFT_SIDE[view]], transform: MIRROR },
@@ -28,7 +31,13 @@ export function BodyFigure({ view, selected, labels, onToggle }: Props) {
 
   return (
     <figure className={styles.figura}>
-      <svg viewBox="0 0 220 516" aria-hidden="true" focusable="false" className={styles.svg}>
+      {/* Side labels in HTML, above the drawing: inside the SVG they would collide with the limb once cropped.
+          In the front view, the patient's right is on the left. */}
+      <div className={styles.lados} aria-hidden="true">
+        <span>{sideLabel[halves[0].side]}</span>
+        <span>{sideLabel[halves[1].side]}</span>
+      </div>
+      <svg viewBox={viewBox} aria-hidden="true" focusable="false" className={styles.svg}>
         <defs>
           <clipPath id={clipId}>
             <path d={SILHOUETTE[view]} />
@@ -55,7 +64,9 @@ export function BodyFigure({ view, selected, labels, onToggle }: Props) {
         {/* The clip is in the same group as the mirroring: that way the silhouette mirrors along with the zones. */}
         {halves.map(({ side, transform }) => (
           <g key={side} transform={transform} clipPath={`url(#${clipId})`}>
-            {ZONES[view].map(({ zone, d }) => {
+            {ZONES[view]
+              .filter(({ zone }) => visible.has(zone))
+              .map(({ zone, d }) => {
               const key = zoneKey(zone, side);
               return (
                 <path
@@ -75,13 +86,6 @@ export function BodyFigure({ view, selected, labels, onToggle }: Props) {
         {halves.map(({ side, transform }) => (
           <path key={side} d={SILHOUETTE[view]} transform={transform} className={styles.contorno} />
         ))}
-        {/* Side labels, next to the head: in the front view, the patient's right is on the left. */}
-        <text x="4" y="22" className={styles.lado}>
-          {sideLabel[halves[0].side]}
-        </text>
-        <text x="216" y="22" textAnchor="end" className={styles.lado}>
-          {sideLabel[halves[1].side]}
-        </text>
       </svg>
       <figcaption>{view === "front" ? "De frente" : "De espalda"}</figcaption>
     </figure>

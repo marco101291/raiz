@@ -9,13 +9,14 @@ const zones = [
   { id: "SOLE", label: "Planta del pie", region: { id: "LUMBOSACRAL", label: "Lumbosacra" } },
 ];
 
-function setup(optional = false, defaultValue: string[] = []) {
+function setup(optional = false, defaultValue: string[] = [], regions: string[] = []) {
   const onSubmit = vi.fn();
   const onChange = vi.fn();
   const { container } = render(
     <MapStep
       zones={zones}
       optional={optional}
+      regions={regions}
       defaultValue={defaultValue}
       onChange={onChange}
       onBack={vi.fn()}
@@ -76,6 +77,35 @@ describe("MapStep", () => {
     expect(onScreenLeft("GREAT_TOE-LEFT")).toBe(false);
     expect(onScreenLeft("SOLE-LEFT")).toBe(true);
     expect(onScreenLeft("SOLE-RIGHT")).toBe(false);
+  });
+
+  it("si el dolor empieza en el cuello, solo muestra el brazo y la mano, de frente", () => {
+    const { path } = setup(false, [], ["CERVICAL"]);
+
+    expect(screen.getByRole("checkbox", { name: "Pulgar, derecha" })).toBeInTheDocument();
+    expect(screen.queryByRole("checkbox", { name: "Dedo gordo del pie, derecha" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("table", { name: "Pierna y pie" })).not.toBeInTheDocument();
+    expect(path("THUMB-RIGHT")).not.toBeNull();
+    expect(path("GREAT_TOE-RIGHT")).toBeNull();
+    expect(screen.queryByText("De espalda")).not.toBeInTheDocument();
+    expect(screen.getByText("Toca las zonas del brazo y la mano donde lo sientes.")).toBeInTheDocument();
+  });
+
+  it("si el dolor empieza en la espalda baja, muestra la pierna de frente y de espalda", () => {
+    setup(false, [], ["LUMBOSACRAL"]);
+
+    expect(screen.queryByRole("checkbox", { name: "Pulgar, derecha" })).not.toBeInTheDocument();
+    expect(screen.getByText("De frente")).toBeInTheDocument();
+    expect(screen.getByText("De espalda")).toBeInTheDocument();
+  });
+
+  it("descarta zonas marcadas antes en una región que ya no aplica", async () => {
+    const { onSubmit } = setup(false, ["THUMB-RIGHT", "SOLE-LEFT"], ["LUMBOSACRAL"]);
+
+    expect(screen.getByRole("heading", { name: "Marcaste 1 zona" })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Continuar" }));
+
+    expect(onSubmit).toHaveBeenCalledWith(["SOLE-LEFT"]);
   });
 
   it("splitKey separa la zona del lado aunque la zona tenga guiones bajos", () => {
