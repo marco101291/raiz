@@ -13,17 +13,21 @@ const referral = (id: string, label: string) => ({
   disclaimer: "Esta herramienta es educativa.",
 });
 
+const WARNING_SIGNS = [
+  { id: "BLADDER_OR_BOWEL_DYSFUNCTION", label: "Dificultad para orinar", emergency: true },
+];
+
 function renderResult(request = {}) {
   const onEdit = vi.fn();
   const onRestart = vi.fn();
-  render(<ResultStep request={request} onEdit={onEdit} onRestart={onRestart} />);
+  render(<ResultStep request={request} warningSigns={WARNING_SIGNS} onEdit={onEdit} onRestart={onRestart} />);
   return { onEdit, onRestart };
 }
 
 describe("ResultStep", () => {
   beforeEach(() => assess.mockReset());
 
-  it("correlación: derivación arriba, patrón, raíces con evidencia y aviso", async () => {
+  it("correlación: qué hacer, cuándo ir a urgencias, qué puede ser y, al final, las raíces para el médico", async () => {
     assess.mockResolvedValue({
       type: "ROOT_CORRELATION",
       referral: referral("PROMPT", "Busca valoración médica en los próximos días"),
@@ -50,10 +54,15 @@ describe("ResultStep", () => {
     expect(headings).toEqual([
       "Busca valoración médica en los próximos días",
       "A quién acudir",
+      "Cuándo ir a urgencias",
+      "Qué puede ser",
       "Cómo se comporta tu dolor",
-      "Raíces compatibles con tus síntomas",
       "S1 derecha",
     ]);
+    expect(screen.getByText("Dificultad para orinar")).toBeInTheDocument();
+    const forDoctor = screen.getByText("Para tu médico: raíces nerviosas compatibles").closest("details");
+    expect(forDoctor).not.toHaveAttribute("open");
+    expect(forDoctor).toContainElement(screen.getByRole("heading", { name: "S1 derecha" }));
     expect(screen.getByText("Hay datos de pérdida de fuerza o de reflejos.")).toBeInTheDocument();
     expect(screen.getByText("Debilidad al: pararse de puntas")).toBeInTheDocument();
     expect(screen.getByText("Agudo (menos de 6 semanas)")).toBeInTheDocument();
@@ -70,9 +79,9 @@ describe("ResultStep", () => {
     });
     renderResult();
 
-    expect(await screen.findByRole("heading", { name: "Qué significa" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Qué puede ser" })).toBeInTheDocument();
     expect(screen.getByText("Lo que describes no sigue el territorio de una raíz nerviosa.")).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "Raíces compatibles con tus síntomas" })).not.toBeInTheDocument();
+    expect(screen.queryByText(/Para tu médico/)).not.toBeInTheDocument();
   });
 
   it("muestra otras causas posibles de las zonas marcadas, con su fuente", async () => {
@@ -87,7 +96,9 @@ describe("ResultStep", () => {
     });
     renderResult();
 
-    expect(await screen.findByRole("heading", { name: "También puede deberse a" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { name: "Otras causas frecuentes en las zonas que marcaste" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Pubalgia" })).toBeInTheDocument();
     expect(screen.getByText("Fuente: Weir 2015")).toBeInTheDocument();
   });
@@ -106,6 +117,7 @@ describe("ResultStep", () => {
     expect(screen.getByText(/llama al 911/)).toBeInTheDocument();
     expect(screen.getByText(/marcaste síntomas en ambos lados/)).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Cómo se comporta tu dolor" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Cuándo ir a urgencias" })).not.toBeInTheDocument();
   });
 
   it("si el motor falla con alarma, no deja a la persona sin salida", async () => {

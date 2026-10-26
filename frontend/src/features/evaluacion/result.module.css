@@ -30,6 +30,59 @@
   font-weight: 700;
 }
 
+.seccion h3 {
+  font-size: var(--texto);
+}
+
+.bloque {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+
+/* When to go to the ER: always visible, marked by a thick ink border rather than an urgency color, which
+   only the referral uses. */
+.alerta {
+  border-top: 3px solid var(--tinta);
+}
+
+.causas {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.causa {
+  display: grid;
+  gap: 0.3rem;
+  padding-left: 1rem;
+  border-left: 4px solid var(--linea);
+}
+
+.causa h4 {
+  font-size: var(--texto);
+}
+
+/* For the doctor: folded, so the technical detail does not lead the result. */
+.medico {
+  display: grid;
+  gap: 0.8rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--linea);
+}
+
+.medico summary {
+  font-size: var(--texto-lg);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.medico[open] summary {
+  margin-bottom: 0.8rem;
+}
+
 /* The roots really are a sequence: ordered from most to least compatible. */
 .raices {
   margin: 0;
@@ -48,11 +101,6 @@
 
 .raiz h3 {
   font-size: var(--texto-lg);
-}
-
-/* Another possible cause: same format as a root, with a neutral border so it does not compete with them. */
-.otraCausa {
-  border-left-color: var(--linea);
 }
 
 .deficit {

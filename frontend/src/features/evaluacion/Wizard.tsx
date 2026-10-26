@@ -71,6 +71,7 @@ export function Wizard() {
     return (
       <ResultStep
         request={buildRequest(draft)}
+        warningSigns={catalog.flags.filter((flag) => flag.emergency)}
         onEdit={() => update({ step: alarm ? "alarma" : "mapa" })}
         onRestart={resetDraft}
       />

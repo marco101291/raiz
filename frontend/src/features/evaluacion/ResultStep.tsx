@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api, type AssessmentRequest, type AssessmentResponse } from "@/lib/api/client";
+import { api, type AssessmentRequest, type AssessmentResponse, type Schemas } from "@/lib/api/client";
 import { CorrelationResult } from "./CorrelationResult";
 import result from "./result.module.css";
 import step from "./step.module.css";
@@ -11,15 +11,18 @@ type State = { status: "loading" } | { status: "error" } | { status: "ready"; as
 
 interface Props {
   request: AssessmentRequest;
+  /** Emergency red flags from the triage catalog, shown on every non-urgent result. */
+  warningSigns?: Schemas["RedFlagView"][];
   onEdit: () => void;
   onRestart: () => void;
 }
 
 /**
  * Step 5. The engine is called on arrival: one request per assessment, repeated if the person reloads
- * (Raíz does not store assessments). Fixed order: referral, pattern, roots, disclaimer.
+ * (Raíz does not store assessments). Fixed order: referral, when to go to the ER, what it may be, roots
+ * for the doctor, disclaimer.
  */
-export function ResultStep({ request, onEdit, onRestart }: Props) {
+export function ResultStep({ request, warningSigns = [], onEdit, onRestart }: Props) {
   const [state, setState] = useState<State>({ status: "loading" });
   const [attempt, setAttempt] = useState(0);
   const body = JSON.stringify(request);
@@ -73,7 +76,7 @@ export function ResultStep({ request, onEdit, onRestart }: Props) {
       {assessment.type === "URGENT_REFERRAL" ? (
         <UrgentResult result={assessment} />
       ) : (
-        <CorrelationResult result={assessment} />
+        <CorrelationResult result={assessment} warningSigns={warningSigns} />
       )}
       <p className={result.aviso}>{assessment.referral?.disclaimer}</p>
       <div className={step.acciones}>
