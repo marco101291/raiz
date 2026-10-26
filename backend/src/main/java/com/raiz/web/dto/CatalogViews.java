@@ -11,8 +11,13 @@ public final class CatalogViews {
     public record BodyZoneView(String id, String label, CodeLabel region) {
     }
 
+    /** @param regions where the pain can start, each with its own "how far does it reach" options */
     public record PainOptionsView(List<CodeLabel> qualities, List<CodeLabel> aggravators,
-                                  List<CodeLabel> relievers, List<CodeLabel> distributions) {
+                                  List<CodeLabel> relievers, List<PainRegionView> regions) {
+    }
+
+    /** @param label plain-language region name ("Cuello", "Espalda baja") */
+    public record PainRegionView(String id, String label, List<CodeLabel> distributions) {
     }
 
     /** @param roots roots whose myotome includes the movement, in anatomical order */

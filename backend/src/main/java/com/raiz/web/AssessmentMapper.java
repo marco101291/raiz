@@ -8,7 +8,9 @@ import com.raiz.domain.assessment.Referral;
 import com.raiz.domain.assessment.RootMatch;
 import com.raiz.domain.assessment.Specialist;
 import com.raiz.domain.assessment.SymptomReport;
+import com.raiz.domain.model.PainDistribution;
 import com.raiz.domain.model.Sided;
+import com.raiz.domain.model.SpinalRegion;
 import com.raiz.persistence.OtherCause;
 import com.raiz.persistence.ResultTextCatalog;
 import com.raiz.web.dto.AssessmentRequest;
@@ -21,6 +23,7 @@ import com.raiz.web.dto.AssessmentResponse.RootMatchView;
 import com.raiz.web.dto.CodeLabel;
 import com.raiz.web.dto.RedFlagView;
 
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,7 +43,14 @@ final class AssessmentMapper {
         if (pain == null) {
             return null;
         }
-        return new PainProfile(pain.intensity(), pain.durationDays(), pain.distribution(),
+        // A repeated region is a client error (400), not a server error: hence IllegalArgumentException.
+        var reach = pain.reach().stream().collect(Collectors.toMap(
+                AssessmentRequest.Reach::region, AssessmentRequest.Reach::distribution,
+                (first, second) -> {
+                    throw new IllegalArgumentException("Cada región solo puede aparecer una vez en pain.reach");
+                },
+                () -> new EnumMap<SpinalRegion, PainDistribution>(SpinalRegion.class)));
+        return new PainProfile(pain.intensity(), pain.durationDays(), reach,
                 pain.qualities(), pain.aggravators(), pain.relievers());
     }
 

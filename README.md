@@ -102,7 +102,7 @@ Los pesos y umbrales son heurísticos y deben revisarse con un profesional antes
 | `GET` | `/api/v1/catalog/body-zones` | Zonas para el mapa SVG (id + etiqueta) |
 | `GET` | `/api/v1/catalog/red-flags` | Datos de alarma para el triage |
 
-Además: `GET /api/v1/catalog/pain-options` (descriptores, agravantes, aliviantes, distribuciones) y `GET /api/v1/catalog/strength-tests` (pruebas guiadas), para que el frontend no duplique etiquetas.
+Además: `GET /api/v1/catalog/pain-options` (descriptores, agravantes, aliviantes y, por región, hasta dónde llega el dolor) y `GET /api/v1/catalog/strength-tests` (pruebas guiadas), para que el frontend no duplique etiquetas.
 
 Ejemplo de `POST /api/v1/assessments`:
 
@@ -112,7 +112,7 @@ Ejemplo de `POST /api/v1/assessments`:
   "pain": {
     "intensity": 4,
     "durationDays": 9,
-    "distribution": "PROXIMAL",
+    "reach": [{ "region": "LUMBOSACRAL", "distribution": "PROXIMAL" }],
     "qualities": ["BURNING", "TINGLING"],
     "aggravators": ["SITTING", "FORWARD_BENDING"],
     "relievers": ["LYING_DOWN"]
@@ -145,7 +145,7 @@ La evaluación del paciente es un asistente de varios pasos. El modo profesional
 2. Cuestionario de dolor
    │
    ▼
-3. Mapa corporal ── opcional si distribution = AXIAL_ONLY ("no se irradia")
+3. Mapa corporal ── opcional si el dolor no baja desde ninguna región (todo AXIAL_ONLY)
    │
    ▼
 4. Fuerza guiada ── solo si hay irradiación o zonas marcadas
@@ -168,7 +168,8 @@ Una pantalla con las preguntas de `RedFlag` en sí/no, formuladas en lenguaje cl
 |---|---|---|
 | `intensity` | Slider 0–10 con descriptores (0 sin dolor, 10 el peor imaginable) | Obligatorio, entero 0–10 |
 | Inicio del episodio | Selector de fecha "¿Cuándo empezó esta vez?" → el cliente calcula `durationDays` | Obligatorio, no futura |
-| `distribution` | Tres opciones con silueta ilustrada | Obligatorio |
+| `reach[].region` | "¿Dónde empieza el dolor?": cuello, espalda baja o ambos (chips) | Obligatorio, al menos uno |
+| `reach[].distribution` | "¿Hasta dónde llega?", una pregunta por región con tres opciones y silueta: hasta el codo o la mano para el cuello, hasta la rodilla o el pie para la espalda baja | Obligatorio por cada región elegida |
 | `qualities` | Chips de selección múltiple | Al menos uno |
 | `aggravators` | Chips de selección múltiple | Opcional |
 | `relievers` | Chips de selección múltiple; "Nada lo alivia" excluye a los demás | Opcional |

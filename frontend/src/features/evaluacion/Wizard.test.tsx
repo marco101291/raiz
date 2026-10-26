@@ -27,10 +27,23 @@ const options = {
     { id: "LYING_DOWN", label: "Acostarse" },
     { id: "NOTHING", label: "Nada lo alivia" },
   ],
-  distributions: [
-    { id: "AXIAL_ONLY", label: "Solo en la espalda o el cuello" },
-    { id: "PROXIMAL", label: "Se extiende a nalga o muslo" },
-    { id: "DISTAL", label: "Baja por debajo de la rodilla" },
+  regions: [
+    {
+      id: "CERVICAL",
+      label: "Cuello",
+      distributions: [
+        { id: "AXIAL_ONLY", label: "Solo en el cuello" },
+        { id: "DISTAL", label: "Pasa del codo" },
+      ],
+    },
+    {
+      id: "LUMBOSACRAL",
+      label: "Espalda baja",
+      distributions: [
+        { id: "AXIAL_ONLY", label: "Solo en la espalda baja" },
+        { id: "DISTAL", label: "Pasa de la rodilla" },
+      ],
+    },
   ],
 };
 
@@ -139,7 +152,10 @@ describe("Wizard: cuestionario de dolor", () => {
 
     await userEvent.click(screen.getByRole("radio", { name: "6: Moderado" }));
     await userEvent.type(screen.getByLabelText("¿Cuándo empezó esta vez?"), "2026-01-05");
-    await userEvent.click(screen.getByRole("radio", { name: /Baja por debajo de la rodilla/ }));
+    await userEvent.click(screen.getByRole("checkbox", { name: "Espalda baja" }));
+    expect(screen.queryByRole("group", { name: /dolor de cuello/ })).not.toBeInTheDocument();
+    const lowBackReach = screen.getByRole("group", { name: "¿Hasta dónde llega el dolor de espalda baja?" });
+    await userEvent.click(within(lowBackReach).getByRole("radio", { name: /Pasa de la rodilla/ }));
     await userEvent.click(screen.getByRole("checkbox", { name: "Ardor o quemazón" }));
     await userEvent.click(screen.getByRole("button", { name: "Continuar" }));
 
@@ -152,7 +168,11 @@ describe("Wizard: cuestionario de dolor", () => {
     expect(assess).toHaveBeenCalledWith(
       expect.objectContaining({
         redFlags: [],
-        pain: expect.objectContaining({ intensity: 6, distribution: "DISTAL", qualities: ["BURNING"] }),
+        pain: expect.objectContaining({
+          intensity: 6,
+          reach: [{ region: "LUMBOSACRAL", distribution: "DISTAL" }],
+          qualities: ["BURNING"],
+        }),
         sensoryZones: [{ finding: "GREAT_TOE", side: "RIGHT" }],
       }),
     );
@@ -160,7 +180,8 @@ describe("Wizard: cuestionario de dolor", () => {
     expect(saved.pain).toMatchObject({
       intensity: 6,
       onsetDate: "2026-01-05",
-      distribution: "DISTAL",
+      regions: ["LUMBOSACRAL"],
+      reach: { LUMBOSACRAL: "DISTAL" },
       qualities: ["BURNING"],
     });
   });

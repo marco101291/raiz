@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { api, type Schemas } from "@/lib/api/client";
-import { buildRequest, getDraft, resetDraft, setDraft, subscribeDraft, type Draft } from "./draft";
+import { buildRequest, getDraft, painStaysAxial, resetDraft, setDraft, subscribeDraft, type Draft } from "./draft";
 import { MapStep } from "./MapStep";
 import { PainStep } from "./PainStep";
 import { Progress } from "./Progress";
@@ -105,7 +105,7 @@ export function Wizard() {
       {draft.step === "mapa" && (
         <MapStep
           zones={catalog.bodyZones}
-          distribution={draft.pain?.distribution}
+          optional={painStaysAxial(draft.pain)}
           defaultValue={draft.sensoryZones ?? []}
           onChange={(sensoryZones) => update({ sensoryZones })}
           onBack={() => update({ step: "dolor" })}

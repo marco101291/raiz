@@ -23,13 +23,11 @@ public final class PainPatternClassifier {
         var features = new ArrayList<String>();
 
         // Radicular: nerve-type pain that follows a limb.
-        boolean followsLimb = pain.distribution() == PainDistribution.DISTAL || !report.sensoryZones().isEmpty();
+        boolean followsLimb = pain.reachesBeyondElbowOrKnee() || !report.sensoryZones().isEmpty();
         if (pain.hasNeuropathicQuality() && followsLimb) {
             pain.qualities().stream().filter(q -> q.neuropathic())
                     .forEach(q -> features.add("Dolor descrito como: " + q.label().toLowerCase()));
-            features.add(pain.distribution() == PainDistribution.DISTAL
-                    ? "Baja por debajo de la rodilla o del codo"
-                    : "Sigue una zona concreta de la extremidad");
+            features.add(reachFeature(pain));
             return new PatternInsight(PatternInsight.Type.RADICULAR, pain.chronicity(), features);
         }
 
@@ -60,5 +58,19 @@ public final class PainPatternClassifier {
         }
 
         return new PatternInsight(PatternInsight.Type.NONSPECIFIC, pain.chronicity(), List.of());
+    }
+
+    /** "Baja por debajo del codo", "... de la rodilla" or both, depending on where the pain started. */
+    private static String reachFeature(PainProfile pain) {
+        List<String> beyond = pain.reach().entrySet().stream()
+                .filter(entry -> entry.getValue() == PainDistribution.DISTAL)
+                .map(entry -> switch (entry.getKey()) {
+                    case CERVICAL -> "del codo";
+                    case LUMBOSACRAL -> "de la rodilla";
+                })
+                .toList();
+        return beyond.isEmpty()
+                ? "Sigue una zona concreta de la extremidad"
+                : "Baja por debajo " + String.join(" y ", beyond);
     }
 }

@@ -9,11 +9,14 @@ import com.raiz.domain.model.RedFlag;
 import com.raiz.domain.model.Reflex;
 import com.raiz.domain.model.Reliever;
 import com.raiz.domain.model.Side;
+import com.raiz.domain.model.SpinalRegion;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -35,11 +38,21 @@ public record AssessmentRequest(
             @NotNull(message = "es obligatoria")
             @Min(value = 0, message = "no puede ser negativa")
             Integer durationDays,
-            @NotNull(message = "es obligatoria")
-            PainDistribution distribution,
+            @NotEmpty(message = "indica dónde empieza el dolor")
+            List<@NotNull(message = "no puede contener valores nulos") @Valid Reach> reach,
             Set<@NotNull(message = "no puede contener valores nulos") PainQuality> qualities,
             Set<@NotNull(message = "no puede contener valores nulos") Aggravator> aggravators,
             Set<@NotNull(message = "no puede contener valores nulos") Reliever> relievers) {
+    }
+
+    /**
+     * Where the pain starts and how far it reaches from there, e.g.
+     * {@code {"region": "LUMBOSACRAL", "distribution": "PROXIMAL"}}. One entry per region; both if the pain
+     * starts in the neck and in the low back.
+     */
+    public record Reach(
+            @NotNull(message = "es obligatoria") SpinalRegion region,
+            @NotNull(message = "es obligatoria") PainDistribution distribution) {
     }
 
     /** A finding with its side, e.g. {@code {"finding": "GREAT_TOE", "side": "RIGHT"}}. */

@@ -17,7 +17,10 @@ const painDraftSchema = z
   .object({
     intensity: z.number().int().min(0).max(10).nullable(),
     onsetDate: z.string(),
-    distribution: z.string().nullable(),
+    /** Where the pain starts: "CERVICAL", "LUMBOSACRAL" or both. */
+    regions: z.array(z.string()),
+    /** How far it reaches from each region, e.g. { LUMBOSACRAL: "DISTAL" }. */
+    reach: z.record(z.string(), z.string().nullable()),
     qualities: z.array(z.string()),
     aggravators: z.array(z.string()),
     relievers: z.array(z.string()),
@@ -77,6 +80,12 @@ export function subscribeDraft(listener: () => void): () => void {
 }
 
 /** Red flags the person answered "sí" to, in catalog order. */
+/** The map is optional when the pain stays in the neck or the low back in every region (README, Forms). */
+export function painStaysAxial(pain: PainDraft | undefined): boolean {
+  const regions = pain?.regions ?? [];
+  return regions.length > 0 && regions.every((region) => pain?.reach?.[region] === "AXIAL_ONLY");
+}
+
 export function reportedRedFlags(triage: Draft["triage"]): string[] {
   return Object.entries(triage)
     .filter(([, value]) => value === "si")
@@ -89,14 +98,16 @@ export function reportedRedFlags(triage: Draft["triage"]): string[] {
  */
 export function buildRequest(draft: Draft, today = todayIso()): AssessmentRequest {
   const pain = draft.pain;
-  const complete = pain?.intensity != null && pain.onsetDate && pain.distribution;
+  const regions = pain?.regions ?? [];
+  const complete =
+    pain?.intensity != null && pain.onsetDate && regions.length > 0 && regions.every((region) => pain.reach?.[region]);
   return {
     redFlags: reportedRedFlags(draft.triage) as AssessmentRequest["redFlags"],
     pain: complete
       ? ({
           intensity: pain.intensity,
           durationDays: daysBetween(pain.onsetDate!, today),
-          distribution: pain.distribution,
+          reach: regions.map((region) => ({ region, distribution: pain.reach![region] })),
           qualities: pain.qualities ?? [],
           aggravators: pain.aggravators ?? [],
           relievers: pain.relievers ?? [],

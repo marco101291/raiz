@@ -13,19 +13,33 @@ import { PainScale } from "./PainScale";
 import step from "./step.module.css";
 import styles from "./PainStep.module.css";
 
-const schema = z.object({
-  intensity: z.number().nullish().pipe(z.number({ error: "Elige un número del 0 al 10." }).int().min(0).max(10)),
-  onsetDate: z
-    .string()
-    .min(1, "Elige la fecha.")
-    .refine(isIsoDate, "Escribe una fecha válida.")
-    .refine((date) => date <= todayIso(), "La fecha no puede ser posterior a hoy."),
-  distribution: z.string().nullish().pipe(z.string({ error: "Elige hasta dónde llega el dolor." })),
-  qualities: z.array(z.string()).min(1, "Elige al menos una."),
-  aggravators: z.array(z.string()),
-  relievers: z.array(z.string()),
-});
-/** Values while filling in (intensity or distribution may be missing) and once validated. */
+const schema = z
+  .object({
+    regions: z.array(z.string()).min(1, "Elige dónde empieza el dolor."),
+    reach: z.record(z.string(), z.string().nullish()),
+    intensity: z.number().nullish().pipe(z.number({ error: "Elige un número del 0 al 10." }).int().min(0).max(10)),
+    onsetDate: z
+      .string()
+      .min(1, "Elige la fecha.")
+      .refine(isIsoDate, "Escribe una fecha válida.")
+      .refine((date) => date <= todayIso(), "La fecha no puede ser posterior a hoy."),
+    qualities: z.array(z.string()).min(1, "Elige al menos una."),
+    aggravators: z.array(z.string()),
+    relievers: z.array(z.string()),
+  })
+  // Each region where the pain starts needs its own answer; reach for unselected regions is dropped.
+  .superRefine(({ regions, reach }, ctx) => {
+    for (const region of regions) {
+      if (!reach[region]) {
+        ctx.addIssue({ code: "custom", path: ["reach", region], message: "Elige hasta dónde llega el dolor." });
+      }
+    }
+  })
+  .transform((values) => ({
+    ...values,
+    reach: Object.fromEntries(values.regions.map((region) => [region, values.reach[region]!])),
+  }));
+/** Values while filling in (intensity or how far it reaches may be missing) and once validated. */
 type PainForm = z.input<typeof schema>;
 export type PainAnswers = z.output<typeof schema>;
 
@@ -49,9 +63,10 @@ export function PainStep({ options, defaultValues, onChange, onBack, onSubmit }:
     resolver: zodResolver(schema),
     shouldFocusError: true,
     defaultValues: {
+      regions: [],
+      reach: {},
       intensity: null,
       onsetDate: "",
-      distribution: null,
       qualities: [],
       aggravators: [],
       relievers: [],
@@ -64,6 +79,8 @@ export function PainStep({ options, defaultValues, onChange, onBack, onSubmit }:
   useEffect(() => subscribe({ formState: { values: true }, callback: ({ values }) => notifyChange(values) }), [subscribe]);
 
   const onsetDate = useWatch({ control, name: "onsetDate" });
+  const regions = useWatch({ control, name: "regions" });
+  const reachErrors = errors.reach as Record<string, { message?: string } | undefined> | undefined;
   const today = todayIso();
   const duration = isIsoDate(onsetDate) && onsetDate <= today ? describeDuration(daysBetween(onsetDate, today)) : null;
   const errorCount = Object.keys(errors).length;
@@ -80,6 +97,39 @@ export function PainStep({ options, defaultValues, onChange, onBack, onSubmit }:
           {errorCount === 1 ? "Te falta 1 respuesta." : `Te faltan ${errorCount} respuestas.`}
         </p>
       )}
+
+      <fieldset className={styles.seccion}>
+        <legend className={styles.pregunta}>¿Dónde empieza el dolor?</legend>
+        <p className={styles.ayuda}>Si empieza en los dos sitios, elige ambos.</p>
+        <Controller
+          control={control}
+          name="regions"
+          render={({ field }) => (
+            <ChipGroup name={field.name} options={options.regions ?? []} value={field.value} onChange={field.onChange} />
+          )}
+        />
+        <FieldError message={errors.regions?.message} />
+      </fieldset>
+
+      {options.regions
+        ?.filter(({ id = "" }) => regions.includes(id))
+        .map(({ id = "", label = "", distributions }) => (
+          <fieldset key={id} className={styles.seccion}>
+            <legend className={styles.pregunta}>¿Hasta dónde llega el dolor de {label.toLowerCase()}?</legend>
+            <div className={styles.distribuciones}>
+              {distributions?.map((option) => (
+                <label key={option.id} className={styles.distribucion}>
+                  <input type="radio" value={option.id} {...register(`reach.${id}`)} />
+                  <span>
+                    <DistributionFigure region={id} distribution={option.id ?? ""} />
+                    {option.label}
+                  </span>
+                </label>
+              ))}
+            </div>
+            <FieldError message={reachErrors?.[id]?.message} />
+          </fieldset>
+        ))}
 
       <fieldset className={styles.seccion}>
         <legend className={styles.pregunta}>¿Qué tan fuerte es el dolor ahora?</legend>
@@ -121,22 +171,6 @@ export function PainStep({ options, defaultValues, onChange, onBack, onSubmit }:
         {duration && <p className={styles.duracion}>{duration}</p>}
         <FieldError message={errors.onsetDate?.message} />
       </div>
-
-      <fieldset className={styles.seccion}>
-        <legend className={styles.pregunta}>¿Hasta dónde llega el dolor?</legend>
-        <div className={styles.distribuciones}>
-          {options.distributions?.map(({ id = "", label }) => (
-            <label key={id} className={styles.distribucion}>
-              <input type="radio" value={id} {...register("distribution")} />
-              <span>
-                <DistributionFigure distribution={id} />
-                {label}
-              </span>
-            </label>
-          ))}
-        </div>
-        <FieldError message={errors.distribution?.message} />
-      </fieldset>
 
       <fieldset className={styles.seccion}>
         <legend className={styles.pregunta}>¿Cómo se siente?</legend>

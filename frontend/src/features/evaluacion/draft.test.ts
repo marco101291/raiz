@@ -62,7 +62,8 @@ describe("buildRequest", () => {
         pain: {
           intensity: 4,
           onsetDate: "2026-10-04",
-          distribution: "PROXIMAL",
+          regions: ["LUMBOSACRAL"],
+          reach: { LUMBOSACRAL: "PROXIMAL", CERVICAL: "DISTAL" },
           qualities: ["BURNING"],
           aggravators: ["SITTING"],
           relievers: [],
@@ -75,7 +76,7 @@ describe("buildRequest", () => {
       pain: {
         intensity: 4,
         durationDays: 9,
-        distribution: "PROXIMAL",
+        reach: [{ region: "LUMBOSACRAL", distribution: "PROXIMAL" }],
         qualities: ["BURNING"],
         aggravators: ["SITTING"],
         relievers: [],
@@ -90,5 +91,15 @@ describe("buildRequest", () => {
   it("no envía un cuestionario de dolor incompleto", async () => {
     const { buildRequest } = await freshDraft();
     expect(buildRequest({ step: "resultado", triage: {}, pain: { intensity: 4 } }).pain).toBeUndefined();
+    const missingReach = { intensity: 4, onsetDate: "2026-10-04", regions: ["CERVICAL", "LUMBOSACRAL"], reach: {} };
+    expect(buildRequest({ step: "resultado", triage: {}, pain: missingReach }).pain).toBeUndefined();
+  });
+
+  it("el mapa es opcional solo si el dolor no baja desde ninguna región", async () => {
+    const { painStaysAxial } = await freshDraft();
+    const neckAndBack = ["CERVICAL", "LUMBOSACRAL"];
+    expect(painStaysAxial({ regions: ["CERVICAL"], reach: { CERVICAL: "AXIAL_ONLY" } })).toBe(true);
+    expect(painStaysAxial({ regions: neckAndBack, reach: { CERVICAL: "AXIAL_ONLY", LUMBOSACRAL: "PROXIMAL" } })).toBe(false);
+    expect(painStaysAxial({ regions: [] })).toBe(false);
   });
 });

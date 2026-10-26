@@ -6,6 +6,7 @@ import com.raiz.domain.port.NerveRootCatalog;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -213,7 +214,7 @@ class CorrelationEngineTest {
 
     @Test
     void flexionSittingAndCoughPatternIsDiscogenic() {
-        var pain = new PainProfile(4, 5, PainDistribution.AXIAL_ONLY, Set.of(PainQuality.DULL_ACHE),
+        var pain = new PainProfile(4, 5, lowBack(PainDistribution.AXIAL_ONLY), Set.of(PainQuality.DULL_ACHE),
                 Set.of(Aggravator.SITTING, Aggravator.FORWARD_BENDING, Aggravator.COUGH_SNEEZE),
                 Set.of(Reliever.WALKING));
 
@@ -225,7 +226,7 @@ class CorrelationEngineTest {
 
     @Test
     void extensionPatternRelievedBySitting() {
-        var pain = new PainProfile(3, 10, PainDistribution.AXIAL_ONLY, Set.of(PainQuality.STIFFNESS),
+        var pain = new PainProfile(3, 10, lowBack(PainDistribution.AXIAL_ONLY), Set.of(PainQuality.STIFFNESS),
                 Set.of(Aggravator.BACKWARD_BENDING, Aggravator.STANDING_LONG), Set.of(Reliever.SITTING));
 
         Assessment result = engine.assess(new SymptomReport(null, pain, null, null, null));
@@ -244,11 +245,51 @@ class CorrelationEngineTest {
     @Test
     void painProfileRejectsOutOfRangeIntensity() {
         org.assertj.core.api.Assertions.assertThatIllegalArgumentException()
-                .isThrownBy(() -> new PainProfile(11, 1, PainDistribution.AXIAL_ONLY, null, null, null));
+                .isThrownBy(() -> new PainProfile(11, 1, lowBack(PainDistribution.AXIAL_ONLY), null, null, null));
+    }
+
+    @Test
+    void painProfileRequiresWhereThePainStarts() {
+        org.assertj.core.api.Assertions.assertThatIllegalArgumentException()
+                .isThrownBy(() -> new PainProfile(4, 1, Map.of(), null, null, null));
+    }
+
+    @Test
+    void radicularFeatureNamesTheElbowForNeckPain() {
+        var pain = new PainProfile(5, 7, Map.of(SpinalRegion.CERVICAL, PainDistribution.DISTAL),
+                Set.of(PainQuality.TINGLING), null, null);
+
+        assertThat(engine.assess(new SymptomReport(null, pain, null, null, null)).pattern())
+                .satisfies(p -> assertThat(p.type()).isEqualTo(PatternInsight.Type.RADICULAR))
+                .satisfies(p -> assertThat(p.features()).contains("Baja por debajo del codo"));
+    }
+
+    @Test
+    void painStartingInNeckAndLowBackNamesBothJoints() {
+        var pain = new PainProfile(5, 7,
+                Map.of(SpinalRegion.LUMBOSACRAL, PainDistribution.DISTAL, SpinalRegion.CERVICAL, PainDistribution.DISTAL),
+                Set.of(PainQuality.TINGLING), null, null);
+
+        assertThat(engine.assess(new SymptomReport(null, pain, null, null, null)).pattern().features())
+                .contains("Baja por debajo del codo y de la rodilla");
+    }
+
+    @Test
+    void pastTheElbowOrKneeInOnlyOneRegionStillCountsAsFollowingTheLimb() {
+        var pain = new PainProfile(5, 7,
+                Map.of(SpinalRegion.LUMBOSACRAL, PainDistribution.AXIAL_ONLY, SpinalRegion.CERVICAL, PainDistribution.DISTAL),
+                Set.of(PainQuality.BURNING), null, null);
+
+        assertThat(engine.assess(new SymptomReport(null, pain, null, null, null)).pattern().type())
+                .isEqualTo(PatternInsight.Type.RADICULAR);
+    }
+
+    private static Map<SpinalRegion, PainDistribution> lowBack(PainDistribution distribution) {
+        return Map.of(SpinalRegion.LUMBOSACRAL, distribution);
     }
 
     private static PainProfile radicularPain(int intensity, int days) {
-        return new PainProfile(intensity, days, PainDistribution.DISTAL,
+        return new PainProfile(intensity, days, lowBack(PainDistribution.DISTAL),
                 Set.of(PainQuality.BURNING, PainQuality.TINGLING),
                 Set.of(Aggravator.SITTING), Set.of(Reliever.LYING_DOWN));
     }

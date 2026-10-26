@@ -9,13 +9,13 @@ const zones = [
   { id: "SOLE", label: "Planta del pie", region: { id: "LUMBOSACRAL", label: "Lumbosacra" } },
 ];
 
-function setup(distribution: string | null = "DISTAL", defaultValue: string[] = []) {
+function setup(optional = false, defaultValue: string[] = []) {
   const onSubmit = vi.fn();
   const onChange = vi.fn();
   const { container } = render(
     <MapStep
       zones={zones}
-      distribution={distribution}
+      optional={optional}
       defaultValue={defaultValue}
       onChange={onChange}
       onBack={vi.fn()}
@@ -42,7 +42,7 @@ describe("MapStep", () => {
   });
 
   it("cada zona marcada se puede quitar desde la lista de marcadas", async () => {
-    const { onChange } = setup("DISTAL", ["SOLE-LEFT", "THUMB-RIGHT"]);
+    const { onChange } = setup(false, ["SOLE-LEFT", "THUMB-RIGHT"]);
 
     await userEvent.click(screen.getByRole("button", { name: "Quitar Planta del pie, izquierda" }));
 
@@ -51,7 +51,7 @@ describe("MapStep", () => {
   });
 
   it("si el dolor se irradia, pide al menos una zona", async () => {
-    const { onSubmit } = setup("DISTAL");
+    const { onSubmit } = setup(false);
 
     await userEvent.click(screen.getByRole("button", { name: "Continuar" }));
 
@@ -60,7 +60,7 @@ describe("MapStep", () => {
   });
 
   it("si el dolor no se irradia, el mapa es opcional", async () => {
-    const { onSubmit } = setup("AXIAL_ONLY");
+    const { onSubmit } = setup(true);
 
     await userEvent.click(screen.getByRole("button", { name: "Continuar sin marcar" }));
 

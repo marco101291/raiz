@@ -10,8 +10,8 @@ import mapStyles from "./MapStep.module.css";
 
 interface Props {
   zones: Schemas["BodyZoneView"][];
-  /** "AXIAL_ONLY" = the pain does not radiate: the map is optional (README, Forms). */
-  distribution?: string | null;
+  /** The pain does not radiate from any region: the map is optional (README, Forms). */
+  optional?: boolean;
   defaultValue: string[];
   onChange: (zones: string[]) => void;
   onBack: () => void;
@@ -19,10 +19,9 @@ interface Props {
 }
 
 /** Step 3. Zones with their side ("GREAT_TOE-RIGHT"). A single field: no need for React Hook Form. */
-export function MapStep({ zones, distribution, defaultValue, onChange, onBack, onSubmit }: Props) {
+export function MapStep({ zones, optional = false, defaultValue, onChange, onBack, onSubmit }: Props) {
   const [marked, setMarked] = useState<string[]>(defaultValue);
   const [error, setError] = useState(false);
-  const optional = distribution === "AXIAL_ONLY";
   const selected = new Set(marked);
   const labels = Object.fromEntries(zones.map((z) => [z.id ?? "", z.label ?? ""]));
 

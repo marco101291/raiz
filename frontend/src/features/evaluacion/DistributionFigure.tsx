@@ -1,7 +1,7 @@
 /**
  * Schematic silhouette for "¿Hasta dónde llega el dolor?". The painful stretch is painted in nerve yellow
- * over an ink stroke, on one side of the body: back or neck, then thigh and arm, then below the knee and
- * the elbow.
+ * over an ink stroke, on one side of the body: from the neck down the arm, or from the low back down the
+ * leg, depending on where the pain starts.
  */
 const BODY = [
   "M18 26 L10 52 L8 74", // left arm
@@ -10,14 +10,24 @@ const BODY = [
   "M35 62 L36 90 L37 116", // right leg
 ];
 
-const REACH: Record<string, string[]> = {
-  AXIAL_ONLY: ["M30 22 L30 30", "M30 46 L30 60"],
-  PROXIMAL: ["M30 22 L30 30", "M30 46 L30 60", "M42 26 L50 52", "M35 62 L36 90"],
-  DISTAL: ["M30 22 L30 30", "M30 46 L30 60", "M42 26 L50 52 L52 74", "M35 62 L36 90 L37 116"],
+const NECK = "M30 22 L30 30";
+const LOW_BACK = "M30 46 L30 60";
+
+const REACH: Record<string, Record<string, string[]>> = {
+  CERVICAL: {
+    AXIAL_ONLY: [NECK],
+    PROXIMAL: [NECK, "M42 26 L50 52"],
+    DISTAL: [NECK, "M42 26 L50 52 L52 74"],
+  },
+  LUMBOSACRAL: {
+    AXIAL_ONLY: [LOW_BACK],
+    PROXIMAL: [LOW_BACK, "M35 62 L36 90"],
+    DISTAL: [LOW_BACK, "M35 62 L36 90 L37 116"],
+  },
 };
 
-export function DistributionFigure({ distribution }: { distribution: string }) {
-  const reach = REACH[distribution] ?? [];
+export function DistributionFigure({ region, distribution }: { region: string; distribution: string }) {
+  const reach = REACH[region]?.[distribution] ?? [];
   return (
     <svg viewBox="0 0 60 122" width="56" height="114" aria-hidden="true" focusable="false">
       <circle cx="30" cy="11" r="8" fill="var(--hueso-hondo)" stroke="var(--linea)" strokeWidth="2" />

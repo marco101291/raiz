@@ -132,11 +132,16 @@ export interface components {
             intensity: number;
             /** Format: int32 */
             durationDays: number;
-            /** @enum {string} */
-            distribution: "AXIAL_ONLY" | "PROXIMAL" | "DISTAL";
+            reach: components["schemas"]["Reach"][];
             qualities?: ("BURNING" | "TINGLING" | "NUMBNESS" | "ELECTRIC" | "DULL_ACHE" | "STABBING" | "STIFFNESS")[];
             aggravators?: ("SITTING" | "FORWARD_BENDING" | "COUGH_SNEEZE" | "LIFTING" | "BACKWARD_BENDING" | "STANDING_LONG" | "WALKING" | "LYING_DOWN")[];
             relievers?: ("LYING_DOWN" | "WALKING" | "SITTING" | "CHANGING_POSITION" | "NOTHING")[];
+        };
+        Reach: {
+            /** @enum {string} */
+            region: "CERVICAL" | "LUMBOSACRAL";
+            /** @enum {string} */
+            distribution: "AXIAL_ONLY" | "PROXIMAL" | "DISTAL";
         };
         SidedFindingBodyZone: {
             /** @enum {string} */
@@ -275,6 +280,11 @@ export interface components {
             qualities?: components["schemas"]["CodeLabel"][];
             aggravators?: components["schemas"]["CodeLabel"][];
             relievers?: components["schemas"]["CodeLabel"][];
+            regions?: components["schemas"]["PainRegionView"][];
+        };
+        PainRegionView: {
+            id?: string;
+            label?: string;
             distributions?: components["schemas"]["CodeLabel"][];
         };
         BodyZoneView: {

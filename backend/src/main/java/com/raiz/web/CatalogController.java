@@ -7,10 +7,12 @@ import com.raiz.domain.model.PainDistribution;
 import com.raiz.domain.model.PainQuality;
 import com.raiz.domain.model.RedFlag;
 import com.raiz.domain.model.Reliever;
+import com.raiz.domain.model.SpinalRegion;
 import com.raiz.domain.port.NerveRootCatalog;
 import com.raiz.persistence.StrengthTestCatalog;
 import com.raiz.web.dto.CatalogViews.BodyZoneView;
 import com.raiz.web.dto.CatalogViews.PainOptionsView;
+import com.raiz.web.dto.CatalogViews.PainRegionView;
 import com.raiz.web.dto.CatalogViews.StrengthTestView;
 import com.raiz.web.dto.CodeLabel;
 import com.raiz.web.dto.RedFlagView;
@@ -52,7 +54,10 @@ class CatalogController {
                 CodeLabel.sorted(List.of(PainQuality.values()), PainQuality::label),
                 CodeLabel.sorted(List.of(Aggravator.values()), Aggravator::label),
                 CodeLabel.sorted(List.of(Reliever.values()), Reliever::label),
-                CodeLabel.sorted(List.of(PainDistribution.values()), PainDistribution::label));
+                Arrays.stream(SpinalRegion.values())
+                        .map(region -> new PainRegionView(region.name(), region.originLabel(),
+                                CodeLabel.sorted(List.of(PainDistribution.values()), d -> d.label(region))))
+                        .toList());
     }
 
     @GetMapping("/strength-tests")

@@ -6,6 +6,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.MediaType;
 
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasSize;
@@ -26,7 +28,7 @@ class AssessmentApiIT extends ApiIntegrationTest {
               "pain": {
                 "intensity": 4,
                 "durationDays": 9,
-                "distribution": "PROXIMAL",
+                "reach": [{ "region": "LUMBOSACRAL", "distribution": "PROXIMAL" }],
                 "qualities": ["BURNING", "TINGLING"],
                 "aggravators": ["SITTING", "FORWARD_BENDING"],
                 "relievers": ["LYING_DOWN"]
@@ -47,7 +49,7 @@ class AssessmentApiIT extends ApiIntegrationTest {
             "{}",
             "{\"redFlags\": [\"FEVER\"]}",
             "{\"sensoryZones\": [{\"finding\": \"THUMB\", \"side\": \"LEFT\"}]}",
-            "{\"pain\": {\"intensity\": 2, \"durationDays\": 200, \"distribution\": \"AXIAL_ONLY\"}}",
+            "{\"pain\": {\"intensity\": 2, \"durationDays\": 200, \"reach\": [{\"region\": \"LUMBOSACRAL\", \"distribution\": \"AXIAL_ONLY\"}]}}",
             README_EXAMPLE
     })
     void everyAssessmentCarriesReferralPatternAndDisclaimer(String body) throws Exception {
@@ -155,7 +157,7 @@ class AssessmentApiIT extends ApiIntegrationTest {
         postJson(URI, """
                 {
                   "pain": {
-                    "intensity": 4, "durationDays": 10, "distribution": "AXIAL_ONLY",
+                    "intensity": 4, "durationDays": 10, "reach": [{ "region": "LUMBOSACRAL", "distribution": "AXIAL_ONLY" }],
                     "qualities": ["DULL_ACHE"], "aggravators": ["SITTING", "COUGH_SNEEZE"], "relievers": ["WALKING"]
                   }
                 }
@@ -171,7 +173,7 @@ class AssessmentApiIT extends ApiIntegrationTest {
     @Test
     void outOfRangeIntensityNamesTheField() throws Exception {
         postJson(URI, """
-                { "pain": { "intensity": 11, "durationDays": 1, "distribution": "AXIAL_ONLY" } }
+                { "pain": { "intensity": 11, "durationDays": 1, "reach": [{ "region": "LUMBOSACRAL", "distribution": "AXIAL_ONLY" }] } }
                 """)
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
@@ -184,8 +186,28 @@ class AssessmentApiIT extends ApiIntegrationTest {
     void missingRequiredPainFieldsAreListed() throws Exception {
         postJson(URI, "{ \"pain\": { \"intensity\": 3 } }")
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors", hasSize(2)))
-                .andExpect(jsonPath("$.errors[*].message", everyItem(org.hamcrest.Matchers.is("es obligatoria"))));
+                .andExpect(jsonPath("$.errors[*].field", containsInAnyOrder("pain.durationDays", "pain.reach")));
+    }
+
+    @Test
+    void repeatedRegionInReachIs400() throws Exception {
+        postJson(URI, """
+                { "pain": { "intensity": 3, "durationDays": 1, "reach": [
+                    { "region": "CERVICAL", "distribution": "AXIAL_ONLY" }, { "region": "CERVICAL", "distribution": "DISTAL" }
+                ] } }
+                """)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail").value("Cada región solo puede aparecer una vez en pain.reach"));
+    }
+
+    @Test
+    void neckPainPastTheElbowIsDescribedWithTheElbow() throws Exception {
+        postJson(URI, """
+                { "pain": { "intensity": 5, "durationDays": 7, "qualities": ["TINGLING"],
+                            "reach": [{ "region": "CERVICAL", "distribution": "DISTAL" }] } }
+                """)
+                .andExpect(jsonPath("$.pattern.type").value("RADICULAR"))
+                .andExpect(jsonPath("$.pattern.features", hasItem("Baja por debajo del codo")));
     }
 
     @ParameterizedTest

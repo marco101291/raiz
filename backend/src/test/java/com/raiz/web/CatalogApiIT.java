@@ -34,7 +34,10 @@ class CatalogApiIT extends ApiIntegrationTest {
                 .andExpect(jsonPath("$.qualities", hasSize(7)))
                 .andExpect(jsonPath("$.aggravators", hasSize(8)))
                 .andExpect(jsonPath("$.relievers", hasSize(5)))
-                .andExpect(jsonPath("$.distributions[*].id", contains("AXIAL_ONLY", "PROXIMAL", "DISTAL")))
+                .andExpect(jsonPath("$.regions[*].label", contains("Cuello", "Espalda baja")))
+                .andExpect(jsonPath("$.regions[0].distributions[*].id", contains("AXIAL_ONLY", "PROXIMAL", "DISTAL")))
+                .andExpect(jsonPath("$.regions[0].distributions[2].label").value("Pasa del codo y puede llegar a la mano"))
+                .andExpect(jsonPath("$.regions[1].distributions[2].label").value("Pasa de la rodilla y puede llegar al pie"))
                 .andExpect(jsonPath("$.relievers[?(@.id == 'NOTHING')].label").value("Nada lo alivia"));
     }
 
