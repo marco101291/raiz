@@ -257,6 +257,20 @@ class CorrelationEngineTest {
     }
 
     @Test
+    void patternFeaturesFollowTheQuestionnaireOrder() {
+        var pain = new PainProfile(4, 5, lowBack(PainDistribution.DISTAL),
+                Set.of(PainQuality.ELECTRIC, PainQuality.NUMBNESS, PainQuality.TINGLING, PainQuality.BURNING),
+                null, null);
+
+        assertThat(engine.assess(new SymptomReport(null, pain, null, null, null)).pattern().features()).containsExactly(
+                "Dolor descrito como: ardor o quemazón",
+                "Dolor descrito como: hormigueo",
+                "Dolor descrito como: adormecimiento",
+                "Dolor descrito como: como descarga eléctrica",
+                "Baja por debajo de la rodilla");
+    }
+
+    @Test
     void extensionPatternRelievedBySitting() {
         var pain = new PainProfile(3, 10, lowBack(PainDistribution.AXIAL_ONLY), Set.of(PainQuality.STIFFNESS),
                 Set.of(Aggravator.BACKWARD_BENDING, Aggravator.STANDING_LONG), Set.of(Reliever.SITTING));

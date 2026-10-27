@@ -8,6 +8,7 @@ import com.raiz.domain.model.SpinalRegion;
 
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,9 +39,21 @@ public record PainProfile(
         }
         // EnumMap keeps the regions in declaration order, so derived texts are stable.
         reach = Collections.unmodifiableMap(new EnumMap<>(reach));
-        qualities = qualities == null ? Set.of() : Set.copyOf(qualities);
-        aggravators = aggravators == null ? Set.of() : Set.copyOf(aggravators);
-        relievers = relievers == null ? Set.of() : Set.copyOf(relievers);
+        qualities = ordered(qualities, PainQuality.class);
+        aggravators = ordered(aggravators, Aggravator.class);
+        relievers = ordered(relievers, Reliever.class);
+    }
+
+    /**
+     * Immutable copy that iterates in the enum's declaration order. {@code Set.copyOf} has no defined order and
+     * the JVM varies it between runs, so the pattern features would come out in a different order each time.
+     */
+    private static <E extends Enum<E>> Set<E> ordered(Set<E> values, Class<E> type) {
+        EnumSet<E> copy = EnumSet.noneOf(type);
+        if (values != null) {
+            copy.addAll(values);
+        }
+        return Collections.unmodifiableSet(copy);
     }
 
     public Chronicity chronicity() {
