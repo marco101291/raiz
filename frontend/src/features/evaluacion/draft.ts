@@ -24,6 +24,10 @@ const painDraftSchema = z
     qualities: z.array(z.string()),
     aggravators: z.array(z.string()),
     relievers: z.array(z.string()),
+    /** History: "YES", "NO" or "UNKNOWN"; levels like "L4_L5" only if "YES"; surgery "YES" or "NO". */
+    priorHerniation: z.string().nullable(),
+    herniationLevels: z.array(z.string()),
+    priorSpineSurgery: z.string().nullable(),
   })
   .partial();
 export type PainDraft = z.infer<typeof painDraftSchema>;
@@ -125,7 +129,24 @@ export function buildRequest(draft: Draft, today = todayIso()): AssessmentReques
       : undefined,
     sensoryZones: (draft.sensoryZones ?? []).map(sided) as AssessmentRequest["sensoryZones"],
     weakness: (draft.weakness ?? []).map(sided) as AssessmentRequest["weakness"],
+    history: historyFrom(pain),
   };
+}
+
+type History = NonNullable<AssessmentRequest["history"]>;
+
+/** History is optional: sent only if at least one of its questions was answered. */
+function historyFrom(pain: PainDraft | undefined): History | undefined {
+  if (!pain?.priorHerniation && !pain?.priorSpineSurgery) {
+    return undefined;
+  }
+  const herniation = pain.priorHerniation ?? "UNKNOWN";
+  return {
+    priorHerniation: herniation,
+    // Levels only make sense for a diagnosed herniation; the engine rejects them otherwise.
+    herniationLevels: herniation === "YES" ? (pain.herniationLevels ?? []) : [],
+    priorSpineSurgery: pain.priorSpineSurgery === "YES",
+  } as History;
 }
 
 /** "GREAT_TOE-RIGHT" → { finding: "GREAT_TOE", side: "RIGHT" }. The last "-" separates the side. */

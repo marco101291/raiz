@@ -26,6 +26,9 @@ const schema = z
     qualities: z.array(z.string()).min(1, "Elige al menos una."),
     aggravators: z.array(z.string()),
     relievers: z.array(z.string()),
+    priorHerniation: z.string().nullish(),
+    herniationLevels: z.array(z.string()),
+    priorSpineSurgery: z.string().nullish(),
   })
   // Each region where the pain starts needs its own answer; reach for unselected regions is dropped.
   .superRefine(({ regions, reach }, ctx) => {
@@ -38,6 +41,8 @@ const schema = z
   .transform((values) => ({
     ...values,
     reach: Object.fromEntries(values.regions.map((region) => [region, values.reach[region]!])),
+    // Levels only make sense for a diagnosed herniation; the engine rejects them otherwise.
+    herniationLevels: values.priorHerniation === "YES" ? values.herniationLevels : [],
   }));
 /** Values while filling in (intensity or how far it reaches may be missing) and once validated. */
 type PainForm = z.input<typeof schema>;
@@ -70,6 +75,9 @@ export function PainStep({ options, defaultValues, onChange, onBack, onSubmit }:
       qualities: [],
       aggravators: [],
       relievers: [],
+      priorHerniation: null,
+      herniationLevels: [],
+      priorSpineSurgery: null,
       ...defaultValues,
     },
   });
@@ -80,6 +88,8 @@ export function PainStep({ options, defaultValues, onChange, onBack, onSubmit }:
 
   const onsetDate = useWatch({ control, name: "onsetDate" });
   const regions = useWatch({ control, name: "regions" });
+  const priorHerniation = useWatch({ control, name: "priorHerniation" });
+  const discLevels = (options.discLevels ?? []).filter((level) => regions.length === 0 || regions.includes(level.region ?? ""));
   const reachErrors = errors.reach as Record<string, { message?: string } | undefined> | undefined;
   const today = todayIso();
   const duration = isIsoDate(onsetDate) && onsetDate <= today ? describeDuration(daysBetween(onsetDate, today)) : null;
@@ -215,6 +225,52 @@ export function PainStep({ options, defaultValues, onChange, onBack, onSubmit }:
         />
       </fieldset>
 
+      <fieldset className={styles.seccion}>
+        <legend className={styles.pregunta}>¿Te han diagnosticado una hernia de disco antes?</legend>
+        <p className={styles.ayuda}>Opcional.</p>
+        <div className={styles.opciones}>
+          {HERNIATION_ANSWERS.map(({ id, label }) => (
+            <label key={id} className={styles.opcion}>
+              <input type="radio" value={id} {...register("priorHerniation")} />
+              <span>{label}</span>
+            </label>
+          ))}
+        </div>
+        {priorHerniation === "YES" && (
+          <div className={styles.subpregunta}>
+            <p id="levels-help" className={styles.ayuda}>
+              ¿En qué nivel? Opcional: suele venir en el informe de la resonancia.
+            </p>
+            <Controller
+              control={control}
+              name="herniationLevels"
+              render={({ field }) => (
+                <ChipGroup
+                  name={field.name}
+                  options={discLevels}
+                  value={field.value}
+                  onChange={field.onChange}
+                  describedBy="levels-help"
+                />
+              )}
+            />
+          </div>
+        )}
+      </fieldset>
+
+      <fieldset className={styles.seccion}>
+        <legend className={styles.pregunta}>¿Te han operado de la columna?</legend>
+        <p className={styles.ayuda}>Opcional.</p>
+        <div className={styles.opciones}>
+          {SURGERY_ANSWERS.map(({ id, label }) => (
+            <label key={id} className={styles.opcion}>
+              <input type="radio" value={id} {...register("priorSpineSurgery")} />
+              <span>{label}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
       <div className={step.acciones}>
         <button type="button" className={step.secundario} onClick={onBack}>
           Atrás
@@ -226,6 +282,17 @@ export function PainStep({ options, defaultValues, onChange, onBack, onSubmit }:
     </form>
   );
 }
+
+const HERNIATION_ANSWERS = [
+  { id: "YES", label: "Sí" },
+  { id: "NO", label: "No" },
+  { id: "UNKNOWN", label: "No sé" },
+];
+
+const SURGERY_ANSWERS = [
+  { id: "YES", label: "Sí" },
+  { id: "NO", label: "No" },
+];
 
 function FieldError({ message }: { message?: string }) {
   return message ? <p className={step.error}>{message}</p> : null;

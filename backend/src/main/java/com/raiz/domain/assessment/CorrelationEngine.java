@@ -2,6 +2,7 @@ package com.raiz.domain.assessment;
 
 import com.raiz.domain.assessment.Assessment.NoRootCorrelation.Note;
 import com.raiz.domain.assessment.ReferralReason.Kind;
+import com.raiz.domain.model.DiscLevel;
 import com.raiz.domain.model.NerveRoot;
 import com.raiz.domain.model.RedFlag;
 import com.raiz.domain.model.Side;
@@ -17,6 +18,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.raiz.domain.assessment.Specialist.*;
@@ -124,7 +126,8 @@ public final class CorrelationEngine {
         List<NerveRoot> roots = catalog.findAll();
         List<RootMatch> matches = roots.stream()
                 .flatMap(root -> Arrays.stream(Side.values())
-                        .map(side -> new RootMatch(root, side, evidenceFor(root, side, report))))
+                        .map(side -> new RootMatch(root, side, evidenceFor(root, side, report),
+                                priorHerniationLevels(root, report.history()))))
                 .filter(match -> match.score() > 0)
                 .sorted(Comparator.comparingInt(RootMatch::score).reversed()
                         .thenComparingInt(match -> roots.indexOf(match.root()))
@@ -179,6 +182,13 @@ public final class CorrelationEngine {
         specialists.addAll(referral.specialists());
         Urgency urgency = referral.urgency() == Urgency.ROUTINE ? Urgency.PROMPT : referral.urgency();
         return new Referral(urgency, List.copyOf(specialists), reasons);
+    }
+
+    /** Levels of the prior herniation that typically compress this root: information, not evidence. */
+    private static Set<DiscLevel> priorHerniationLevels(NerveRoot root, MedicalHistory history) {
+        return history.herniationLevels().stream()
+                .filter(level -> root.typicalDiscLevels().stream().anyMatch(level::describes))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     private static List<Evidence> evidenceFor(NerveRoot root, Side side, SymptomReport report) {

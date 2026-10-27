@@ -181,6 +181,38 @@ class CorrelationEngineTest {
                 .containsExactly(ReferralReason.of(ReferralReason.Kind.SENSORY_ONLY));
     }
 
+    // --- History ---
+
+    @Test
+    void priorHerniationAtTheRootsDiscIsPointedOutWithoutChangingTheScore() {
+        var l5 = new NerveRoot("L5", SpinalRegion.LUMBOSACRAL, Set.of(BodyZone.LATERAL_LEG), Set.of(), Set.of(),
+                List.of("L4-L5 posterolateral", "L5-S1 foraminal"), List.of(), "", "", "");
+        var engineWithDiscs = new CorrelationEngine(new FixedCatalog(List.of(l5)), zone -> false);
+        var history = new MedicalHistory(MedicalHistory.PriorHerniation.YES, Set.of(DiscLevel.L4_L5, DiscLevel.C5_C6), true);
+        var report = new SymptomReport(null, null, Set.of(Sided.right(BodyZone.LATERAL_LEG)), null, null, history);
+
+        var correlation = (Assessment.RootCorrelation) engineWithDiscs.assess(report);
+
+        assertThat(correlation.matches()).singleElement()
+                .satisfies(m -> assertThat(m.priorHerniationLevels()).containsExactly(DiscLevel.L4_L5))
+                .satisfies(m -> assertThat(m.score()).isEqualTo(2));
+        assertThat(correlation.referral().urgency()).isEqualTo(Urgency.ROUTINE);
+    }
+
+    @Test
+    void herniationLevelsNeedADiagnosedHerniation() {
+        org.assertj.core.api.Assertions.assertThatIllegalArgumentException()
+                .isThrownBy(() -> new MedicalHistory(MedicalHistory.PriorHerniation.NO, Set.of(DiscLevel.L4_L5), false));
+    }
+
+    @Test
+    void discLevelMatchesCatalogEntriesByLevelOnly() {
+        assertThat(DiscLevel.L4_L5.describes("L4-L5 posterolateral")).isTrue();
+        assertThat(DiscLevel.L4_L5.describes("L4-L5")).isTrue();
+        assertThat(DiscLevel.L1_L2.describes("L1-L2 foraminal")).isTrue();
+        assertThat(DiscLevel.T12_L1.describes("T1-T2")).isFalse();
+    }
+
     @Test
     void oneArmAndTheOtherLegIsNotBilateral() {
         var report = new SymptomReport(null, null,

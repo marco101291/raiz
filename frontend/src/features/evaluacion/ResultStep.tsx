@@ -13,7 +13,7 @@ interface Props {
   request: AssessmentRequest;
   /** Emergency red flags from the triage catalog, shown on every non-urgent result. */
   warningSigns?: Schemas["RedFlagView"][];
-  /** From the strength step: tests not done because of pain, weak arms in everyday tasks. */
+  /** History and strength answers worth telling a professional: not part of the engine's decision. */
   notes?: string[];
   onEdit: () => void;
   onRestart: () => void;

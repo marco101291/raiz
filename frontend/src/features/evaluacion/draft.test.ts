@@ -96,6 +96,28 @@ describe("buildRequest", () => {
     expect(buildRequest({ step: "resultado", triage: {}, pain: missingReach }).pain).toBeUndefined();
   });
 
+  it("envía los antecedentes solo si se contestaron, y los niveles solo con hernia diagnosticada", async () => {
+    const { buildRequest } = await freshDraft();
+    const draft = (pain: object) => buildRequest({ step: "resultado", triage: {}, pain }).history;
+
+    expect(draft({ intensity: 4 })).toBeUndefined();
+    expect(draft({ priorHerniation: "YES", herniationLevels: ["L4_L5"], priorSpineSurgery: "NO" })).toEqual({
+      priorHerniation: "YES",
+      herniationLevels: ["L4_L5"],
+      priorSpineSurgery: false,
+    });
+    expect(draft({ priorHerniation: "NO", herniationLevels: ["L4_L5"] })).toEqual({
+      priorHerniation: "NO",
+      herniationLevels: [],
+      priorSpineSurgery: false,
+    });
+    expect(draft({ priorSpineSurgery: "YES" })).toEqual({
+      priorHerniation: "UNKNOWN",
+      herniationLevels: [],
+      priorSpineSurgery: true,
+    });
+  });
+
   it("la fuerza guiada aplica si el dolor baja o si hay zonas marcadas", async () => {
     const { strengthApplies } = await freshDraft();
     const axial = { regions: ["LUMBOSACRAL"], reach: { LUMBOSACRAL: "AXIAL_ONLY" } };

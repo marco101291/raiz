@@ -142,6 +142,13 @@ export interface components {
             sensoryZones?: components["schemas"]["SidedFindingBodyZone"][];
             weakness?: components["schemas"]["SidedFindingMotorAction"][];
             diminishedReflexes?: components["schemas"]["SidedFindingReflex"][];
+            history?: components["schemas"]["History"];
+        };
+        History: {
+            /** @enum {string} */
+            priorHerniation: "YES" | "NO" | "UNKNOWN";
+            herniationLevels?: ("C4_C5" | "C5_C6" | "C6_C7" | "C7_T1" | "T12_L1" | "L1_L2" | "L2_L3" | "L3_L4" | "L4_L5" | "L5_S1")[];
+            priorSpineSurgery?: boolean;
         };
         Pain: {
             /** Format: int32 */
@@ -249,6 +256,7 @@ export interface components {
             score?: number;
             neurologicalDeficit?: boolean;
             evidence?: components["schemas"]["EvidenceView"][];
+            priorHerniationLevels?: string[];
         };
         UrgentReferral: Omit<components["schemas"]["AssessmentResponse"], "type"> & {
             referral?: components["schemas"]["ReferralView"];
@@ -292,11 +300,17 @@ export interface components {
             motorAction?: components["schemas"]["CodeLabel"];
             roots?: string[];
         };
+        DiscLevelView: {
+            id?: string;
+            label?: string;
+            region?: string;
+        };
         PainOptionsView: {
             qualities?: components["schemas"]["CodeLabel"][];
             aggravators?: components["schemas"]["CodeLabel"][];
             relievers?: components["schemas"]["CodeLabel"][];
             regions?: components["schemas"]["PainRegionView"][];
+            discLevels?: components["schemas"]["DiscLevelView"][];
         };
         PainRegionView: {
             id?: string;

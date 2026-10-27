@@ -8,7 +8,7 @@ interface Props {
   result: Assessment;
   /** Emergency red flags from the triage catalog: what should send the person to the ER from now on. */
   warningSigns: Schemas["RedFlagView"][];
-  /** From the strength step: not weakness for the engine, but worth a professional examination. */
+  /** History and strength answers: not part of the engine's decision, but worth telling a professional. */
   notes?: string[];
 }
 
@@ -79,7 +79,7 @@ export function CorrelationResult({ result: assessment, warningSigns, notes = []
       {notes.length > 0 && (
         <section className={result.seccion} aria-labelledby="consulta">
           <h2 id="consulta">Coméntalo en tu consulta</h2>
-          <p className={result.ayuda}>Un profesional puede explorar tu fuerza con más precisión.</p>
+          <p className={result.ayuda}>No cambia la orientación, pero quien te valore debe saberlo.</p>
           <ul className={result.lista}>
             {notes.map((note) => (
               <li key={note}>{note}</li>
@@ -100,6 +100,9 @@ export function CorrelationResult({ result: assessment, warningSigns, notes = []
                 <h3>{match.label}</h3>
                 {match.neurologicalDeficit && (
                   <p className={result.deficit}>Hay datos de pérdida de fuerza o de reflejos.</p>
+                )}
+                {(match.priorHerniationLevels?.length ?? 0) > 0 && (
+                  <p>Coincide con tu hernia previa {match.priorHerniationLevels?.join(", ")}.</p>
                 )}
                 <ul className={result.lista}>
                   {match.evidence?.map((e) => <li key={`${e.kind}-${e.finding}`}>{e.explanation}</li>)}

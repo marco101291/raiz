@@ -103,6 +103,18 @@ describe("ResultStep", () => {
     expect(screen.getByText("Fuente: Weir 2015")).toBeInTheDocument();
   });
 
+  it("para el médico, señala la raíz que coincide con la hernia previa", async () => {
+    assess.mockResolvedValue({
+      type: "ROOT_CORRELATION",
+      referral: referral("ROUTINE", "Agenda"),
+      pattern: { type: "NOT_ASSESSED" },
+      matches: [{ label: "L5 derecha", evidence: [], priorHerniationLevels: ["L4-L5"] }],
+    });
+    renderResult();
+
+    expect(await screen.findByText("Coincide con tu hernia previa L4-L5.")).toBeInTheDocument();
+  });
+
   it("muestra lo que conviene comentar en la consulta", async () => {
     assess.mockResolvedValue({ type: "NO_ROOT_CORRELATION", referral: referral("ROUTINE", "Agenda"), note: "Nota" });
     render(

@@ -14,19 +14,28 @@ import java.util.stream.Stream;
  *
  * @param pain               pain questionnaire; may be missing in professional mode
  * @param diminishedReflexes usually provided by a professional; empty in patient mode
+ * @param history            prior herniation and surgery; {@link MedicalHistory#NONE} when not answered
  */
 public record SymptomReport(
         Set<RedFlag> redFlags,
         PainProfile pain,
         Set<Sided<BodyZone>> sensoryZones,
         Set<Sided<MotorAction>> weakness,
-        Set<Sided<Reflex>> diminishedReflexes) {
+        Set<Sided<Reflex>> diminishedReflexes,
+        MedicalHistory history) {
 
     public SymptomReport {
+        history = history == null ? MedicalHistory.NONE : history;
         redFlags = redFlags == null ? Set.of() : Set.copyOf(redFlags);
         sensoryZones = sensoryZones == null ? Set.of() : Set.copyOf(sensoryZones);
         weakness = weakness == null ? Set.of() : Set.copyOf(weakness);
         diminishedReflexes = diminishedReflexes == null ? Set.of() : Set.copyOf(diminishedReflexes);
+    }
+
+    /** Without history: the professional mode and most tests do not ask for it. */
+    public SymptomReport(Set<RedFlag> redFlags, PainProfile pain, Set<Sided<BodyZone>> sensoryZones,
+                         Set<Sided<MotorAction>> weakness, Set<Sided<Reflex>> diminishedReflexes) {
+        this(redFlags, pain, sensoryZones, weakness, diminishedReflexes, MedicalHistory.NONE);
     }
 
     public Optional<PainProfile> painProfile() {

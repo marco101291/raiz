@@ -1,7 +1,9 @@
 package com.raiz.web.dto;
 
 import com.raiz.domain.model.Aggravator;
+import com.raiz.domain.assessment.MedicalHistory.PriorHerniation;
 import com.raiz.domain.model.BodyZone;
+import com.raiz.domain.model.DiscLevel;
 import com.raiz.domain.model.MotorAction;
 import com.raiz.domain.model.PainDistribution;
 import com.raiz.domain.model.PainQuality;
@@ -28,7 +30,8 @@ public record AssessmentRequest(
         @Valid Pain pain,
         Set<@NotNull(message = "no puede contener valores nulos") @Valid SidedFinding<BodyZone>> sensoryZones,
         Set<@NotNull(message = "no puede contener valores nulos") @Valid SidedFinding<MotorAction>> weakness,
-        Set<@NotNull(message = "no puede contener valores nulos") @Valid SidedFinding<Reflex>> diminishedReflexes) {
+        Set<@NotNull(message = "no puede contener valores nulos") @Valid SidedFinding<Reflex>> diminishedReflexes,
+        @Valid History history) {
 
     public record Pain(
             @NotNull(message = "es obligatoria")
@@ -53,6 +56,18 @@ public record AssessmentRequest(
     public record Reach(
             @NotNull(message = "es obligatoria") SpinalRegion region,
             @NotNull(message = "es obligatoria") PainDistribution distribution) {
+    }
+
+    /**
+     * Prior herniation and spine surgery. Optional as a whole; when sent, the herniation answer is required.
+     *
+     * @param herniationLevels  only when {@code priorHerniation} is YES, and only if the person knows them
+     * @param priorSpineSurgery missing means no: a boxed Boolean, since Jackson rejects a missing primitive
+     */
+    public record History(
+            @NotNull(message = "es obligatoria") PriorHerniation priorHerniation,
+            Set<@NotNull(message = "no puede contener valores nulos") DiscLevel> herniationLevels,
+            Boolean priorSpineSurgery) {
     }
 
     /** A finding with its side, e.g. {@code {"finding": "GREAT_TOE", "side": "RIGHT"}}. */

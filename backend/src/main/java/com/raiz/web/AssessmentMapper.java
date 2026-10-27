@@ -2,12 +2,14 @@ package com.raiz.web;
 
 import com.raiz.domain.assessment.Assessment;
 import com.raiz.domain.assessment.Evidence;
+import com.raiz.domain.assessment.MedicalHistory;
 import com.raiz.domain.assessment.PainProfile;
 import com.raiz.domain.assessment.PatternInsight;
 import com.raiz.domain.assessment.Referral;
 import com.raiz.domain.assessment.RootMatch;
 import com.raiz.domain.assessment.Specialist;
 import com.raiz.domain.assessment.SymptomReport;
+import com.raiz.domain.model.DiscLevel;
 import com.raiz.domain.model.PainDistribution;
 import com.raiz.domain.model.Sided;
 import com.raiz.domain.model.SpinalRegion;
@@ -36,7 +38,16 @@ final class AssessmentMapper {
 
     static SymptomReport toReport(AssessmentRequest request) {
         return new SymptomReport(request.redFlags(), toPain(request.pain()),
-                sided(request.sensoryZones()), sided(request.weakness()), sided(request.diminishedReflexes()));
+                sided(request.sensoryZones()), sided(request.weakness()), sided(request.diminishedReflexes()),
+                toHistory(request.history()));
+    }
+
+    private static MedicalHistory toHistory(AssessmentRequest.History history) {
+        if (history == null) {
+            return MedicalHistory.NONE;
+        }
+        return new MedicalHistory(history.priorHerniation(), history.herniationLevels(),
+                Boolean.TRUE.equals(history.priorSpineSurgery()));
     }
 
     private static PainProfile toPain(AssessmentRequest.Pain pain) {
@@ -100,7 +111,8 @@ final class AssessmentMapper {
 
     private static RootMatchView toView(RootMatch match) {
         return new RootMatchView(match.root().code(), match.side(), match.label(), match.score(),
-                match.hasNeurologicalDeficit(), match.evidence().stream().map(AssessmentMapper::toView).toList());
+                match.hasNeurologicalDeficit(), match.evidence().stream().map(AssessmentMapper::toView).toList(),
+                match.priorHerniationLevels().stream().sorted().map(DiscLevel::label).toList());
     }
 
     private static EvidenceView toView(Evidence evidence) {

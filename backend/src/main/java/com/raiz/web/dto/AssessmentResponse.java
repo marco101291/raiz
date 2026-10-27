@@ -56,8 +56,9 @@ public sealed interface AssessmentResponse {
     record PatternView(PatternInsight.Type type, CodeLabel chronicity, List<String> features, String explanation) {
     }
 
+    /** @param priorHerniationLevels levels of the person's prior herniation that typically compress this root */
     record RootMatchView(String rootCode, Side side, String label, int score, boolean neurologicalDeficit,
-                         List<EvidenceView> evidence) {
+                         List<EvidenceView> evidence, List<String> priorHerniationLevels) {
     }
 
     record EvidenceView(Kind kind, String finding, int weight, String explanation) {

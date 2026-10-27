@@ -38,7 +38,10 @@ class CatalogApiIT extends ApiIntegrationTest {
                 .andExpect(jsonPath("$.regions[0].distributions[*].id", contains("AXIAL_ONLY", "PROXIMAL", "DISTAL")))
                 .andExpect(jsonPath("$.regions[0].distributions[2].label").value("Pasa del codo y puede llegar a la mano"))
                 .andExpect(jsonPath("$.regions[1].distributions[2].label").value("Pasa de la rodilla y puede llegar al pie"))
-                .andExpect(jsonPath("$.relievers[?(@.id == 'NOTHING')].label").value("Nada lo alivia"));
+                .andExpect(jsonPath("$.relievers[?(@.id == 'NOTHING')].label").value("Nada lo alivia"))
+                .andExpect(jsonPath("$.discLevels", hasSize(10)))
+                .andExpect(jsonPath("$.discLevels[?(@.id == 'L4_L5')].label").value("L4-L5"))
+                .andExpect(jsonPath("$.discLevels[?(@.id == 'C5_C6')].region").value("CERVICAL"));
     }
 
     /** Each test's roots come from the myotome; they must match the README table. */

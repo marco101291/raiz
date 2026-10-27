@@ -2,6 +2,7 @@ package com.raiz.web;
 
 import com.raiz.domain.model.Aggravator;
 import com.raiz.domain.model.BodyZone;
+import com.raiz.domain.model.DiscLevel;
 import com.raiz.domain.model.MotorAction;
 import com.raiz.domain.model.NerveRoot;
 import com.raiz.domain.model.PainDistribution;
@@ -13,6 +14,7 @@ import com.raiz.domain.port.NerveRootCatalog;
 import com.raiz.persistence.FunctionalQuestionCatalog;
 import com.raiz.persistence.StrengthTestCatalog;
 import com.raiz.web.dto.CatalogViews.BodyZoneView;
+import com.raiz.web.dto.CatalogViews.DiscLevelView;
 import com.raiz.web.dto.CatalogViews.FunctionalQuestionView;
 import com.raiz.web.dto.CatalogViews.PainOptionsView;
 import com.raiz.web.dto.CatalogViews.PainRegionView;
@@ -63,6 +65,9 @@ class CatalogController {
                 Arrays.stream(SpinalRegion.values())
                         .map(region -> new PainRegionView(region.name(), region.originLabel(),
                                 CodeLabel.sorted(List.of(PainDistribution.values()), d -> d.label(region))))
+                        .toList(),
+                Arrays.stream(DiscLevel.values())
+                        .map(level -> new DiscLevelView(level.name(), level.label(), level.region().name()))
                         .toList());
     }
 

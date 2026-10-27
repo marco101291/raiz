@@ -15,6 +15,7 @@ import {
 import { MapStep } from "./MapStep";
 import { PainStep } from "./PainStep";
 import { Progress } from "./Progress";
+import { historyNotes } from "./history";
 import { ResultStep } from "./ResultStep";
 import { consultationNotes, weaknessFrom } from "./strength";
 import { StrengthStep } from "./StrengthStep";
@@ -98,7 +99,10 @@ export function Wizard() {
       <ResultStep
         request={buildRequest(draft)}
         warningSigns={catalog.flags.filter((flag) => flag.emergency)}
-        notes={withStrength ? consultationNotes(tests, draft.strength ?? {}, questions, draft.functional ?? {}) : []}
+        notes={[
+          ...historyNotes(draft.pain, catalog.painOptions.discLevels ?? []),
+          ...(withStrength ? consultationNotes(tests, draft.strength ?? {}, questions, draft.functional ?? {}) : []),
+        ]}
         onEdit={() => update({ step: alarm ? "alarma" : withStrength ? "fuerza" : "mapa" })}
         onRestart={resetDraft}
       />

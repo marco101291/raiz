@@ -145,6 +145,26 @@ class AssessmentApiIT extends ApiIntegrationTest {
     }
 
     @Test
+    void priorHerniationAtTheSameDiscIsPointedOutOnTheRoot() throws Exception {
+        postJson(URI, """
+                { "sensoryZones": [{ "finding": "GREAT_TOE", "side": "RIGHT" }],
+                  "history": { "priorHerniation": "YES", "herniationLevels": ["L4_L5"], "priorSpineSurgery": false } }
+                """)
+                .andExpect(jsonPath("$.matches[0].label").value("L5 derecha"))
+                .andExpect(jsonPath("$.matches[0].score").value(2))
+                .andExpect(jsonPath("$.matches[0].priorHerniationLevels", contains("L4-L5")));
+    }
+
+    @Test
+    void herniationLevelsWithoutADiagnosedHerniationAre400() throws Exception {
+        postJson(URI, """
+                { "history": { "priorHerniation": "NO", "herniationLevels": ["L4_L5"] } }
+                """)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail").value("Los niveles de la hernia solo aplican si te la diagnosticaron"));
+    }
+
+    @Test
     void zonesWithoutOtherCausesReturnAnEmptyList() throws Exception {
         postJson(URI, """
                 { "sensoryZones": [{ "finding": "SOLE", "side": "RIGHT" }] }

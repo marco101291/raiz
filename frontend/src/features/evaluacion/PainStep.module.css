@@ -107,3 +107,56 @@
     text-align: left;
   }
 }
+
+.opciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.opcion {
+  position: relative;
+}
+
+.opcion input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.opcion span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 4.5rem;
+  min-height: 3rem;
+  padding: 0 1.1rem;
+  border-radius: var(--radio-control);
+  border: 2px solid var(--linea);
+  background: var(--papel);
+  font-weight: 700;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.opcion:hover span {
+  border-color: var(--tinta-suave);
+}
+
+/* The selection is marked in nerve yellow with an ink border: it does not rely on color alone. */
+.opcion input:checked + span {
+  background: var(--nervio);
+  border-color: var(--tinta);
+}
+
+.opcion input:focus-visible + span {
+  outline: 3px solid var(--tinta);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 7px var(--nervio);
+}
+
+.subpregunta {
+  display: grid;
+  gap: 0.6rem;
+  padding-top: 0.5rem;
+}
