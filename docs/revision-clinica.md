@@ -14,7 +14,7 @@ Todo el contenido clínico que sigue está **pendiente de revisión** y no debe 
 
 Fuera de alcance: el diseño visual y el código. Para opinar sobre un punto, escribe tu comentario debajo de él o respóndelo en un correo citando la sección; las preguntas abiertas para el clínico están marcadas como **Pregunta**.
 
-Estado del contenido: rama `master`, commit `3283a08`, migraciones de base de datos V1 a V10.
+Estado del contenido: rama `master`, commit `6a31cd0`, migraciones de base de datos V1 a V10.
 
 ## Señales de alarma del triage
 
@@ -156,7 +156,7 @@ Además, el resumen para el paciente de L1 y L2 avisa que el dolor de ingle pued
 
 El cuestionario clasifica el dolor en uno de cuatro patrones; la primera regla que se cumple gana. El patrón se muestra en "Qué puede ser" y, si es de nervio, influye en la derivación.
 
-**Preguntas:** dónde empieza (cuello, espalda baja o ambos), hasta dónde llega desde cada uno, intensidad de 0 a 10, fecha de inicio, cómo se siente, qué lo empeora y qué lo alivia.
+**Preguntas:** dónde empieza (cuello, espalda baja o ambos), hasta dónde llega desde cada uno, intensidad de 0 a 10, fecha de inicio, cómo se siente, qué lo empeora y qué lo alivia. Al final van los antecedentes (sección siguiente a Fuerza guiada).
 
 | Patrón | Se cumple si | Texto que lee el paciente |
 | --- | --- | --- |
@@ -170,7 +170,7 @@ El cuestionario clasifica el dolor en uno de cuatro patrones; la primera regla q
 - **Cómo se siente:** ardor o quemazón, hormigueo, adormecimiento, como descarga eléctrica (las cuatro cuentan como de nervio), dolor sordo, punzada, rigidez.
 - **Qué lo empeora:** estar sentado, agacharse, toser o estornudar, cargar peso (estas cuatro suman para disco), inclinarse hacia atrás, estar de pie mucho tiempo, caminar, estar acostado.
 - **Qué lo alivia:** acostarse, caminar suave, sentarse, cambiar de postura, nada lo alivia.
-- **Hasta dónde llega:** solo en el cuello o la espalda baja; hasta el brazo o el muslo sin pasar del codo o la rodilla; pasa del codo o la rodilla.
+- **Hasta dónde llega:** solo en el cuello o la espalda baja; hasta el hombro, el brazo, el glúteo o el muslo sin pasar del codo o la rodilla; pasa del codo o la rodilla.
 
 **Pregunta:** el código no cita una fuente para estas reglas. ¿Coinciden con la evidencia sobre preferencia direccional y patrones de dolor discal y facetario?
 
@@ -214,6 +214,28 @@ Respuestas: no, sí el brazo derecho, sí el brazo izquierdo, sí los dos.
 
 **Pregunta:** ¿Son seguras estas pruebas para hacer en casa? ¿Falta una pregunta para T1 (separar los dedos)?
 
+## Antecedentes
+
+Dos preguntas opcionales al final del cuestionario de dolor. **No cambian puntos ni urgencia:** solo informan al profesional.
+
+| Pregunta | Respuestas | Qué hace la app |
+| --- | --- | --- |
+| ¿Te han diagnosticado una hernia de disco antes? | Sí, no, no sé. Con "sí", niveles opcionales: C4-C5, C5-C6, C6-C7, C7-T1, T12-L1, L1-L2, L2-L3, L3-L4, L4-L5, L5-S1 | Nota en "Coméntalo en tu consulta" y coincidencia en "Para tu médico" |
+| ¿Te han operado de la columna? | Sí, no | Solo nota en "Coméntalo en tu consulta" |
+
+**Regla de coincidencia:** una raíz compatible se señala si alguno de los discos que suelen comprimirla (catálogo de raíces) es el nivel de la hernia previa. Por ejemplo, una hernia previa L4-L5 se señala en L5 (L4-L5 posterolateral) y en L4 (L4-L5 foraminal).
+
+Textos que lee el paciente:
+
+- En "Para tu médico", bajo la raíz: "Coincide con tu hernia previa L4-L5."
+- En "Coméntalo en tu consulta": "Te diagnosticaron una hernia de disco antes (L4-L5)." y "Te han operado de la columna."
+
+**Pregunta:** ¿Debería una hernia previa en el mismo nivel sumar puntos a esa raíz? Hoy no lo hace porque no hay una fuente que diga cuánto debería pesar.
+
+**Pregunta:** ¿Debería una cirugía previa cambiar la derivación, por ejemplo hacia quien operó, o mencionar recidiva o fibrosis como otras causas?
+
+**Pregunta:** Los niveles se ofrecen según dónde empieza el dolor. ¿Hace falta ofrecer niveles torácicos o T1-T2?
+
 ## Textos del resultado
 
 Estos textos viven en la base de datos y se cambian sin tocar el motor. Si una derivación tiene dos motivos, sus textos se unen en el orden de la tabla del motor; el aviso bilateral va siempre primero.
@@ -245,7 +267,7 @@ Aviso al pie de cada resultado: "Esta herramienta es educativa y no sustituye un
 
 ## Fuentes y huecos
 
-Seis partes del contenido no tienen una fuente citada en el código. Son las que más necesitan el criterio del clínico.
+Siete partes del contenido no tienen una fuente citada en el código. Son las que más necesitan el criterio del clínico.
 
 ### Huecos conocidos
 
@@ -256,6 +278,7 @@ Seis partes del contenido no tienen una fuente citada en el código. Son las que
 | Pesos y umbrales del motor | Los puntos 2, 3 y 3, el dolor intenso en 8 de 10 y las 6 y 12 semanas no citan fuente. |
 | Pruebas de fuerza de pierna | Las 6 pruebas y sus instrucciones vienen del README, sin fuente sobre su fiabilidad en casa. |
 | Preguntas de brazo | Se derivan del miotoma citado, pero no hay fuente sobre su validez como autoevaluación. |
+| Antecedentes | La regla de coincidencia usa el catálogo citado, pero no hay fuente sobre el valor de una hernia previa para orientar el nivel actual. |
 | Nota sobre resonancia | "El tamaño de la hernia en la resonancia se correlaciona mal con los síntomas" quedó fuera del catálogo porque no es de una raíz; falta decidir dónde va. |
 
 NICE NG59 se cita sin año ni versión.
