@@ -71,7 +71,7 @@ export function MapStep({ zones, optional = false, regions = [], defaultValue, o
         </p>
         {/* The buttock is not a BodyZone: it points to no root and is already asked in the pain step. */}
         <p className={step.intro}>
-          ¿Te duele la espalda, el cuello o la nalga? Eso ya lo contaste en el paso anterior; aquí marca
+          ¿Te duele la espalda, el cuello o el glúteo? Eso ya lo contaste en el paso anterior; aquí marca
           hasta dónde baja el dolor.
         </p>
       </header>

@@ -7,7 +7,7 @@ package com.raiz.domain.model;
  */
 public enum PainDistribution {
     AXIAL_ONLY("Solo en el cuello", "Solo en la espalda baja"),
-    PROXIMAL("Baja al hombro o al brazo, sin pasar del codo", "Baja a la nalga o al muslo, sin pasar de la rodilla"),
+    PROXIMAL("Baja al hombro o al brazo, sin pasar del codo", "Baja al glúteo o al muslo, sin pasar de la rodilla"),
     DISTAL("Pasa del codo y puede llegar a la mano", "Pasa de la rodilla y puede llegar al pie");
 
     private final String cervicalLabel;
