@@ -64,7 +64,7 @@ export function MapStep({ zones, optional = false, regions = [], defaultValue, o
       }}
     >
       <header className={step.encabezado}>
-        <h1 className={step.titulo}>¿Dónde sientes el dolor o el hormigueo?</h1>
+        <h1 className={step.titulo} tabIndex={-1}>¿Dónde sientes el dolor o el hormigueo?</h1>
         <p className={step.intro}>
           {regions.length === 1 ? INTRO[regions[0]] : "Toca las zonas de brazos y piernas donde lo sientes."}
           {optional && " Como el dolor no baja al brazo ni a la pierna, este paso es opcional."}

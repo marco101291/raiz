@@ -65,7 +65,7 @@ export function TriageStep({ flags, defaultValues, onChange, onSubmit }: Props) 
       onSubmit={handleSubmit((values) => onSubmit(reportedRedFlags(values)))}
     >
       <header className={step.encabezado}>
-        <h1 className={step.titulo}>Antes de empezar, ¿te pasa alguna de estas cosas?</h1>
+        <h1 className={step.titulo} tabIndex={-1}>Antes de empezar, ¿te pasa alguna de estas cosas?</h1>
         <p className={step.intro}>
           Algunas señales necesitan atención médica sin esperar. Responde cada una; si alguna es sí, te
           decimos qué hacer.

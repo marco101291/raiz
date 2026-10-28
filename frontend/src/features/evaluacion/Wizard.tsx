@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { api, type Schemas } from "@/lib/api/client";
 import {
   buildRequest,
@@ -63,6 +63,24 @@ export function Wizard() {
 
   useEffect(loadCatalog, [loadCatalog]);
 
+  // The steps share one page: without this, the next one opens at the previous scroll position (usually
+  // mid-form, where "Siguiente" was) and its first questions go unseen. Focusing the heading also
+  // announces the new step to screen readers. The first render keeps what the browser restored.
+  const step = draft?.step;
+  const stepRef = useRef<HTMLDivElement>(null);
+  const shownStep = useRef(step);
+  useEffect(() => {
+    if (step === shownStep.current) {
+      return;
+    }
+    const firstRender = shownStep.current === undefined;
+    shownStep.current = step;
+    if (!firstRender) {
+      window.scrollTo({ top: 0 });
+      stepRef.current?.querySelector<HTMLElement>("h1")?.focus({ preventScroll: true });
+    }
+  }, [step]);
+
   const update = (patch: Partial<Draft>) => setDraft({ ...getDraft(), ...patch });
 
   if (draft === null || catalog.status === "loading") {
@@ -110,7 +128,7 @@ export function Wizard() {
   }
 
   return (
-    <div className={styles.paso}>
+    <div ref={stepRef} className={styles.paso}>
       <Progress current={draft.step} />
 
       {draft.step === "alarma" && (

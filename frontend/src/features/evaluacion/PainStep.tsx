@@ -98,7 +98,7 @@ export function PainStep({ options, defaultValues, onChange, onBack, onSubmit }:
   return (
     <form className={step.form} noValidate onSubmit={handleSubmit(onSubmit)}>
       <header className={step.encabezado}>
-        <h1 className={step.titulo}>Cuéntanos de tu dolor</h1>
+        <h1 className={step.titulo} tabIndex={-1}>Cuéntanos de tu dolor</h1>
         <p className={step.intro}>Con esto distinguimos si se parece más a un dolor de nervio, de disco o de articulación.</p>
       </header>
 

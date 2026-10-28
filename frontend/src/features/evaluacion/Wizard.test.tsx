@@ -109,14 +109,17 @@ describe("Wizard", () => {
     expect(screen.queryByRole("navigation", { name: "Progreso de la evaluación" })).not.toBeInTheDocument();
   });
 
-  it("sin alarma pasa al cuestionario de dolor sin llamar al motor", async () => {
+  it("sin alarma pasa al cuestionario de dolor, desde arriba, sin llamar al motor", async () => {
+    const scrollTo = vi.spyOn(window, "scrollTo");
     await renderWizard();
 
     await answer(/Adormecimiento/, "No");
     await answer(/Fiebre/, "No");
     await userEvent.click(screen.getByRole("button", { name: "Continuar" }));
 
-    expect(await screen.findByRole("heading", { name: "Cuéntanos de tu dolor" })).toBeInTheDocument();
+    // The pain step opens at its first question, not where "Continuar" was on the previous step.
+    expect(await screen.findByRole("heading", { name: "Cuéntanos de tu dolor" })).toHaveFocus();
+    expect(scrollTo).toHaveBeenCalledWith({ top: 0 });
     expect(screen.getByText("Paso 2 de 5:", { exact: false })).toBeInTheDocument();
     expect(assess).not.toHaveBeenCalled();
   });

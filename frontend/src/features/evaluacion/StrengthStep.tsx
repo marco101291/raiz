@@ -58,7 +58,7 @@ export function StrengthStep({ tests, questions, defaultValues, onChange, onBack
       }}
     >
       <header className={step.encabezado}>
-        <h1 className={step.titulo}>¿Has perdido fuerza?</h1>
+        <h1 className={step.titulo} tabIndex={-1}>¿Has perdido fuerza?</h1>
         <p className={step.intro}>
           {tests.length > 0
             ? "Haz cada prueba despacio y compara un lado con el otro. Si alguna no te parece segura, elige «No la hice»."
