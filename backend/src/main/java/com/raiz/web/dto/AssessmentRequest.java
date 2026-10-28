@@ -17,6 +17,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
@@ -26,12 +27,12 @@ import java.util.Set;
  * applies the clinical rules. Lists may be missing: that means empty.
  */
 public record AssessmentRequest(
-        Set<@NotNull(message = "no puede contener valores nulos") RedFlag> redFlags,
-        @Valid Pain pain,
-        Set<@NotNull(message = "no puede contener valores nulos") @Valid SidedFinding<BodyZone>> sensoryZones,
-        Set<@NotNull(message = "no puede contener valores nulos") @Valid SidedFinding<MotorAction>> weakness,
-        Set<@NotNull(message = "no puede contener valores nulos") @Valid SidedFinding<Reflex>> diminishedReflexes,
-        @Valid History history) {
+        @Nullable Set<@NotNull(message = "no puede contener valores nulos") RedFlag> redFlags,
+        @Valid @Nullable Pain pain,
+        @Nullable Set<@NotNull(message = "no puede contener valores nulos") @Valid SidedFinding<BodyZone>> sensoryZones,
+        @Nullable Set<@NotNull(message = "no puede contener valores nulos") @Valid SidedFinding<MotorAction>> weakness,
+        @Nullable Set<@NotNull(message = "no puede contener valores nulos") @Valid SidedFinding<Reflex>> diminishedReflexes,
+        @Valid @Nullable History history) {
 
     public record Pain(
             @NotNull(message = "es obligatoria")
@@ -43,9 +44,9 @@ public record AssessmentRequest(
             Integer durationDays,
             @NotEmpty(message = "indica dónde empieza el dolor")
             List<@NotNull(message = "no puede contener valores nulos") @Valid Reach> reach,
-            Set<@NotNull(message = "no puede contener valores nulos") PainQuality> qualities,
-            Set<@NotNull(message = "no puede contener valores nulos") Aggravator> aggravators,
-            Set<@NotNull(message = "no puede contener valores nulos") Reliever> relievers) {
+            @Nullable Set<@NotNull(message = "no puede contener valores nulos") PainQuality> qualities,
+            @Nullable Set<@NotNull(message = "no puede contener valores nulos") Aggravator> aggravators,
+            @Nullable Set<@NotNull(message = "no puede contener valores nulos") Reliever> relievers) {
     }
 
     /**
@@ -66,8 +67,8 @@ public record AssessmentRequest(
      */
     public record History(
             @NotNull(message = "es obligatoria") PriorHerniation priorHerniation,
-            Set<@NotNull(message = "no puede contener valores nulos") DiscLevel> herniationLevels,
-            Boolean priorSpineSurgery) {
+            @Nullable Set<@NotNull(message = "no puede contener valores nulos") DiscLevel> herniationLevels,
+            @Nullable Boolean priorSpineSurgery) {
     }
 
     /** A finding with its side, e.g. {@code {"finding": "GREAT_TOE", "side": "RIGHT"}}. */

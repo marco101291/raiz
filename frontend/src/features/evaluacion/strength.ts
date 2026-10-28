@@ -28,8 +28,8 @@ const WEAKER_SIDE: Record<string, "RIGHT" | "LEFT"> = { WEAKER_RIGHT: "RIGHT", W
  */
 export function weaknessFrom(tests: StrengthTest[], answers: Record<string, string>): string[] {
   const keys = tests.flatMap((test) => {
-    const side = WEAKER_SIDE[answers[test.id ?? ""]];
-    return side && test.motorAction?.id ? [`${test.motorAction.id}-${side}`] : [];
+    const side = WEAKER_SIDE[answers[test.id]];
+    return side ? [`${test.motorAction.id}-${side}`] : [];
   });
   return [...new Set(keys)];
 }
@@ -47,12 +47,12 @@ export function consultationNotes(
   functionalAnswers: Record<string, string>,
 ): string[] {
   const painful = tests
-    .filter((test) => testAnswers[test.id ?? ""] === "PAIN")
+    .filter((test) => testAnswers[test.id] === "PAIN")
     .map((test) => `No pudiste hacer «${test.name}» por dolor.`);
   const weakArms = questions.flatMap((question) => {
-    const arm = ARM[functionalAnswers[question.id ?? ""]];
-    const movement = question.motorAction?.label?.toLowerCase();
-    return arm && movement ? [`Te cuesta ${movement} (${arm}).`] : [];
+    const arm = ARM[functionalAnswers[question.id]];
+    const movement = question.motorAction.label.toLowerCase();
+    return arm ? [`Te cuesta ${movement} (${arm}).`] : [];
   });
   return [...painful, ...weakArms];
 }

@@ -5,6 +5,7 @@ import com.raiz.domain.model.MotorAction;
 import com.raiz.domain.model.NerveRoot;
 import com.raiz.domain.model.Reflex;
 import com.raiz.web.Audience;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -27,8 +28,8 @@ public sealed interface NerveRootView {
             List<CodeLabel> dermatome,
             List<CodeLabel> myotome,
             List<CodeLabel> reflexes,
-            String patientSummary,
-            String sourceReference) implements NerveRootView {
+            @Nullable String patientSummary,
+            @Nullable String sourceReference) implements NerveRootView {
 
         static PatientView from(NerveRoot root) {
             return new PatientView(root.code(), CodeLabel.of(root.region(), root.region().label()),
@@ -47,9 +48,9 @@ public sealed interface NerveRootView {
             List<CodeLabel> reflexes,
             List<String> typicalDiscLevels,
             List<String> provocationTests,
-            String patientSummary,
-            String clinicalNotes,
-            String sourceReference) implements NerveRootView {
+            @Nullable String patientSummary,
+            @Nullable String clinicalNotes,
+            @Nullable String sourceReference) implements NerveRootView {
 
         static ProfessionalView from(NerveRoot root) {
             return new ProfessionalView(root.code(), CodeLabel.of(root.region(), root.region().label()),

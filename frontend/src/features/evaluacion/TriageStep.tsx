@@ -30,7 +30,7 @@ export function TriageStep({ flags, defaultValues, onChange, onSubmit }: Props) 
         Object.fromEntries(
           // Input: may be missing or null (unanswered). Validated output: always "si" or "no".
           flags.map((flag) => [
-            flag.id ?? "",
+            flag.id,
             z.enum(["si", "no"]).nullish().pipe(z.enum(["si", "no"], { error: "Elige sí o no." })),
           ]),
         ),
@@ -56,7 +56,7 @@ export function TriageStep({ flags, defaultValues, onChange, onSubmit }: Props) 
 
   const answers = useWatch({ control });
   const anyYes = reportedRedFlags(onlyAnswered(answers)).length > 0;
-  const missing = flags.filter((flag) => errors[flag.id ?? ""]).length;
+  const missing = flags.filter((flag) => errors[flag.id]).length;
 
   return (
     <form
@@ -80,7 +80,7 @@ export function TriageStep({ flags, defaultValues, onChange, onSubmit }: Props) 
 
       <div className={styles.preguntas}>
         {flags.map((flag) => {
-          const id = flag.id ?? "";
+          const id = flag.id;
           const error = errors[id]?.message;
           return (
             <fieldset key={id} className={styles.pregunta} aria-invalid={error ? true : undefined}>

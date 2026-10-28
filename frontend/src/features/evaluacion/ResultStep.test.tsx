@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { AssessmentResponse } from "@/lib/api/client";
 import { ResultStep } from "./ResultStep";
 
 const assess = vi.fn();
@@ -12,6 +13,8 @@ const referral = (id: string, label: string) => ({
   message: "Mensaje de la derivación",
   disclaimer: "Esta herramienta es educativa.",
 });
+
+const notAssessed = () => ({ type: "NOT_ASSESSED" as const, features: [], explanation: "" });
 
 const WARNING_SIGNS = [
   { id: "BLADDER_OR_BOWEL_DYSFUNCTION", label: "Dificultad para orinar", emergency: true },
@@ -39,15 +42,20 @@ describe("ResultStep", () => {
       },
       matches: [
         {
+          rootCode: "S1",
+          side: "RIGHT",
           label: "S1 derecha",
+          score: 5,
           neurologicalDeficit: true,
           evidence: [
-            { kind: "SENSORY", finding: "SOLE", explanation: "Síntomas sensitivos en: planta del pie" },
-            { kind: "MOTOR", finding: "ANKLE_PLANTAR_FLEXION", explanation: "Debilidad al: pararse de puntas" },
+            { kind: "SENSORY", finding: "SOLE", weight: 2, explanation: "Síntomas sensitivos en: planta del pie" },
+            { kind: "MOTOR", finding: "ANKLE_PLANTAR_FLEXION", weight: 3, explanation: "Debilidad al: pararse de puntas" },
           ],
+          priorHerniationLevels: [],
         },
       ],
-    });
+      otherCauses: [],
+    } satisfies AssessmentResponse);
     renderResult({ redFlags: [] });
 
     const headings = (await screen.findAllByRole("heading")).map((h) => h.textContent);
@@ -76,7 +84,8 @@ describe("ResultStep", () => {
       referral: referral("ROUTINE", "Agenda una valoración con un especialista"),
       pattern: { type: "DISCOGENIC", features: [], explanation: "Compatible con dolor de origen discal." },
       note: "Lo que describes no sigue el territorio de una raíz nerviosa.",
-    });
+      otherCauses: [],
+    } satisfies AssessmentResponse);
     renderResult();
 
     expect(await screen.findByRole("heading", { name: "Qué puede ser" })).toBeInTheDocument();
@@ -88,12 +97,12 @@ describe("ResultStep", () => {
     assess.mockResolvedValue({
       type: "NO_ROOT_CORRELATION",
       referral: referral("PROMPT", "Busca valoración médica en los próximos días"),
-      pattern: { type: "NOT_ASSESSED", features: [], explanation: "" },
+      pattern: notAssessed(),
       note: "Nota",
       otherCauses: [
         { id: "PUBALGIA", title: "Pubalgia", description: "Dolor en el pubis.", sourceReference: "Weir 2015" },
       ],
-    });
+    } satisfies AssessmentResponse);
     renderResult();
 
     expect(
@@ -107,16 +116,33 @@ describe("ResultStep", () => {
     assess.mockResolvedValue({
       type: "ROOT_CORRELATION",
       referral: referral("ROUTINE", "Agenda"),
-      pattern: { type: "NOT_ASSESSED" },
-      matches: [{ label: "L5 derecha", evidence: [], priorHerniationLevels: ["L4-L5"] }],
-    });
+      pattern: notAssessed(),
+      matches: [
+        {
+          rootCode: "L5",
+          side: "RIGHT",
+          label: "L5 derecha",
+          score: 2,
+          neurologicalDeficit: false,
+          evidence: [],
+          priorHerniationLevels: ["L4-L5"],
+        },
+      ],
+      otherCauses: [],
+    } satisfies AssessmentResponse);
     renderResult();
 
     expect(await screen.findByText("Coincide con tu hernia previa L4-L5.")).toBeInTheDocument();
   });
 
   it("muestra lo que conviene comentar en la consulta", async () => {
-    assess.mockResolvedValue({ type: "NO_ROOT_CORRELATION", referral: referral("ROUTINE", "Agenda"), note: "Nota" });
+    assess.mockResolvedValue({
+      type: "NO_ROOT_CORRELATION",
+      referral: referral("ROUTINE", "Agenda"),
+      pattern: notAssessed(),
+      note: "Nota",
+      otherCauses: [],
+    } satisfies AssessmentResponse);
     render(
       <ResultStep request={{}} notes={["No pudiste hacer «Caminar de talones» por dolor."]} onEdit={vi.fn()} onRestart={vi.fn()} />,
     );
@@ -129,10 +155,10 @@ describe("ResultStep", () => {
     assess.mockResolvedValue({
       type: "URGENT_REFERRAL",
       referral: referral("EMERGENCY_NOW", "Acude a urgencias hoy"),
-      pattern: { type: "NOT_ASSESSED" },
+      pattern: notAssessed(),
       reported: [],
       inferred: [{ id: "BILATERAL_SYMPTOMS", label: "Síntomas en ambas piernas o ambos brazos", emergency: true }],
-    });
+    } satisfies AssessmentResponse);
     renderResult({ redFlags: ["SADDLE_ANESTHESIA"] });
 
     expect(await screen.findByRole("heading", { level: 1, name: "Acude a urgencias hoy" })).toBeInTheDocument();
@@ -146,9 +172,10 @@ describe("ResultStep", () => {
     assess.mockRejectedValueOnce(new Error("503")).mockResolvedValueOnce({
       type: "URGENT_REFERRAL",
       referral: referral("EMERGENCY_NOW", "Acude a urgencias hoy"),
+      pattern: notAssessed(),
       reported: [],
       inferred: [],
-    });
+    } satisfies AssessmentResponse);
     renderResult({ redFlags: ["SADDLE_ANESTHESIA"] });
 
     expect(await screen.findByRole("alert")).toHaveTextContent("acude a urgencias o llama al 911");
@@ -159,7 +186,13 @@ describe("ResultStep", () => {
   });
 
   it("los botones permiten corregir o empezar de nuevo", async () => {
-    assess.mockResolvedValue({ type: "NO_ROOT_CORRELATION", referral: referral("ROUTINE", "Agenda"), note: "Nota" });
+    assess.mockResolvedValue({
+      type: "NO_ROOT_CORRELATION",
+      referral: referral("ROUTINE", "Agenda"),
+      pattern: notAssessed(),
+      note: "Nota",
+      otherCauses: [],
+    } satisfies AssessmentResponse);
     const { onEdit, onRestart } = renderResult();
 
     await userEvent.click(await screen.findByRole("button", { name: "Cambiar mis respuestas" }));

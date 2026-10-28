@@ -32,8 +32,8 @@ export function StrengthStep({ tests, questions, defaultValues, onChange, onBack
   const [answers, setAnswers] = useState<StrengthAnswers>(defaultValues);
   const [submitted, setSubmitted] = useState(false);
 
-  const missingTests = tests.filter((test) => !answers.tests[test.id ?? ""]);
-  const missingQuestions = questions.filter((question) => !answers.functional[question.id ?? ""]);
+  const missingTests = tests.filter((test) => !answers.tests[test.id]);
+  const missingQuestions = questions.filter((question) => !answers.functional[question.id]);
   const missing = missingTests.length + missingQuestions.length;
   // When every test carries the same safety note, it is shown once above them instead of six times.
   const firstNote = tests[0]?.safetyNote;
@@ -80,13 +80,13 @@ export function StrengthStep({ tests, questions, defaultValues, onChange, onBack
             <Question
               key={test.id}
               id={`test-${test.id}`}
-              title={test.name ?? ""}
-              details={[test.instructions ?? ""]}
+              title={test.name}
+              details={[test.instructions]}
               note={sharedNote ? undefined : test.safetyNote}
               options={TEST_ANSWERS}
-              value={answers.tests[test.id ?? ""]}
+              value={answers.tests[test.id]}
               invalid={submitted && missingTests.includes(test)}
-              onChange={(value) => answer("tests", test.id ?? "", value)}
+              onChange={(value) => answer("tests", test.id, value)}
             />
           ))}
         </section>
@@ -102,11 +102,11 @@ export function StrengthStep({ tests, questions, defaultValues, onChange, onBack
             <Question
               key={question.id}
               id={`functional-${question.id}`}
-              title={question.question ?? ""}
+              title={question.question}
               options={FUNCTIONAL_ANSWERS}
-              value={answers.functional[question.id ?? ""]}
+              value={answers.functional[question.id]}
               invalid={submitted && missingQuestions.includes(question)}
-              onChange={(value) => answer("functional", question.id ?? "", value)}
+              onChange={(value) => answer("functional", question.id, value)}
             />
           ))}
         </section>

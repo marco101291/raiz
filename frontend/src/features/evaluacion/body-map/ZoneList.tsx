@@ -20,7 +20,7 @@ interface Props {
 export function ZoneList({ zones, selected, onToggle }: Props) {
   return (
     <div className={styles.grupos}>
-      {GROUPS.filter(({ region }) => zones.some((zone) => zone.region?.id === region)).map(({ region, title }) => (
+      {GROUPS.filter(({ region }) => zones.some((zone) => zone.region.id === region)).map(({ region, title }) => (
         <table key={region} className={styles.tabla}>
           <caption>{title}</caption>
           <thead>
@@ -34,7 +34,7 @@ export function ZoneList({ zones, selected, onToggle }: Props) {
           </thead>
           <tbody>
             {zones
-              .filter((zone) => zone.region?.id === region)
+              .filter((zone) => zone.region.id === region)
               .map(({ id = "", label }) => (
                 <tr key={id}>
                   <th scope="row">{label}</th>

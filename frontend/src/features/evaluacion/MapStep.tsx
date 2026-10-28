@@ -28,13 +28,13 @@ const INTRO: Record<string, string> = {
 };
 
 export function MapStep({ zones, optional = false, regions = [], defaultValue, onChange, onBack, onSubmit }: Props) {
-  const shown = regions.length > 0 ? zones.filter((zone) => regions.includes(zone.region?.id ?? "")) : zones;
-  const visible = new Set(shown.map((zone) => zone.id ?? ""));
+  const shown = regions.length > 0 ? zones.filter((zone) => regions.includes(zone.region.id)) : zones;
+  const visible = new Set(shown.map((zone) => zone.id));
   // Zones marked before changing where the pain starts are dropped: they could no longer be unmarked.
   const [marked, setMarked] = useState<string[]>(() => defaultValue.filter((key) => visible.has(splitKey(key)[0])));
   const [error, setError] = useState(false);
   const selected = new Set(marked);
-  const labels = Object.fromEntries(zones.map((z) => [z.id ?? "", z.label ?? ""]));
+  const labels = Object.fromEntries(zones.map((z) => [z.id, z.label]));
   const viewBox = regions.length === 1 ? (REGION_VIEWBOX[regions[0]] ?? FULL_VIEWBOX) : FULL_VIEWBOX;
   const views = (["front", "back"] as View[]).filter((view) => ZONES[view].some(({ zone }) => visible.has(zone)));
 

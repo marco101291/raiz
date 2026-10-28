@@ -80,7 +80,7 @@ export function ResultStep({ request, warningSigns = [], notes = [], onEdit, onR
       ) : (
         <CorrelationResult result={assessment} warningSigns={warningSigns} notes={notes} />
       )}
-      <p className={result.aviso}>{assessment.referral?.disclaimer}</p>
+      <p className={result.aviso}>{assessment.referral.disclaimer}</p>
       <div className={step.acciones}>
         <button type="button" className={step.secundario} onClick={onEdit}>
           Cambiar mis respuestas

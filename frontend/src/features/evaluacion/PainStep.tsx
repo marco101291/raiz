@@ -89,7 +89,7 @@ export function PainStep({ options, defaultValues, onChange, onBack, onSubmit }:
   const onsetDate = useWatch({ control, name: "onsetDate" });
   const regions = useWatch({ control, name: "regions" });
   const priorHerniation = useWatch({ control, name: "priorHerniation" });
-  const discLevels = (options.discLevels ?? []).filter((level) => regions.length === 0 || regions.includes(level.region ?? ""));
+  const discLevels = options.discLevels.filter((level) => regions.length === 0 || regions.includes(level.region));
   const reachErrors = errors.reach as Record<string, { message?: string } | undefined> | undefined;
   const today = todayIso();
   const duration = isIsoDate(onsetDate) && onsetDate <= today ? describeDuration(daysBetween(onsetDate, today)) : null;
@@ -115,23 +115,23 @@ export function PainStep({ options, defaultValues, onChange, onBack, onSubmit }:
           control={control}
           name="regions"
           render={({ field }) => (
-            <ChipGroup name={field.name} options={options.regions ?? []} value={field.value} onChange={field.onChange} />
+            <ChipGroup name={field.name} options={options.regions} value={field.value} onChange={field.onChange} />
           )}
         />
         <FieldError message={errors.regions?.message} />
       </fieldset>
 
       {options.regions
-        ?.filter(({ id = "" }) => regions.includes(id))
-        .map(({ id = "", label = "", distributions }) => (
+        .filter(({ id }) => regions.includes(id))
+        .map(({ id, label, distributions }) => (
           <fieldset key={id} className={styles.seccion}>
             <legend className={styles.pregunta}>¿Hasta dónde llega el dolor de {label.toLowerCase()}?</legend>
             <div className={styles.distribuciones}>
-              {distributions?.map((option) => (
+              {distributions.map((option) => (
                 <label key={option.id} className={styles.distribucion}>
                   <input type="radio" value={option.id} {...register(`reach.${id}`)} />
                   <span>
-                    <DistributionFigure region={id} distribution={option.id ?? ""} />
+                    <DistributionFigure region={id} distribution={option.id} />
                     {option.label}
                   </span>
                 </label>
@@ -189,7 +189,7 @@ export function PainStep({ options, defaultValues, onChange, onBack, onSubmit }:
           control={control}
           name="qualities"
           render={({ field }) => (
-            <ChipGroup name={field.name} options={options.qualities ?? []} value={field.value} onChange={field.onChange} />
+            <ChipGroup name={field.name} options={options.qualities} value={field.value} onChange={field.onChange} />
           )}
         />
         <FieldError message={errors.qualities?.message} />
@@ -202,7 +202,7 @@ export function PainStep({ options, defaultValues, onChange, onBack, onSubmit }:
           control={control}
           name="aggravators"
           render={({ field }) => (
-            <ChipGroup name={field.name} options={options.aggravators ?? []} value={field.value} onChange={field.onChange} />
+            <ChipGroup name={field.name} options={options.aggravators} value={field.value} onChange={field.onChange} />
           )}
         />
       </fieldset>
@@ -216,7 +216,7 @@ export function PainStep({ options, defaultValues, onChange, onBack, onSubmit }:
           render={({ field }) => (
             <ChipGroup
               name={field.name}
-              options={options.relievers ?? []}
+              options={options.relievers}
               value={field.value}
               onChange={field.onChange}
               exclusive="NOTHING"

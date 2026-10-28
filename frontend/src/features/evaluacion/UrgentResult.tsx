@@ -7,7 +7,7 @@ import result from "./result.module.css";
  * No pain pattern, no roots and no rehab.
  */
 export function UrgentResult({ result: assessment }: { result: Schemas["UrgentReferral"] }) {
-  const { referral, reported = [], inferred = [] } = assessment;
+  const { referral, reported, inferred } = assessment;
   return (
     <>
       <ReferralBanner referral={referral} />

@@ -10,6 +10,7 @@ const tests = [
     instructions: "Da 10 pasos con la punta del pie levantada.",
     safetyNote: "Apóyate en una pared y detente si el dolor sube claramente.",
     motorAction: { id: "ANKLE_DORSIFLEXION", label: "Levantar la punta del pie" },
+    roots: ["L4", "L5"],
   },
 ];
 const questions = [
@@ -17,6 +18,7 @@ const questions = [
     id: "HAND_GRIP",
     question: "¿Te falta fuerza para apretar con la mano?",
     motorAction: { id: "FINGER_FLEXION", label: "Cerrar el puño con fuerza" },
+    roots: ["C8"],
   },
 ];
 

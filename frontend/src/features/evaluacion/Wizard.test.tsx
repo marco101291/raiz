@@ -1,6 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { AssessmentResponse, Schemas } from "@/lib/api/client";
 
 const redFlags = vi.fn();
 const painOptions = vi.fn();
@@ -19,16 +20,17 @@ vi.mock("@/lib/api/client", () => ({
           instructions: "Da 10 pasos.",
           safetyNote: "Apóyate en una pared.",
           motorAction: { id: "ANKLE_PLANTAR_FLEXION", label: "Pararse de puntas" },
+          roots: ["S1"],
         },
-      ]),
+      ] satisfies Schemas["StrengthTestView"][]),
     functionalQuestions: () => Promise.resolve([]),
     assess: (b: unknown) => assess(b),
   },
 }));
 
-const zones = [{ id: "GREAT_TOE", label: "Dedo gordo del pie", region: { id: "LUMBOSACRAL", label: "Lumbosacra" } }];
+const zones: Schemas["BodyZoneView"][] = [{ id: "GREAT_TOE", label: "Dedo gordo del pie", region: { id: "LUMBOSACRAL", label: "Lumbosacra" } }];
 
-const options = {
+const options: Schemas["PainOptionsView"] = {
   qualities: [
     { id: "BURNING", label: "Ardor o quemazón" },
     { id: "DULL_ACHE", label: "Dolor sordo, como cansancio" },
@@ -56,9 +58,10 @@ const options = {
       ],
     },
   ],
+  discLevels: [{ id: "L4_L5", label: "L4-L5", region: "LUMBOSACRAL" }],
 };
 
-const flags = [
+const flags: Schemas["RedFlagView"][] = [
   { id: "SADDLE_ANESTHESIA", label: "Adormecimiento en zona genital", emergency: true },
   { id: "FEVER", label: "Fiebre asociada al dolor", emergency: false },
 ];
@@ -90,10 +93,10 @@ describe("Wizard", () => {
         message: "No esperes.",
         disclaimer: "Esta herramienta es educativa.",
       },
-      pattern: { type: "NOT_ASSESSED" },
+      pattern: { type: "NOT_ASSESSED", features: [], explanation: "" },
       reported: [flags[0]],
       inferred: [],
-    });
+    } satisfies AssessmentResponse);
     await renderWizard();
 
     await answer(/Adormecimiento/, "Sí");
@@ -150,9 +153,10 @@ describe("Wizard: cuestionario de dolor", () => {
         message: "Mensaje",
         disclaimer: "Aviso",
       },
-      pattern: { type: "RADICULAR", explanation: "Explicación" },
+      pattern: { type: "RADICULAR", features: [], explanation: "Explicación" },
       note: "Nota",
-    });
+      otherCauses: [],
+    } satisfies AssessmentResponse);
     vi.resetModules();
     const { Wizard } = await import("./Wizard");
     render(<Wizard />);

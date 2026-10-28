@@ -137,18 +137,18 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         AssessmentRequest: {
-            redFlags?: ("SADDLE_ANESTHESIA" | "BLADDER_OR_BOWEL_DYSFUNCTION" | "PROGRESSIVE_WEAKNESS" | "BILATERAL_SYMPTOMS" | "GAIT_OR_HAND_CLUMSINESS" | "FEVER" | "UNEXPLAINED_WEIGHT_LOSS" | "CANCER_HISTORY" | "SIGNIFICANT_TRAUMA" | "UNRELENTING_NIGHT_PAIN")[];
-            pain?: components["schemas"]["Pain"];
-            sensoryZones?: components["schemas"]["SidedFindingBodyZone"][];
-            weakness?: components["schemas"]["SidedFindingMotorAction"][];
-            diminishedReflexes?: components["schemas"]["SidedFindingReflex"][];
-            history?: components["schemas"]["History"];
+            redFlags?: ("SADDLE_ANESTHESIA" | "BLADDER_OR_BOWEL_DYSFUNCTION" | "PROGRESSIVE_WEAKNESS" | "BILATERAL_SYMPTOMS" | "GAIT_OR_HAND_CLUMSINESS" | "FEVER" | "UNEXPLAINED_WEIGHT_LOSS" | "CANCER_HISTORY" | "SIGNIFICANT_TRAUMA" | "UNRELENTING_NIGHT_PAIN")[] | null;
+            pain?: components["schemas"]["Pain"] | null;
+            sensoryZones?: components["schemas"]["SidedFindingBodyZone"][] | null;
+            weakness?: components["schemas"]["SidedFindingMotorAction"][] | null;
+            diminishedReflexes?: components["schemas"]["SidedFindingReflex"][] | null;
+            history?: components["schemas"]["History"] | null;
         };
         History: {
             /** @enum {string} */
             priorHerniation: "YES" | "NO" | "UNKNOWN";
-            herniationLevels?: ("C4_C5" | "C5_C6" | "C6_C7" | "C7_T1" | "T12_L1" | "L1_L2" | "L2_L3" | "L3_L4" | "L4_L5" | "L5_S1")[];
-            priorSpineSurgery?: boolean;
+            herniationLevels?: ("C4_C5" | "C5_C6" | "C6_C7" | "C7_T1" | "T12_L1" | "L1_L2" | "L2_L3" | "L3_L4" | "L4_L5" | "L5_S1")[] | null;
+            priorSpineSurgery?: boolean | null;
         };
         Pain: {
             /** Format: int32 */
@@ -156,9 +156,9 @@ export interface components {
             /** Format: int32 */
             durationDays: number;
             reach: components["schemas"]["Reach"][];
-            qualities?: ("BURNING" | "TINGLING" | "NUMBNESS" | "ELECTRIC" | "DULL_ACHE" | "STABBING" | "STIFFNESS")[];
-            aggravators?: ("SITTING" | "FORWARD_BENDING" | "COUGH_SNEEZE" | "LIFTING" | "BACKWARD_BENDING" | "STANDING_LONG" | "WALKING" | "LYING_DOWN")[];
-            relievers?: ("LYING_DOWN" | "WALKING" | "SITTING" | "CHANGING_POSITION" | "NOTHING")[];
+            qualities?: ("BURNING" | "TINGLING" | "NUMBNESS" | "ELECTRIC" | "DULL_ACHE" | "STABBING" | "STIFFNESS")[] | null;
+            aggravators?: ("SITTING" | "FORWARD_BENDING" | "COUGH_SNEEZE" | "LIFTING" | "BACKWARD_BENDING" | "STANDING_LONG" | "WALKING" | "LYING_DOWN")[] | null;
+            relievers?: ("LYING_DOWN" | "WALKING" | "SITTING" | "CHANGING_POSITION" | "NOTHING")[] | null;
         };
         Reach: {
             /** @enum {string} */
@@ -188,22 +188,22 @@ export interface components {
             type: string;
         };
         CodeLabel: {
-            id?: string;
-            label?: string;
+            id: string;
+            label: string;
         };
         EvidenceView: {
             /** @enum {string} */
-            kind?: "SENSORY" | "MOTOR" | "REFLEX";
-            finding?: string;
+            kind: "SENSORY" | "MOTOR" | "REFLEX";
+            finding: string;
             /** Format: int32 */
-            weight?: number;
-            explanation?: string;
+            weight: number;
+            explanation: string;
         };
         NoRootCorrelation: Omit<components["schemas"]["AssessmentResponse"], "type"> & {
-            referral?: components["schemas"]["ReferralView"];
-            pattern?: components["schemas"]["PatternView"];
-            note?: string;
-            otherCauses?: components["schemas"]["OtherCauseView"][];
+            referral: components["schemas"]["ReferralView"];
+            pattern: components["schemas"]["PatternView"];
+            note: string;
+            otherCauses: components["schemas"]["OtherCauseView"][];
         } & {
             /**
              * @description discriminator enum property added by openapi-typescript
@@ -212,34 +212,34 @@ export interface components {
             type: "NO_ROOT_CORRELATION";
         };
         OtherCauseView: {
-            id?: string;
-            title?: string;
-            description?: string;
-            sourceReference?: string;
+            id: string;
+            title: string;
+            description: string;
+            sourceReference: string;
         };
         PatternView: {
             /** @enum {string} */
-            type?: "RADICULAR" | "DISCOGENIC" | "EXTENSION_SENSITIVE" | "NONSPECIFIC" | "NOT_ASSESSED";
-            chronicity?: components["schemas"]["CodeLabel"];
-            features?: string[];
-            explanation?: string;
+            type: "RADICULAR" | "DISCOGENIC" | "EXTENSION_SENSITIVE" | "NONSPECIFIC" | "NOT_ASSESSED";
+            chronicity?: components["schemas"]["CodeLabel"] | null;
+            features: string[];
+            explanation: string;
         };
         RedFlagView: {
-            id?: string;
-            label?: string;
-            emergency?: boolean;
+            id: string;
+            label: string;
+            emergency: boolean;
         };
         ReferralView: {
-            urgency?: components["schemas"]["CodeLabel"];
-            specialists?: components["schemas"]["CodeLabel"][];
-            message?: string;
-            disclaimer?: string;
+            urgency: components["schemas"]["CodeLabel"];
+            specialists: components["schemas"]["CodeLabel"][];
+            message: string;
+            disclaimer: string;
         };
         RootCorrelation: Omit<components["schemas"]["AssessmentResponse"], "type"> & {
-            referral?: components["schemas"]["ReferralView"];
-            pattern?: components["schemas"]["PatternView"];
-            matches?: components["schemas"]["RootMatchView"][];
-            otherCauses?: components["schemas"]["OtherCauseView"][];
+            referral: components["schemas"]["ReferralView"];
+            pattern: components["schemas"]["PatternView"];
+            matches: components["schemas"]["RootMatchView"][];
+            otherCauses: components["schemas"]["OtherCauseView"][];
         } & {
             /**
              * @description discriminator enum property added by openapi-typescript
@@ -248,21 +248,21 @@ export interface components {
             type: "ROOT_CORRELATION";
         };
         RootMatchView: {
-            rootCode?: string;
+            rootCode: string;
             /** @enum {string} */
-            side?: "LEFT" | "RIGHT";
-            label?: string;
+            side: "LEFT" | "RIGHT";
+            label: string;
             /** Format: int32 */
-            score?: number;
-            neurologicalDeficit?: boolean;
-            evidence?: components["schemas"]["EvidenceView"][];
-            priorHerniationLevels?: string[];
+            score: number;
+            neurologicalDeficit: boolean;
+            evidence: components["schemas"]["EvidenceView"][];
+            priorHerniationLevels: string[];
         };
         UrgentReferral: Omit<components["schemas"]["AssessmentResponse"], "type"> & {
-            referral?: components["schemas"]["ReferralView"];
-            pattern?: components["schemas"]["PatternView"];
-            reported?: components["schemas"]["RedFlagView"][];
-            inferred?: components["schemas"]["RedFlagView"][];
+            referral: components["schemas"]["ReferralView"];
+            pattern: components["schemas"]["PatternView"];
+            reported: components["schemas"]["RedFlagView"][];
+            inferred: components["schemas"]["RedFlagView"][];
         } & {
             /**
              * @description discriminator enum property added by openapi-typescript
@@ -272,61 +272,61 @@ export interface components {
         };
         NerveRootView: unknown;
         PatientView: components["schemas"]["NerveRootView"] & {
-            code?: string;
-            region?: components["schemas"]["CodeLabel"];
-            dermatome?: components["schemas"]["CodeLabel"][];
-            myotome?: components["schemas"]["CodeLabel"][];
-            reflexes?: components["schemas"]["CodeLabel"][];
-            patientSummary?: string;
-            sourceReference?: string;
+            code: string;
+            region: components["schemas"]["CodeLabel"];
+            dermatome: components["schemas"]["CodeLabel"][];
+            myotome: components["schemas"]["CodeLabel"][];
+            reflexes: components["schemas"]["CodeLabel"][];
+            patientSummary?: string | null;
+            sourceReference?: string | null;
         };
         ProfessionalView: components["schemas"]["NerveRootView"] & {
-            code?: string;
-            region?: components["schemas"]["CodeLabel"];
-            dermatome?: components["schemas"]["CodeLabel"][];
-            myotome?: components["schemas"]["CodeLabel"][];
-            reflexes?: components["schemas"]["CodeLabel"][];
-            typicalDiscLevels?: string[];
-            provocationTests?: string[];
-            patientSummary?: string;
-            clinicalNotes?: string;
-            sourceReference?: string;
+            code: string;
+            region: components["schemas"]["CodeLabel"];
+            dermatome: components["schemas"]["CodeLabel"][];
+            myotome: components["schemas"]["CodeLabel"][];
+            reflexes: components["schemas"]["CodeLabel"][];
+            typicalDiscLevels: string[];
+            provocationTests: string[];
+            patientSummary?: string | null;
+            clinicalNotes?: string | null;
+            sourceReference?: string | null;
         };
         StrengthTestView: {
-            id?: string;
-            name?: string;
-            instructions?: string;
-            safetyNote?: string;
-            motorAction?: components["schemas"]["CodeLabel"];
-            roots?: string[];
+            id: string;
+            name: string;
+            instructions: string;
+            safetyNote: string;
+            motorAction: components["schemas"]["CodeLabel"];
+            roots: string[];
         };
         DiscLevelView: {
-            id?: string;
-            label?: string;
-            region?: string;
+            id: string;
+            label: string;
+            region: string;
         };
         PainOptionsView: {
-            qualities?: components["schemas"]["CodeLabel"][];
-            aggravators?: components["schemas"]["CodeLabel"][];
-            relievers?: components["schemas"]["CodeLabel"][];
-            regions?: components["schemas"]["PainRegionView"][];
-            discLevels?: components["schemas"]["DiscLevelView"][];
+            qualities: components["schemas"]["CodeLabel"][];
+            aggravators: components["schemas"]["CodeLabel"][];
+            relievers: components["schemas"]["CodeLabel"][];
+            regions: components["schemas"]["PainRegionView"][];
+            discLevels: components["schemas"]["DiscLevelView"][];
         };
         PainRegionView: {
-            id?: string;
-            label?: string;
-            distributions?: components["schemas"]["CodeLabel"][];
+            id: string;
+            label: string;
+            distributions: components["schemas"]["CodeLabel"][];
         };
         FunctionalQuestionView: {
-            id?: string;
-            question?: string;
-            motorAction?: components["schemas"]["CodeLabel"];
-            roots?: string[];
+            id: string;
+            question: string;
+            motorAction: components["schemas"]["CodeLabel"];
+            roots: string[];
         };
         BodyZoneView: {
-            id?: string;
-            label?: string;
-            region?: components["schemas"]["CodeLabel"];
+            id: string;
+            label: string;
+            region: components["schemas"]["CodeLabel"];
         };
     };
     responses: never;

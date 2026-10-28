@@ -100,7 +100,7 @@ export function Wizard() {
         request={buildRequest(draft)}
         warningSigns={catalog.flags.filter((flag) => flag.emergency)}
         notes={[
-          ...historyNotes(draft.pain, catalog.painOptions.discLevels ?? []),
+          ...historyNotes(draft.pain, catalog.painOptions.discLevels),
           ...(withStrength ? consultationNotes(tests, draft.strength ?? {}, questions, draft.functional ?? {}) : []),
         ]}
         onEdit={() => update({ step: alarm ? "alarma" : withStrength ? "fuerza" : "mapa" })}

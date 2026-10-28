@@ -6,6 +6,7 @@ import com.raiz.domain.assessment.PatternInsight;
 import com.raiz.domain.model.Side;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -53,7 +54,8 @@ public sealed interface AssessmentResponse {
     }
 
     /** @param chronicity null when there was no pain questionnaire */
-    record PatternView(PatternInsight.Type type, CodeLabel chronicity, List<String> features, String explanation) {
+    record PatternView(PatternInsight.Type type, @Nullable CodeLabel chronicity, List<String> features,
+                       String explanation) {
     }
 
     /** @param priorHerniationLevels levels of the person's prior herniation that typically compress this root */

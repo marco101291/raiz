@@ -19,10 +19,10 @@ interface Props {
  */
 export function CorrelationResult({ result: assessment, warningSigns, notes = [] }: Props) {
   const { referral, pattern } = assessment;
-  const matches = assessment.type === "ROOT_CORRELATION" ? (assessment.matches ?? []) : [];
+  const matches = assessment.type === "ROOT_CORRELATION" ? assessment.matches : [];
   const note = assessment.type === "NO_ROOT_CORRELATION" ? assessment.note : undefined;
-  const otherCauses = assessment.otherCauses ?? [];
-  const patternAssessed = pattern?.type !== undefined && pattern.type !== "NOT_ASSESSED";
+  const otherCauses = assessment.otherCauses;
+  const patternAssessed = pattern.type !== "NOT_ASSESSED";
 
   return (
     <>
@@ -46,13 +46,13 @@ export function CorrelationResult({ result: assessment, warningSigns, notes = []
           {patternAssessed && (
             <div className={result.bloque}>
               <h3>Cómo se comporta tu dolor</h3>
-              <p>{pattern?.explanation}</p>
-              {pattern?.features && pattern.features.length > 0 && (
+              <p>{pattern.explanation}</p>
+              {pattern.features.length > 0 && (
                 <ul className={result.lista}>
                   {pattern.features.map((feature) => <li key={feature}>{feature}</li>)}
                 </ul>
               )}
-              {pattern?.chronicity && <p className={result.dato}>{pattern.chronicity.label}</p>}
+              {pattern.chronicity && <p className={result.dato}>{pattern.chronicity.label}</p>}
             </div>
           )}
 
@@ -101,11 +101,11 @@ export function CorrelationResult({ result: assessment, warningSigns, notes = []
                 {match.neurologicalDeficit && (
                   <p className={result.deficit}>Hay datos de pérdida de fuerza o de reflejos.</p>
                 )}
-                {(match.priorHerniationLevels?.length ?? 0) > 0 && (
-                  <p>Coincide con tu hernia previa {match.priorHerniationLevels?.join(", ")}.</p>
+                {match.priorHerniationLevels.length > 0 && (
+                  <p>Coincide con tu hernia previa {match.priorHerniationLevels.join(", ")}.</p>
                 )}
                 <ul className={result.lista}>
-                  {match.evidence?.map((e) => <li key={`${e.kind}-${e.finding}`}>{e.explanation}</li>)}
+                  {match.evidence.map((e) => <li key={`${e.kind}-${e.finding}`}>{e.explanation}</li>)}
                 </ul>
               </li>
             ))}

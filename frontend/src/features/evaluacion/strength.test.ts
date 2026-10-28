@@ -2,10 +2,32 @@ import { describe, expect, it } from "vitest";
 import { consultationNotes, weaknessFrom } from "./strength";
 
 const plantarFlexion = { id: "ANKLE_PLANTAR_FLEXION", label: "Pararse de puntas" };
+const safetyNote = "Apóyate en una pared y detente si el dolor sube claramente.";
 const tests = [
-  { id: "TOE_WALK", name: "Caminar de puntas", motorAction: plantarFlexion },
-  { id: "SINGLE_LEG_HEEL_RAISE", name: "Elevación de talón a una pierna", motorAction: plantarFlexion },
-  { id: "HEEL_WALK", name: "Caminar de talones", motorAction: { id: "ANKLE_DORSIFLEXION", label: "Levantar la punta" } },
+  {
+    id: "TOE_WALK",
+    name: "Caminar de puntas",
+    instructions: "Da 10 pasos sobre la punta de los pies.",
+    safetyNote,
+    motorAction: plantarFlexion,
+    roots: ["S1"],
+  },
+  {
+    id: "SINGLE_LEG_HEEL_RAISE",
+    name: "Elevación de talón a una pierna",
+    instructions: "Haz 10 repeticiones por lado y compara ambos lados.",
+    safetyNote,
+    motorAction: plantarFlexion,
+    roots: ["S1"],
+  },
+  {
+    id: "HEEL_WALK",
+    name: "Caminar de talones",
+    instructions: "Da 10 pasos con la punta del pie levantada.",
+    safetyNote,
+    motorAction: { id: "ANKLE_DORSIFLEXION", label: "Levantar la punta" },
+    roots: ["L4", "L5"],
+  },
 ];
 
 const questions = [
@@ -13,11 +35,13 @@ const questions = [
     id: "ARM_RAISE",
     question: "¿Te cuesta levantar el brazo?",
     motorAction: { id: "SHOULDER_ABDUCTION", label: "Separar el brazo del cuerpo" },
+    roots: ["C5"],
   },
   {
     id: "HAND_GRIP",
     question: "¿Te falta fuerza para apretar?",
     motorAction: { id: "FINGER_FLEXION", label: "Cerrar el puño con fuerza" },
+    roots: ["C8"],
   },
 ];
 

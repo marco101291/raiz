@@ -8,7 +8,7 @@ import type { PainDraft } from "./draft";
 export function historyNotes(pain: PainDraft | undefined, discLevels: Schemas["DiscLevelView"][]): string[] {
   const notes: string[] = [];
   if (pain?.priorHerniation === "YES") {
-    const labels = discLevels.filter((level) => pain.herniationLevels?.includes(level.id ?? "")).map((l) => l.label);
+    const labels = discLevels.filter((level) => pain.herniationLevels?.includes(level.id)).map((l) => l.label);
     notes.push(`Te diagnosticaron una hernia de disco antes${labels.length > 0 ? ` (${labels.join(", ")})` : ""}.`);
   }
   if (pain?.priorSpineSurgery === "YES") {
