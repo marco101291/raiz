@@ -11,6 +11,37 @@ Tiene dos audiencias:
 
 Este README es la especificación del proyecto. Está escrito para usarse con Claude Code: ver [Instrucciones para Claude Code](#instrucciones-para-claude-code).
 
+## Estado
+
+[![CI](https://github.com/marco101291/raiz/actions/workflows/ci.yml/badge.svg)](https://github.com/marco101291/raiz/actions/workflows/ci.yml)
+
+El módulo de columna funciona de punta a punta en modo paciente: triage, cuestionario de dolor, mapa corporal, fuerza guiada y resultado con derivación.
+
+**El contenido clínico está pendiente de revisión profesional** y no debe usarse para orientar a personas reales hasta entonces. El documento para esa revisión está en [docs/revision-clinica.md](docs/revision-clinica.md).
+
+Pendiente: rehabilitación, modo profesional, PDF de resumen y los módulos de otras regiones (ver [Hoja de ruta](#hoja-de-ruta)).
+
+## Cómo correrlo
+
+Requisitos: Java 21, Node 24 y Docker.
+
+```bash
+# Backend: PostgreSQL en Docker y API en http://localhost:8080
+cd backend
+docker compose up -d
+./mvnw spring-boot:run
+
+# Frontend, en otra terminal: http://localhost:3000 (reenvía /api/v1/* al backend)
+cd frontend
+npm install
+npm run dev
+```
+
+- **OpenAPI:** http://localhost:8080/v3/api-docs y Swagger UI en http://localhost:8080/swagger-ui.html.
+- **Pruebas del backend:** `./mvnw verify` en `backend/`. Testcontainers levanta su propio PostgreSQL, así que solo necesita Docker.
+- **Pruebas del frontend:** `npm run typecheck && npm run lint && npm test` en `frontend/`.
+- **CI:** GitHub Actions corre las dos suites en cada push a `main` y en cada pull request.
+
 ---
 
 ## Principios no negociables
@@ -44,26 +75,44 @@ Este README es la especificación del proyecto. Está escrito para usarse con Cl
 raiz/
 ├── backend/            Java 21 · Spring Boot 4 · JPA · Flyway · PostgreSQL
 │   └── src/main/java/com/raiz/
-│       ├── domain/     Java puro, sin Spring ni JPA (ya implementado, ver abajo)
-│       │   ├── model/        NerveRoot, BodyZone, MotorAction, Reflex, RedFlag, SpinalRegion,
-│       │   │                 PainQuality, Aggravator, Reliever, PainDistribution
-│       │   ├── assessment/   CorrelationEngine, PainPatternClassifier, SymptomReport, PainProfile,
-│       │   │                 Assessment (sealed), Evidence (sealed), PatternInsight, Referral...
-│       │   └── port/         NerveRootCatalog (puerto de salida)
-│       ├── persistence/  Entidades JPA + adaptador JpaNerveRootCatalog   (pendiente)
-│       ├── web/          Controladores REST, DTOs, ProblemDetail           (pendiente)
-│       └── config/       Wiring del motor como @Bean                       (pendiente)
-└── frontend/           Next.js (App Router) · TypeScript · mapa SVG       (pendiente)
+│   ├── src/main/java/com/raiz/
+│   │   ├── domain/       Java puro, sin Spring ni JPA
+│   │   │   ├── model/        NerveRoot, BodyZone, MotorAction, Reflex, RedFlag, SpinalRegion,
+│   │   │   │                 PainQuality, Aggravator, Reliever, PainDistribution, DiscLevel
+│   │   │   ├── assessment/   CorrelationEngine, PainPatternClassifier, SymptomReport, PainProfile,
+│   │   │   │                 MedicalHistory, Assessment (sealed), Evidence (sealed), Referral...
+│   │   │   └── port/         NerveRootCatalog, CommonBilateralCauses (puertos de salida)
+│   │   ├── persistence/  Entidades JPA, JpaNerveRootCatalog y catálogos: pruebas de fuerza,
+│   │   │                 preguntas funcionales, otras causas y textos del resultado
+│   │   ├── web/          Controladores REST, DTOs (records), mapper, ProblemDetail
+│   │   └── config/       Wiring del motor como @Bean y reglas del OpenAPI
+│   └── src/main/resources/db/migration/   Esquema y contenido clínico (V1–V10)
+├── frontend/           Next.js 16 (App Router) · React 19 · TypeScript · React Hook Form + Zod
+│   └── src/
+│       ├── app/                 Páginas y proxy de /api/v1/* hacia el backend
+│       ├── features/evaluacion/ Asistente: pasos, mapa SVG y resultado
+│       └── lib/api/             Cliente y tipos generados del OpenAPI
+└── docs/               Documento para la revisión clínica
 ```
 
 Arquitectura hexagonal ligera: el dominio no conoce Spring. El motor recibe un `NerveRootCatalog` y la capa de persistencia lo implementa con JPA. Esto permite probar el motor con un catálogo fijo en memoria, sin base de datos.
 
 ### Lo que ya existe
 
-- Modelo de dominio para triage, cuestionario de dolor, correlación y derivación.
-- `PainPatternClassifier`: lectura del patrón de dolor ("¿es una hernia?").
-- `CorrelationEngine`: triage → patrón de dolor → correlación con puntuación → derivación.
-- `CorrelationEngineTest` (JUnit 5 + AssertJ) con 15 escenarios. El dominio se compiló y se verificó con `javac` en esos mismos escenarios; la capa Spring todavía no.
+- **Dominio:**
+  - `CorrelationEngine`: triage → patrón de dolor → correlación por raíz y lado → derivación.
+  - `PainPatternClassifier`: lectura del patrón de dolor ("¿es una hernia?").
+  - Antecedentes de hernia y cirugía: señalan las raíces que coinciden con una hernia previa.
+  - Probado con JUnit 5 y AssertJ, sin base de datos.
+- **Persistencia:** el catálogo clínico completo (C5–T1 y L1–S1), las pruebas de fuerza, las preguntas funcionales, otras causas por zona y los textos del resultado. Todo entra por migraciones Flyway.
+- **API REST:**
+  - Los endpoints de la tabla de abajo, menos rehabilitación.
+  - Errores con `ProblemDetail` y contrato OpenAPI.
+  - Pruebas de integración con MockMvc y Testcontainers.
+- **Frontend:**
+  - El asistente de cinco pasos de la sección [Formularios](#formularios), con el progreso en `sessionStorage`.
+  - Mapa SVG con su alternativa en lista.
+  - Pantalla de resultado.
 
 ### Motor de evaluación
 
@@ -98,11 +147,14 @@ Los pesos y umbrales son heurísticos y deben revisarse con un profesional antes
 | `GET` | `/api/v1/nerve-roots?region=LUMBOSACRAL&audience=PATIENT` | Catálogo; la audiencia controla qué campos salen |
 | `GET` | `/api/v1/nerve-roots/{code}?audience=PROFESSIONAL` | Detalle de una raíz |
 | `POST` | `/api/v1/assessments` | Recibe `SymptomReport`, devuelve `Assessment` |
-| `GET` | `/api/v1/rehab/protocols?pattern=RADICULAR_IRRITATION&audience=PATIENT` | Enfoque o plantilla de rehabilitación |
+| `GET` | `/api/v1/rehab/protocols?pattern=RADICULAR_IRRITATION&audience=PATIENT` | Enfoque o plantilla de rehabilitación **(pendiente)** |
 | `GET` | `/api/v1/catalog/body-zones` | Zonas para el mapa SVG (id + etiqueta) |
 | `GET` | `/api/v1/catalog/red-flags` | Datos de alarma para el triage |
+| `GET` | `/api/v1/catalog/pain-options` | Descriptores, agravantes, aliviantes, niveles discales y, por región, hasta dónde llega el dolor |
+| `GET` | `/api/v1/catalog/strength-tests` | Pruebas de fuerza guiadas |
+| `GET` | `/api/v1/catalog/functional-questions` | Preguntas de tareas diarias para el cuello |
 
-Además: `GET /api/v1/catalog/pain-options` (descriptores, agravantes, aliviantes y, por región, hasta dónde llega el dolor) `GET /api/v1/catalog/strength-tests` (pruebas guiadas) y `GET /api/v1/catalog/functional-questions` (preguntas de tareas diarias para el cuello), para que el frontend no duplique etiquetas.
+Los catálogos llevan sus etiquetas en español para que el frontend no las duplique.
 
 Ejemplo de `POST /api/v1/assessments`:
 
@@ -122,7 +174,8 @@ Ejemplo de `POST /api/v1/assessments`:
     { "finding": "UPPER_ANTERIOR_THIGH", "side": "RIGHT" }
   ],
   "weakness": [],
-  "diminishedReflexes": []
+  "diminishedReflexes": [],
+  "history": { "priorHerniation": "NO", "priorSpineSurgery": false }
 }
 ```
 
@@ -173,6 +226,11 @@ Una pantalla con las preguntas de `RedFlag` en sí/no, formuladas en lenguaje cl
 | `qualities` | Chips de selección múltiple | Al menos uno |
 | `aggravators` | Chips de selección múltiple | Opcional |
 | `relievers` | Chips de selección múltiple; "Nada lo alivia" excluye a los demás | Opcional |
+| `history.priorHerniation` | "¿Te han diagnosticado una hernia de disco antes?": sí, no o no sé | Opcional |
+| `history.herniationLevels` | Si la respuesta es sí: niveles del reporte de la resonancia, filtrados por la región elegida | Opcional |
+| `history.priorSpineSurgery` | "¿Te han operado de la columna?" | Opcional |
+
+Los antecedentes no cambian la derivación: el resultado señala las raíces que coinciden con la hernia previa y los anota en "Coméntalo en tu consulta".
 
 ### Paso 3. Mapa corporal (`sensoryZones`)
 
@@ -205,16 +263,20 @@ Las pruebas de pierna se muestran si el dolor empieza en la espalda baja; las pr
 Orden fijo en pantalla:
 
 1. **Derivación** (siempre arriba, color según `urgency`): a quién ver y con qué prisa.
-2. **Patrón de dolor**: tipo, rasgos que lo apoyan y cronicidad.
-3. **Raíces compatibles** con su lado ("L5 derecha"): cada una con su evidencia, enlace a su ficha y resaltado en el mapa.
-4. **Mientras tanto**: enfoque de la fase 1 de rehabilitación, solo si no hay alarma ni déficit.
-5. **Aviso educativo** (`Referral.DISCLAIMER`).
+2. **Cuándo ir a urgencias:** las señales de alarma urgentes, por si aparecen después.
+3. **Qué puede ser:** la nota del motor, el patrón de dolor (tipo, rasgos que lo apoyan y cronicidad) y otras causas frecuentes en las zonas marcadas, con su fuente.
+4. **Coméntalo en tu consulta:** pruebas que no se pudieron hacer por dolor, brazos con falta de fuerza y antecedentes.
+5. **Para tu médico** (plegado): raíces compatibles con su lado ("L5 derecha"), cada una con su evidencia. Pendiente: enlace a la ficha de la raíz y resaltado en el mapa.
+6. **Mientras tanto** **(pendiente)**: enfoque de la fase 1 de rehabilitación, solo si no hay alarma ni déficit. Se construye después de la revisión clínica.
+7. **Aviso educativo** (`Referral.DISCLAIMER`).
 
 Si hubo alarma, la pantalla muestra únicamente la derivación y los datos de alarma. Si la alarma se infirió del mapa o de las pruebas (síntomas en ambos lados), se dice explícitamente: "Marcaste síntomas en ambas piernas".
 
-Botón "Descargar resumen" (PDF generado en el navegador) para llevarlo a la consulta: respuestas, mapa marcado y resultado.
+Botón "Descargar resumen" **(pendiente)** (PDF generado en el navegador) para llevarlo a la consulta: respuestas, mapa marcado y resultado.
 
 ### Modo profesional
+
+**Pendiente.** Hoy el backend ya expone la vista profesional de cada raíz (`audience=PROFESSIONAL`); faltan las pantallas y la autenticación.
 
 Mismos campos en una sola página, más:
 - **Reflejos** por lado: normal, disminuido o abolido. La asimetría entre lados es lo que tiene valor clínico. "Disminuido" y "abolido" se envían en `diminishedReflexes`.
@@ -230,6 +292,7 @@ Mismos campos en una sola página, más:
 ### Validación
 
 - Los tipos del frontend se generan del OpenAPI (`openapi-typescript`) para que enums y etiquetas no se desincronicen.
+- En los DTOs, `@Nullable` de JSpecify decide qué es opcional en el contrato: un campo sin `@Nullable` es obligatorio en OpenAPI y TypeScript lo tipa sin `undefined`. Un campo nuevo es obligatorio por defecto (`OpenApiConfig`).
 - Esquemas Zod en el frontend (React Hook Form + `zodResolver`) para errores inmediatos por campo.
 - Bean Validation en los DTOs del backend, y las invariantes finales en los constructores del dominio. La validación del cliente es comodidad; la del servidor es la que cuenta.
 
@@ -432,11 +495,11 @@ Contrato compartido:
 
 ## Hoja de ruta
 
-1. **Backend base:** persistencia JPA + Flyway con el catálogo de esta página, endpoints de raíces y evaluaciones, pruebas de integración.
-2. **Frontend:** el asistente de evaluación de la sección [Formularios](#formularios): triage, cuestionario de dolor, mapa SVG (IDs = `BodyZone`), fuerza guiada y pantalla de resultado.
+1. ~~**Backend base:** persistencia JPA + Flyway con el catálogo de esta página, endpoints de raíces y evaluaciones, pruebas de integración.~~ Hecho.
+2. ~~**Frontend:** el asistente de evaluación de la sección [Formularios](#formularios): triage, cuestionario de dolor, mapa SVG (IDs = `BodyZone`), fuerza guiada y pantalla de resultado.~~ Hecho.
 3. **Rehabilitación:** modelo `RehabProtocol`, primera plantilla (irritación radicular sin déficit) y endpoints.
 4. **Modo profesional:** autenticación simple, vistas clínicas.
-5. **Revisión clínica:** validar contenido y pesos de columna con un fisio y un médico antes de publicar.
+5. **Revisión clínica:** validar contenido y pesos de columna con un fisio y un médico antes de publicar. El documento está listo ([docs/revision-clinica.md](docs/revision-clinica.md)); falta quién lo revise.
 6. **Plataforma multirregión:** `FormDefinition` y renderizador genérico, `RegionRouter`, reorganizar en `core` + `modules.spine`.
 7. **Módulo de rodilla**, luego hombro y cadera, cada uno con su revisión clínica.
 8. **Integración con Alivia:** cliente generado y prescripción a partir de plantillas.
@@ -455,11 +518,8 @@ Contrato compartido:
 - Pruebas: JUnit 5 + AssertJ para dominio; `@SpringBootTest` + MockMvc + Testcontainers (PostgreSQL) para integración.
 - Textos visibles al usuario en español.
 
-**Primera tarea sugerida**
-> Lee este README y el código de `backend/src/main/java/com/raiz/domain`. Crea `pom.xml`, `docker-compose.yml`, `application.yml`, las migraciones Flyway con el catálogo completo de este README (C5–T1 y L1–S1), las entidades JPA, el adaptador `JpaNerveRootCatalog`, el `@Bean` del `CorrelationEngine` y los endpoints de raíces, catálogos y evaluaciones con soporte de `audience`. Corre `mvn verify` hasta que pasen todas las pruebas.
-
-**Segunda tarea sugerida**
-> Crea `frontend/` con Next.js (App Router) y TypeScript. Genera los tipos desde el OpenAPI del backend y construye el asistente de evaluación tal como lo describe la sección Formularios: pasos, lógica condicional, validación con Zod, progreso en `sessionStorage` y pantalla de resultado con la derivación siempre arriba. Empieza por el triage y el cuestionario de dolor; el mapa SVG va después.
+- Comentarios, javadoc y comentarios SQL en inglés; los textos de la interfaz, en español.
+- Si cambia un DTO, regenera los tipos del frontend con `npm run gen:api` (con el backend corriendo) y marca con `@Nullable` solo lo que de verdad puede faltar.
 
 **Reglas que no se rompen**
 - Ninguna respuesta de evaluación sin `referral`.
