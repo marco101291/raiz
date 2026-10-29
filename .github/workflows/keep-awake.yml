@@ -1,0 +1,17 @@
+name: Keep backend awake
+
+# Render's free plan sleeps after 15 minutes without traffic and takes about a minute to wake up, longer
+# than a Netlify function waits. Pinging it keeps it awake: a month has at most 744 hours, within the 750
+# free ones. The health endpoint does not touch the database, so Neon can still sleep.
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    # BACKEND_URL is a repository variable (Settings > Secrets and variables > Actions > Variables).
+    if: vars.BACKEND_URL != ''
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -fsS --retry 3 --retry-delay 30 --retry-all-errors --max-time 120 "${{ vars.BACKEND_URL }}/actuator/health"

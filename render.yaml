@@ -1,0 +1,23 @@
+# Backend on Render's free plan, built from backend/Dockerfile. The database is Neon's free PostgreSQL
+# (Render's free one is deleted after 30 days): its connection goes in the three RAIZ_DB_* variables.
+services:
+  - type: web
+    name: raiz-backend
+    runtime: docker
+    plan: free
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    healthCheckPath: /actuator/health
+    # Frontend or docs changes do not redeploy the backend.
+    buildFilter:
+      paths:
+        - backend/**
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: RAIZ_DB_URL
+        sync: false
+      - key: RAIZ_DB_USER
+        sync: false
+      - key: RAIZ_DB_PASSWORD
+        sync: false

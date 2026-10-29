@@ -1,0 +1,9 @@
+/* Nervio-claro with Tinta text: visible without borrowing the urgency colors of the referral. */
+.banda {
+  background: var(--nervio-claro);
+  color: var(--tinta);
+  font-size: var(--texto-sm);
+  padding: 0.625rem var(--gutter);
+  text-align: center;
+  border-bottom: 1px solid var(--linea);
+}

@@ -41,6 +41,7 @@ npm run dev
 - **Pruebas del backend:** `./mvnw verify` en `backend/`. Testcontainers levanta su propio PostgreSQL, así que solo necesita Docker.
 - **Pruebas del frontend:** `npm run typecheck && npm run lint && npm test` en `frontend/`.
 - **CI:** GitHub Actions corre las dos suites en cada push a `main` y en cada pull request.
+- **Despliegue:** Netlify (frontend), Render (backend) y Neon (PostgreSQL), todo en plan gratuito. Pasos en [docs/despliegue.md](docs/despliegue.md).
 
 ---
 

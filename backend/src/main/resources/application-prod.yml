@@ -1,0 +1,11 @@
+# Production on Render's free plan (512 MB) with Neon's free PostgreSQL. Activated with
+# SPRING_PROFILES_ACTIVE=prod; the connection comes from RAIZ_DB_URL, RAIZ_DB_USER and RAIZ_DB_PASSWORD.
+spring:
+  datasource:
+    hikari:
+      # Neon suspends its compute after 5 minutes without activity, and an open connection counts as
+      # activity: let idle connections close and do not ping them, so the free compute hours last.
+      minimum-idle: 0
+      idle-timeout: 60000
+      keepalive-time: 0
+      maximum-pool-size: 3

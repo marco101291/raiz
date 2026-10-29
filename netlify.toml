@@ -1,0 +1,9 @@
+# Frontend on Netlify. Netlify detects Next.js and applies its adapter; the /api/v1/* Route Handler runs
+# as a function and forwards to the backend at RAIZ_API_URL (set in the site's environment variables).
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "24"

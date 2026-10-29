@@ -1,3 +1,7 @@
+# Render (and most hosts) assign the port through PORT.
+server:
+  port: ${PORT:8080}
+
 spring:
   application:
     name: raiz-backend
@@ -18,3 +22,14 @@ spring:
 springdoc:
   # Without this, responses are documented as */* and generated clients lose the types.
   default-produces-media-type: application/json
+
+# Only /actuator/health is exposed: the host's health check and the keep-alive ping use it. It leaves the
+# database out so that pinging the backend does not keep Neon's compute awake.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  health:
+    db:
+      enabled: false
